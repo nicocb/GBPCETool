@@ -103,18 +103,24 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <!-- Optional - for hot reload of the web application when using an IDE Eclipse / IDEA -->
-    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
-    <plugins>
+	<build>
+		<!-- Optional - for hot reload of the web application when using an IDE 
+			Eclipse / IDEA -->
+		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+		<plugins>
 
-      <plugin>
-        <groupId>com.google.appengine</groupId>
-        <artifactId>appengine-maven-plugin</artifactId>
-        <version>${appengine-maven.version}</version>
-      </plugin>
-    </plugins>
-  </build>
+			<plugin>
+				<groupId>com.google.appengine</groupId>
+				<artifactId>appengine-maven-plugin</artifactId>
+				<version>${appengine-maven.version}</version>
+
+				<configuration>
+					<port>8081</port>
+				</configuration>
+
+			</plugin>
+		</plugins>
+	</build>
   
   <dependencyManagement>
     <dependencies>

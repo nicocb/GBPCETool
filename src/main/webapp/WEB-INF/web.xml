@@ -22,13 +22,22 @@
       not included in web.xml will be loaded after filters listed below.
     -->
     <servlet>
-      <servlet-name>school</servlet-name>
+      <servlet-name>schoolCertification</servlet-name>
       <servlet-class>com.gracie.barra.school.action.SchoolCertificationCriteriaServlet</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
+      <servlet-name>schoolCertification</servlet-name>
+      <url-pattern>/schoolCertification</url-pattern>
+    </servlet-mapping>    
+    <servlet>
       <servlet-name>school</servlet-name>
-      <url-pattern>/school</url-pattern>
+      <servlet-class>com.gracie.barra.school.action.SchoolServlet</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>school</servlet-name>
+      <url-pattern>/</url-pattern>
     </servlet-mapping>
     
     <servlet>
@@ -59,6 +68,22 @@
     <filter-mapping>
       <filter-name>authFilter</filter-name>
       <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+    <filter>
+      <filter-name>AuthEnrichFilter</filter-name>
+      <filter-class>com.gracie.barra.auth.AuthEnrichFilter</filter-class>
+    </filter>
+    <filter-mapping>
+      <filter-name>AuthEnrichFilter</filter-name>
+      <url-pattern>*</url-pattern>
+    </filter-mapping>
+        <filter>
+      <filter-name>LogoutFilter</filter-name>
+      <filter-class>com.gracie.barra.auth.LogoutFilter</filter-class>
+    </filter>
+    <filter-mapping>
+      <filter-name>LogoutFilter</filter-name>
+      <url-pattern>/logout</url-pattern>
     </filter-mapping>
     <servlet>
       <servlet-name>logout</servlet-name>

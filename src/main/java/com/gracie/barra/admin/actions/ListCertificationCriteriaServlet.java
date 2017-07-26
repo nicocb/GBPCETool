@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.gracie.barra.admin.dao.CertificationDao;
-import com.gracie.barra.admin.dao.DatastoreDao;
+import com.gracie.barra.admin.dao.CertificationDaoDatastoreImpl;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.Result;
 
@@ -33,7 +33,7 @@ public class ListCertificationCriteriaServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    CertificationDao dao = new DatastoreDao();
+    CertificationDao dao = new CertificationDaoDatastoreImpl();
       
     this.getServletContext().setAttribute("dao", dao);
   }

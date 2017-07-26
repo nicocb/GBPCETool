@@ -35,12 +35,12 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.Result;
 
-public class DatastoreDao implements CertificationDao {
+public class CertificationDaoDatastoreImpl implements CertificationDao {
 
   private DatastoreService datastore;
   private static final String CC_KIND = "CertificationCriterion";
 
-  public DatastoreDao() {
+  public CertificationDaoDatastoreImpl() {
     datastore = DatastoreServiceFactory.getDatastoreService(); // Authorized Datastore service
   }
 

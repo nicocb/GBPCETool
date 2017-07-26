@@ -34,7 +34,8 @@ Copyright 2016 Google Inc.
           <c:if test="${isAuthConfigured}"><li><a href="/books/mine">My Books</a></li></c:if>
         </ul>
         <p class="navbar-text navbar-right">
-          <c:if test="${not empty token}">
+          <c:choose>
+          <c:when test="${not empty userEmail}">
           <!-- using pageContext requires jsp-api artifact in pom.xml -->
           <a href="/logout">
             <c:if test="${not empty userImageUrl}">
@@ -42,8 +43,11 @@ Copyright 2016 Google Inc.
             </c:if>
             ${fn:escapeXml(userEmail)}
           </a>
-          </c:if>
+          </c:when>
+          <c:otherwise>
           <a href="/login">Login</a>
+          </c:otherwise>
+          </c:choose>
         </p>
       </div>
     </div>

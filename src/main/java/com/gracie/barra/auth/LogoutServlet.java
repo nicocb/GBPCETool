@@ -17,6 +17,7 @@
 package com.gracie.barra.auth;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,18 +28,23 @@ import javax.servlet.http.HttpSession;
 // [START example]
 @SuppressWarnings("serial")
 public class LogoutServlet extends HttpServlet {
+	private static final Logger log = Logger.getLogger(LogoutFilter.class.getName());
 
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws IOException, ServletException {
-    // you can also make an authenticated request to logout, but here we choose to
-    // simply delete the session variables for simplicity
-    HttpSession session =  req.getSession(false);
-    if (session != null) {
-      session.invalidate();
-    }
-    // rebuild session
-    req.getSession();
-  }
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		// you can also make an authenticated request to logout, but here we
+		// choose to
+		// simply delete the session variables for simplicity
+		log.info("Logout servlet");
+
+		HttpSession session = req.getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
+		// rebuild session
+		req.getSession();
+
+		log.info("Logout servlet finish");
+	}
 }
 // [END example]

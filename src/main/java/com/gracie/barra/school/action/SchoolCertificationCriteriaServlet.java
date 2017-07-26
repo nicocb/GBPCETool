@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.gracie.barra.admin.dao.CertificationDao;
-import com.gracie.barra.admin.dao.DatastoreDao;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.Result;
 
@@ -33,9 +32,6 @@ public class SchoolCertificationCriteriaServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    CertificationDao dao = new DatastoreDao();
-      
-    this.getServletContext().setAttribute("dao", dao);
   }
 
   @Override

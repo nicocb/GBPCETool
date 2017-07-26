@@ -17,7 +17,6 @@
 package com.gracie.barra.auth;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -26,13 +25,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-public class LogoutFilter implements Filter {
-	private static final Logger log = Logger.getLogger(LogoutFilter.class.getName());
+public class AuthEnrichFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -41,21 +39,16 @@ public class LogoutFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest servletReq, ServletResponse servletResp, FilterChain chain)
 			throws IOException, ServletException {
-
-		log.info("logging out filter");
 		HttpServletRequest req = (HttpServletRequest) servletReq;
-		HttpServletResponse resp = (HttpServletResponse) servletResp;
-		String path = req.getRequestURI();
-
-		chain.doFilter(servletReq, servletResp);
 
 		UserService userService = UserServiceFactory.getUserService();
 		if (userService.isUserLoggedIn()) {
-			resp.sendRedirect(userService.createLogoutURL("/logout"));
-		} else if (path.startsWith("/logout")) {
-			resp.sendRedirect("/");
+			User user = userService.getCurrentUser();
+			req.getSession().setAttribute("userEmail", user.getEmail());
+			req.getSession().setAttribute("userId", user.getUserId());
+
 		}
-		log.info("finished out filter");
+		chain.doFilter(servletReq, servletResp);
 	}
 
 	@Override

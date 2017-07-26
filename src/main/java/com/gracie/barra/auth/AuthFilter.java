@@ -32,26 +32,26 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 public class AuthFilter implements Filter {
 
-  @Override
-  public void init(FilterConfig config) throws ServletException {
-  }
+	@Override
+	public void init(FilterConfig config) throws ServletException {
+	}
 
-  @Override
-  public void doFilter(ServletRequest servletReq, ServletResponse servletResp, FilterChain chain)
-      throws IOException, ServletException {
-    HttpServletRequest req = (HttpServletRequest) servletReq;
-    HttpServletResponse resp = (HttpServletResponse) servletResp;
+	@Override
+	public void doFilter(ServletRequest servletReq, ServletResponse servletResp, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest req = (HttpServletRequest) servletReq;
+		HttpServletResponse resp = (HttpServletResponse) servletResp;
 
-    UserService userService = UserServiceFactory.getUserService();
-    if (userService.isUserLoggedIn()) {
-      chain.doFilter(servletReq, servletResp);
-    } else {
-      req.getSession().setAttribute("loginDestination", "/");
-      resp.sendRedirect(userService.createLoginURL("/login"));
-    }
-  }
+		UserService userService = UserServiceFactory.getUserService();
+		if (userService.isUserLoggedIn()) {
+			chain.doFilter(servletReq, servletResp);
+		} else {
+			req.getSession().setAttribute("loginDestination", "/");
+			resp.sendRedirect(userService.createLoginURL("/login"));
+		}
+	}
 
-  @Override
-  public void destroy() {
-  }
+	@Override
+	public void destroy() {
+	}
 }
