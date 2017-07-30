@@ -19,51 +19,36 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.gracie.barra.admin.dao.CertificationDao;
-import com.gracie.barra.admin.dao.CertificationDaoDatastoreImpl;
+import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.dao.SchoolDao;
-import com.gracie.barra.school.dao.SchoolDaoDatastoreImpl;
 import com.gracie.barra.school.objects.School;
 
 @SuppressWarnings("serial")
-public class SchoolServlet extends HttpServlet {
+public class SchoolServlet extends AbstractGBServlet {
 
 	private static final Logger log = Logger.getLogger(SchoolServlet.class.getName());
 
 	@Override
-	public void init() throws ServletException {
-		CertificationDao dao = new CertificationDaoDatastoreImpl();
-
-		this.getServletContext().setAttribute("dao", dao);
-		SchoolDao schoolDao = new SchoolDaoDatastoreImpl();
-
-		this.getServletContext().setAttribute("schoolDao", schoolDao);
-	}
-
-	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		log.info("Entering servlet.");
 		UserService userService = UserServiceFactory.getUserService();
 		if (userService.isUserLoggedIn()) {
-			SchoolDao schoolDao = (SchoolDao) this.getServletContext().getAttribute("schoolDao");
-			School school = null;
-			try {
-				school = schoolDao.getSchoolByUser(userService.getCurrentUser().getUserId());
-			} catch (Exception e) {
-				throw new ServletException("Error listing certificationCriteria", e);
-			}
+			School school = getSchoolDao().getSchoolByUser(userService.getCurrentUser().getUserId());
 			if (school == null) {
 				req.setAttribute("action", "Create");
 				req.setAttribute("destination", "createSchool");
+				req.setAttribute("schoolStatus", "Not provided");
 			} else {
 				req.setAttribute("action", "Update");
 				req.setAttribute("destination", "updateSchool");
+				req.setAttribute("schoolStatus", school.getPending() ? "Pending" : "Validated");
+				if (!school.getPending()) {
+					req.setAttribute("schoolValidated", "true");
+				}
 			}
 			req.getSession().getServletContext().setAttribute("school", school);
 			req.setAttribute("page", "school");
@@ -83,8 +68,7 @@ public class SchoolServlet extends HttpServlet {
 
 			School school = new School.Builder().id(nullOrEmpty(id) ? null : Long.valueOf(id))
 					.description(req.getParameter("description")).name(req.getParameter("name"))
-					.contactMail(req.getParameter("contactMail")).userId(userService.getCurrentUser().getUserId())
-					.build();
+					.contactMail(req.getParameter("contactMail")).userId(userService.getCurrentUser().getUserId()).build();
 
 			SchoolDao schoolDao = (SchoolDao) this.getServletContext().getAttribute("schoolDao");
 			try {
@@ -102,7 +86,4 @@ public class SchoolServlet extends HttpServlet {
 		}
 	}
 
-	private boolean nullOrEmpty(String id) {
-		return id == null || id.length() == 0 || id.equals("null");
-	}
 }

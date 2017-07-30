@@ -42,6 +42,10 @@ Copyright 2016 Google Inc.
       <label for="rank">Rank</label>
       <textarea name="rank" id="rank" class="form-control">${fn:escapeXml(criterion.rank)}</textarea>
     </div>
+        
+    <div class="form-group hidden">
+      <input type="hidden" name="id" value="${fn:escapeXml(criterion.id)}" />
+    </div>
 
     <button type="submit" class="btn btn-success">Save</button>
   </form>

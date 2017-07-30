@@ -18,10 +18,6 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <div class="container">
   <h3>Criteria</h3>
-  <a href="/admin/createCriterion" class="btn btn-success btn-sm">
-    <i class="glyphicon glyphicon-plus"></i>
-    Add certification criterion
-  </a>
   <c:choose>
   <c:when test="${empty certificationCriteria}">
   <p>No criteria found</p>
@@ -29,17 +25,14 @@ Copyright 2016 Google Inc.
   <c:otherwise>
   <c:forEach items="${certificationCriteria}" var="criterion">
   <div class="media">
-    <a href="/read?id=${criterion.id}">
-      <div class="media-left">
-        <img alt="ahhh" src="${fn:escapeXml('http://placekitten.com/g/128/192')}">
-      </div>
       <div class="media-body">
-        <h4>${fn:escapeXml(criterion.description)}</h4>
-        <p>${fn:escapeXml(criterion.comment)}</p>
-        <p>${fn:escapeXml(criterion.action)}</p>
-        <p>${fn:escapeXml(criterion.rank)}</p>
+        <h4>${fn:escapeXml(criterion.criterion.description)}</h4>
+        <p>Pending : ${fn:escapeXml(criterion.pendings)}</p>
+	      <form method="POST" action="/schoolCriteria" >
+	      <input type="text" name="picture" id="picture" value="${fn:escapeXml(criterion.picture)}" class="form-control" />
+	      <input type="hidden" name="id" value="${criterion.id}" />
+	      <button type="submit" class="btn btn-danger" >Upload</button></form>
       </div>
-    </a>
   </div>
   </c:forEach>
   <c:if test="${not empty cursor}">

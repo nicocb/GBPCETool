@@ -18,9 +18,10 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <div class="container">
   <h3>
-    Academy details 
+    Academy details (${fn:escapeXml(schoolStatus)})
   </h3>
-  
+ 
+
   Make sure you describe your academy in the best possible way and you enter a valid e-mail address for communication.
   Once this information provided we will validate the school existence and give you access to certification form.
 

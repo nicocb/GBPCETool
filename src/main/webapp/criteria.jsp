@@ -18,7 +18,7 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <div class="container">
   <h3>Criteria</h3>
-  <a href="/admin/createCriterion" class="btn btn-success btn-sm">
+  <a href="/admin/criterion" class="btn btn-success btn-sm">
     <i class="glyphicon glyphicon-plus"></i>
     Add certification criterion
   </a>
@@ -29,17 +29,16 @@ Copyright 2016 Google Inc.
   <c:otherwise>
   <c:forEach items="${certificationCriteria}" var="criterion">
   <div class="media">
-    <a href="/read?id=${criterion.id}">
-      <div class="media-left">
-        <img alt="ahhh" src="${fn:escapeXml('http://placekitten.com/g/128/192')}">
-      </div>
+    
       <div class="media-body">
-        <h4>${fn:escapeXml(criterion.description)}</h4>
+        <a href="/admin/criterion?id=${criterion.id}"><h4>${fn:escapeXml(criterion.description)}</h4></a>
         <p>${fn:escapeXml(criterion.comment)}</p>
         <p>${fn:escapeXml(criterion.action)}</p>
         <p>${fn:escapeXml(criterion.rank)}</p>
       </div>
-    </a>
+      <form method="GET" action="/admin/criterion" ><input type="hidden" name="id" value="${criterion.id}" /><button type="submit" class="btn btn-danger" >Update</button></form>
+      <form method="POST" action="/admin/criteria" ><input type="hidden" name="action" value="DELETE" /><input type="hidden" name="id" value="${criterion.id}" /><button type="submit" class="btn btn-danger" >Delete</button></form>
+ 
   </div>
   </c:forEach>
   <c:if test="${not empty cursor}">
