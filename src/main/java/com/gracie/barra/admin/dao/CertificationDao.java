@@ -1,8 +1,12 @@
 package com.gracie.barra.admin.dao;
 
+import java.util.List;
+
+import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
-import com.gracie.barra.admin.objects.Result;
+import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
+import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 
 public interface CertificationDao {
 
@@ -14,10 +18,18 @@ public interface CertificationDao {
 
 	void deleteCertificationCriterion(Long certificationCriterionId);
 
-	Result<CertificationCriterion> listCertificationCriteria(String startCursorString);
+	List<CertificationCriterion> listCertificationCriteria();
 
-	SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc);
+	List<CertificationCriteriaByRank> listCertificationCriteriaByRank();
 
-	Result<SchoolCertificationCriterion> listSchoolCertificationCriteria(Long schoolId, String startCursorString);
+	List<SchoolCertificationCriterion> listSchoolCertificationCriteria(Long schoolId);
+
+	List<SchoolCertificationCriteriaByRank> listSchoolCertificationCriteriaByRank(Long schoolId);
+
+	SchoolCertificationDashboard getSchoolCertificationDashboard(Long schoolId);
+
+	void updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture, String comment, Boolean pending);
+
+	SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc, Long schoolID);
 
 }

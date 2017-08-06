@@ -40,11 +40,11 @@ public class SchoolServlet extends AbstractGBServlet {
 			School school = getSchoolDao().getSchoolByUser(userService.getCurrentUser().getUserId());
 			if (school == null) {
 				req.setAttribute("action", "Create");
-				req.setAttribute("destination", "createSchool");
+				req.setAttribute("destination", "school");
 				req.setAttribute("schoolStatus", "Not provided");
 			} else {
 				req.setAttribute("action", "Update");
-				req.setAttribute("destination", "updateSchool");
+				req.setAttribute("destination", "school");
 				req.setAttribute("schoolStatus", school.getPending() ? "Pending" : "Validated");
 				if (!school.getPending()) {
 					req.setAttribute("schoolValidated", "true");
@@ -70,14 +70,14 @@ public class SchoolServlet extends AbstractGBServlet {
 					.description(req.getParameter("description")).name(req.getParameter("name"))
 					.contactMail(req.getParameter("contactMail")).userId(userService.getCurrentUser().getUserId()).build();
 
-			SchoolDao schoolDao = (SchoolDao) this.getServletContext().getAttribute("schoolDao");
+			SchoolDao schoolDao = this.getSchoolDao();
 			try {
 				if (school.getId() == null) {
 					schoolDao.createSchool(school);
 				} else {
 					schoolDao.updateSchool(school);
 				}
-				resp.sendRedirect("/"); // read what we just wrote
+				resp.sendRedirect("/school"); // read what we just wrote
 			} catch (Exception e) {
 				throw new ServletException("Error creating certificationCriterion", e);
 			}

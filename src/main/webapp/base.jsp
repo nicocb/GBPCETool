@@ -28,16 +28,18 @@ Copyright 2016 Google Inc.
 	<div class="navbar navbar-default">
 		<div class="container">
 			<div class="navbar-header">
-				<div class="navbar-brand">School certification program</div>
+				<div class="navbar-left"><img src="/pics/gb-logo.png" height="50" width="50"/></div>
+				
+				<div class="navbar-brand"> School certification program</div>
 			</div>
 			<ul class="nav navbar-nav">
-				<li><a href="/">School</a></li>
+				<li><a href="/school">School</a></li>
 				<c:choose>
 					<c:when test="${schoolStatus == 'Validated'}">
 						<li><a href="/schoolCriteria">Certification</a></li>
 					</c:when>
 					<c:otherwise>
-						<li>Certification grey</li>
+						<li><a href="#">Certification grey</a></li>
 					</c:otherwise>
 				</c:choose>
 

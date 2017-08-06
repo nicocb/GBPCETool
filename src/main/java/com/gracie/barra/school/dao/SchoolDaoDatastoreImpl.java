@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -19,7 +18,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
-import com.gracie.barra.admin.objects.Result;
 import com.gracie.barra.school.objects.School;
 
 public class SchoolDaoDatastoreImpl implements SchoolDao {
@@ -52,13 +50,18 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 
 	@Override
 	public School getSchoolByUser(String userId) {
-		log.info("Getting school for user " + userId);
 		Query query = new Query(SCHOOL_KIND).setFilter(new FilterPredicate(School.USERID, FilterOperator.EQUAL, userId));
 
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		Entity entity = preparedQuery.asSingleEntity();
-		log.info("Got entity " + entity);
 
+		return entity == null ? null : entityToSchool(entity);
+	}
+
+	@Override
+	public School getSchool(Long id) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
+		Entity entity = datastore.get(key);
 		return entity == null ? null : entityToSchool(entity);
 	}
 
@@ -103,27 +106,17 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 	}
 
 	@Override
-	public Result<School> listSchools(String startCursorString) {
+	public List<School> listSchools() {
 		// Only show 10 at a time
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
-		if (startCursorString != null && !startCursorString.equals("")) {
-			// Where we left off
-			fetchOptions.startCursor(Cursor.fromWebSafeString(startCursorString));
-		}
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
+
 		Query query = new Query(SCHOOL_KIND).addSort(School.PENDING, SortDirection.ASCENDING).addSort(School.NAME,
 				SortDirection.ASCENDING);
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
 
 		List<School> result = entitiesToSchools(results);
-		Cursor cursor = results.getCursor(); // Where to start next time
-		if (cursor != null && result.size() == 10) {
-			String cursorString = cursor.toWebSafeString(); // Cursors are
-															// WebSafe
-			return new Result<>(result, cursorString);
-		} else {
-			return new Result<>(result);
-		}
+		return result;
 	}
 
 	@Override

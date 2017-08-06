@@ -16,7 +16,6 @@
 package com.gracie.barra.admin.actions;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,54 +23,50 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
-import com.gracie.barra.school.objects.School;
 
 @SuppressWarnings("serial")
-public class SchoolsServlet extends AbstractGBServlet {
+public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		List<School> schools = null;
-		try {
-			schools = getSchoolDao().listSchools();
-		} catch (Exception e) {
-			throw new ServletException("Error listing schools", e);
-		}
-		req.getSession().getServletContext().setAttribute("schools", schools);
+		UserService userService = UserServiceFactory.getUserService();
+		if (userService.isUserLoggedIn()) {
+			String[] tokens = req.getPathInfo().split("/");
+			Long schoolId = Long.valueOf(tokens[tokens.length - 1]);
+			SchoolCertificationDashboard schoolCertificationDashboard = null;
+			try {
 
-		req.setAttribute("page", "schools");
-		req.getRequestDispatcher("/baseAdmin.jsp").forward(req, resp);
+				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(schoolId);
+			} catch (Exception e) {
+				throw new ServletException("Error listing certificationCriteria", e);
+			}
+			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
+			req.setAttribute("page", "schoolCriteria");
+			req.setAttribute("schoolId", schoolId);
+			req.setAttribute("mode", "admin");
+			req.getRequestDispatcher("/baseAdmin.jsp").forward(req, resp);
+		}
 	}
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+		Boolean revoke = req.getRequestURI().contains("Refuse");
+
 		UserService userService = UserServiceFactory.getUserService();
 
 		if (userService.isUserLoggedIn()) {
 			String id = req.getParameter("id");
-			switch (req.getParameter("action")) {
-			case "PUT":
-				String status = req.getParameter("pending");
-				try {
-					getSchoolDao().updateSchoolStatus(Long.valueOf(id), Boolean.valueOf(status));
-				} catch (Exception e) {
-					throw new ServletException("Error updating school ", e);
-				}
+			String comment = req.getParameter("comment");
+			String schoolId = req.getParameter("schoolId");
 
-				break;
-			case "DELETE":
-				getSchoolDao().deleteSchool(Long.valueOf(req.getParameter("id")));
-				break;
+			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId),  null, comment, revoke ? null : false);
 
-			default:
-				break;
-			}
-			resp.sendRedirect("/admin/schools");
 		} else {
-			throw new ServletException("Should be admin to update school");
+			throw new ServletException("Should be logged to save school");
 		}
+		resp.sendRedirect("/admin/schoolCriteriaAdmin/" + req.getParameter("schoolId"));
 	}
-
 }

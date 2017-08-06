@@ -14,41 +14,53 @@ Copyright 2016 Google Inc.
  limitations under the License.
 -->
 <!-- [START list] -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <div class="container">
-  <h3>Criteria</h3>
-  <a href="/admin/criterion" class="btn btn-success btn-sm">
-    <i class="glyphicon glyphicon-plus"></i>
-    Add certification criterion
-  </a>
-  <c:choose>
-  <c:when test="${empty certificationCriteria}">
-  <p>No criteria found</p>
-  </c:when>
-  <c:otherwise>
-  <c:forEach items="${certificationCriteria}" var="criterion">
-  <div class="media">
-    
-      <div class="media-body">
-        <a href="/admin/criterion?id=${criterion.id}"><h4>${fn:escapeXml(criterion.description)}</h4></a>
-        <p>${fn:escapeXml(criterion.comment)}</p>
-        <p>${fn:escapeXml(criterion.action)}</p>
-        <p>${fn:escapeXml(criterion.rank)}</p>
-      </div>
-      <form method="GET" action="/admin/criterion" ><input type="hidden" name="id" value="${criterion.id}" /><button type="submit" class="btn btn-danger" >Update</button></form>
-      <form method="POST" action="/admin/criteria" ><input type="hidden" name="action" value="DELETE" /><input type="hidden" name="id" value="${criterion.id}" /><button type="submit" class="btn btn-danger" >Delete</button></form>
- 
-  </div>
-  </c:forEach>
-  <c:if test="${not empty cursor}">
-  <nav>
-    <ul class="pager">
-      <li><a href="?cursor=${fn:escapeXml(cursor)}">More</a></li>
-    </ul>
-  </nav>
-  </c:if>
-  </c:otherwise>
-  </c:choose>
+	<h3>Criteria</h3>
+	<a href="/admin/criterion" class="btn btn-success btn-sm"> <i
+		class="glyphicon glyphicon-plus"></i> Add certification criterion
+	</a>
+	<c:choose>
+		<c:when test="${empty certificationCriteriaByRank}">
+			<p>No criteria found</p>
+		</c:when>
+		<c:otherwise>
+
+			<c:forEach items="${certificationCriteriaByRank}"
+				var="certificationCriteria">
+				<div class="panel panel-default">
+					<div class="panel-heading">Stage
+						${certificationCriteria.rank} max score : ${certificationCriteria.score}</div>
+					<div class="panel-body">
+						<c:forEach items="${certificationCriteria.criteria}" var="criterion">
+							<div class="media">
+
+								<div class="media-body">
+									<a href="/admin/criterion?id=${criterion.id}"><h4>${fn:escapeXml(criterion.description)}</h4></a>
+									<p>${fn:escapeXml(criterion.comment)}</p>
+									<p>${fn:escapeXml(criterion.action)}</p>
+									<p>${fn:escapeXml(criterion.rank)}</p>
+									<p>${fn:escapeXml(criterion.score)}</p>
+								</div>
+								<div class="btn-group" role="group" aria-label="..." >
+								<form class="btn-group" method="GET" action="/admin/criterion">
+									<input type="hidden" name="id" value="${criterion.id}" />
+									<button type="submit" class="btn btn-danger">Update</button>
+								</form>
+								<form class="btn-group" method="POST" action="/admin/criteria">
+									<input type="hidden" name="action" value="DELETE" /><input
+										type="hidden" name="id" value="${criterion.id}" />
+									<button type="submit" class="btn btn-danger">Delete</button>
+								</form>
+								</div>
+
+							</div>
+						</c:forEach>
+					</div>
+				</div>
+			</c:forEach>
+		</c:otherwise>
+	</c:choose>
 </div>
 <!-- [END list] -->

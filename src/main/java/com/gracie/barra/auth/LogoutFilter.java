@@ -53,7 +53,7 @@ public class LogoutFilter implements Filter {
 		if (userService.isUserLoggedIn()) {
 			resp.sendRedirect(userService.createLogoutURL("/logout"));
 		} else if (path.startsWith("/logout")) {
-			resp.sendRedirect("/");
+			resp.sendRedirect("/school");
 		}
 		log.info("finished out filter");
 	}

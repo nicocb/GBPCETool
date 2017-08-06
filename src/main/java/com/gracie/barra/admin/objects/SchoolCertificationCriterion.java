@@ -6,7 +6,7 @@ public class SchoolCertificationCriterion {
 	Long schoolId;
 	CertificationCriterion criterion;
 	String picture;
-	Boolean pending = true;
+	Boolean pending = null;
 	String comment;
 
 	public static final String ID = "id";

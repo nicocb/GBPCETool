@@ -33,10 +33,11 @@ public class CriterionServlet extends AbstractGBServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		CertificationCriterion certificationCriterion = new CertificationCriterion.Builder()
 				.description(req.getParameter("description")).action(req.getParameter("action"))
-				.comment(req.getParameter("comment")).rank(Long.valueOf(req.getParameter("rank"))).build();
+				.comment(req.getParameter("comment")).rank(Long.valueOf(req.getParameter("rank")))
+				.score(Long.valueOf(req.getParameter("score"))).build();
 
 		String id = req.getParameter("id");
-		if (id != null) {
+		if (!nullOrEmpty(id)) {
 			certificationCriterion.setId(Long.valueOf(id));
 			getCertificationDao().updateCertificationCriterion(certificationCriterion);
 		} else {

@@ -22,8 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.gracie.barra.admin.objects.CertificationCriterion;
-import com.gracie.barra.admin.objects.Result;
+import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 
 @SuppressWarnings("serial")
@@ -31,22 +30,14 @@ public class CriteriaServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		String startCursor = req.getParameter("cursor");
-		List<CertificationCriterion> certificationCriteria = null;
-		String endCursor = null;
+		List<CertificationCriteriaByRank> certificationCriteriaByRank = null;
 		try {
-			Result<CertificationCriterion> result = getCertificationDao().listCertificationCriteria(startCursor);
-			certificationCriteria = result.result;
-			endCursor = result.cursor;
+			certificationCriteriaByRank = getCertificationDao().listCertificationCriteriaByRank();
 		} catch (Exception e) {
 			throw new ServletException("Error listing certificationCriteria", e);
 		}
-		req.getSession().getServletContext().setAttribute("certificationCriteria", certificationCriteria);
-		StringBuilder certificationCriterionNames = new StringBuilder();
-		for (CertificationCriterion certificationCriterion : certificationCriteria) {
-			certificationCriterionNames.append(certificationCriterion.getDescription() + " ");
-		}
-		req.setAttribute("cursor", endCursor);
+
+		req.getSession().getServletContext().setAttribute("certificationCriteriaByRank", certificationCriteriaByRank);
 		req.setAttribute("page", "criteria");
 		req.getRequestDispatcher("/baseAdmin.jsp").forward(req, resp);
 	}

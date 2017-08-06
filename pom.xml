@@ -116,8 +116,11 @@
 
 				<configuration>
 					<port>8081</port>
+					<jvmFlags>
+						<jvmFlag>-Xdebug</jvmFlag>
+						<jvmFlag>-Xrunjdwp:transport=dt_socket,address=1789,server=y,suspend=n</jvmFlag>
+					</jvmFlags>
 				</configuration>
-
 			</plugin>
 		</plugins>
 	</build>

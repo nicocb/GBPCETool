@@ -6,18 +6,21 @@ public class CertificationCriterion {
 	private String comment;
 	private String action;
 	private Long rank;
-	
-    public static final String ID = "id";
+	private Long score;
+
+	public static final String ID = "id";
 	public static final String DESCRIPTION = "descrition";
 	public static final String COMMENT = "comment";
 	public static final String ACTION = "action";
 	public static final String RANK = "rank";
+	public static final String SCORE = "score";
 
 	public static class Builder {
 		private String description;
 		private String comment;
 		private String action;
 		private Long rank;
+		private Long score;
 		private Long id;
 
 		public Builder description(String description) {
@@ -38,8 +41,13 @@ public class CertificationCriterion {
 		public Builder rank(Long rank) {
 			this.rank = rank;
 			return this;
-		}		
-		
+		}
+
+		public Builder score(Long score) {
+			this.score = score;
+			return this;
+		}
+
 		public Builder id(Long id) {
 			this.id = id;
 			return this;
@@ -56,6 +64,7 @@ public class CertificationCriterion {
 		this.comment = builder.comment;
 		this.action = builder.action;
 		this.rank = builder.rank;
+		this.score = builder.score;
 	}
 
 	public String getDescription() {
@@ -96,6 +105,14 @@ public class CertificationCriterion {
 
 	public void setRank(Long rank) {
 		this.rank = rank;
+	}
+
+	public Long getScore() {
+		return score;
+	}
+
+	public void setScore(Long score) {
+		this.score = score;
 	}
 
 }

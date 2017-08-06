@@ -14,35 +14,91 @@ Copyright 2016 Google Inc.
  limitations under the License.
 -->
 <!-- [START list] -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <div class="container">
-  <h3>Criteria</h3>
-  <c:choose>
-  <c:when test="${empty certificationCriteria}">
-  <p>No criteria found</p>
-  </c:when>
-  <c:otherwise>
-  <c:forEach items="${certificationCriteria}" var="criterion">
-  <div class="media">
-      <div class="media-body">
-        <h4>${fn:escapeXml(criterion.criterion.description)}</h4>
-        <p>Pending : ${fn:escapeXml(criterion.pendings)}</p>
-	      <form method="POST" action="/schoolCriteria" >
-	      <input type="text" name="picture" id="picture" value="${fn:escapeXml(criterion.picture)}" class="form-control" />
-	      <input type="hidden" name="id" value="${criterion.id}" />
-	      <button type="submit" class="btn btn-danger" >Upload</button></form>
-      </div>
-  </div>
-  </c:forEach>
-  <c:if test="${not empty cursor}">
-  <nav>
-    <ul class="pager">
-      <li><a href="?cursor=${fn:escapeXml(cursor)}">More</a></li>
-    </ul>
-  </nav>
-  </c:if>
-  </c:otherwise>
-  </c:choose>
+	<h3>
+		Criteria <span class="badge">${schoolCertificationDashboard.nbPending}
+			pending</span><span class="badge">${schoolCertificationDashboard.nbMissing}
+			not provided</span>
+	</h3>
+	<c:choose>
+		<c:when test="${empty schoolCertificationDashboard}">
+			<p>No criteria found</p>
+		</c:when>
+		<c:otherwise>
+			<div class="progress">
+				<div class="progress-bar progress-bar-success" style="width: ${schoolCertificationDashboard.criteria[0].actualScore}%">
+				</div>
+				<c:if test="${fn:length(schoolCertificationDashboard.criteria) > 1}">
+				<div class="progress-bar progress-bar-warning" style="width: ${schoolCertificationDashboard.criteria[1].actualScore}%">
+				</div></c:if>
+				<c:if test="${fn:length(schoolCertificationDashboard.criteria) > 2}">
+				<div class="progress-bar progress-bar-danger" style="width: ${schoolCertificationDashboard.criteria[2].actualScore}%">
+				</div></c:if>
+			</div>
+			<c:forEach items="${schoolCertificationDashboard.criteria}"
+				var="criteriaByRank">
+				<div class="panel panel-default">
+					<div class="panel-heading">Stage ${criteriaByRank.rank} score
+						: ${criteriaByRank.actualScore}/${criteriaByRank.score}</div>
+					<div class="panel-body">
+
+						<c:forEach items="${criteriaByRank.criteria}"
+							var="certificationCriterion">
+							<div class="media">
+								<div class="media-body">
+									<h4>${fn:escapeXml(certificationCriterion.criterion.description)}</h4>
+									<c:choose>
+										<c:when test="${empty certificationCriterion.pending}">
+											<p>Not provided</p>
+										</c:when>
+										<c:when test="${certificationCriterion.pending == 'true'}">
+											<p>Pending</p>
+										</c:when>
+										<c:when test="${certificationCriterion.pending == 'false'}">
+											<p>Validated</p>
+										</c:when>
+									</c:choose>
+
+									<c:choose>
+										<c:when test="${mode == 'admin'}">
+											<form method="POST" action="/admin/schoolCriteriaAdmin">
+												<input type="text" name="comment" id="comment"
+													value="${fn:escapeXml(certificationCriterion.comment)}"
+													class="form-control" /> <input type="text" name="picture"
+													id="picture"
+													value="${fn:escapeXml(certificationCriterion.picture)}"
+													class="form-control" disabled/> <input type="hidden" name="id"
+													value="${certificationCriterion.criterion.id}" /><input type="hidden" name="schoolId"
+													value="${schoolId}"/>
+												<button type="submit" class="btn btn-success">Validate</button>
+												<button type="submit" class="btn btn-danger"
+													formaction="/admin/schoolCriteriaAdminRefuse">Refuse</button>
+											</form>
+										</c:when>
+										<c:when test="${empty mode}">
+											<form method="POST" action="/schoolCriteria">
+												<input type="text" name="comment" id="comment"
+													value="${fn:escapeXml(certificationCriterion.comment)}"
+													class="form-control" disabled/>
+												<input type="text" name="picture" id="picture"
+													value="${fn:escapeXml(certificationCriterion.picture)}"
+													class="form-control" /> <input type="hidden" name="id"
+													value="${certificationCriterion.criterion.id}" /><input type="hidden" name="schoolId"
+													value="${schoolId}"/>
+												<button type="submit" class="btn btn-danger">Upload</button>
+											</form>
+										</c:when>
+									</c:choose>
+								</div>
+							</div>
+						</c:forEach>
+					</div>
+				</div>
+			</c:forEach>
+
+		</c:otherwise>
+	</c:choose>
 </div>
 <!-- [END list] -->

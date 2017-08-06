@@ -26,28 +26,22 @@ Copyright 2016 Google Inc.
   <c:forEach items="${schools}" var="school">
   <div class="media">
       <div class="media-body">
-        <h4>${fn:escapeXml(school.name)}</h4>
+        <h4><a href="/admin/schoolCriteriaAdmin/${fn:escapeXml(school.id)}">${fn:escapeXml(school.name)}</a></h4>
         <p>${fn:escapeXml(school.description)}</p>
         <p>${fn:escapeXml(school.contactMail)}</p>
+        <div class="btn-group" role="group" aria-label="..." align="center">
           <c:choose>
 		  <c:when test="${school.pending}">
-		  	<form method="POST" action="/admin/schools" ><input type="hidden" name="action" value="PUT" /><input type="hidden" name="id" value="${school.id}" /><input type="hidden" name="pending" value="false" /><button type="submit" class="btn btn-success" >Validate</button></form>
+		  	<form  class="btn-group" method="POST" action="/admin/schools" ><input type="hidden" name="action" value="PUT" /><input type="hidden" name="id" value="${school.id}" /><input type="hidden" name="pending" value="false" /><button type="submit" class="btn btn-success" >Validate</button></form>
 		  </c:when>
 		  <c:otherwise>
-		  	<form method="POST" action="/admin/schools" ><input type="hidden" name="action" value="PUT" /><input type="hidden" name="id" value="${school.id}" /><input type="hidden" name="pending" value="true" /><button type="submit" class="btn btn-warning" >Revoke</button></form>
+		  	<form  class="btn-group" method="POST" action="/admin/schools" ><input type="hidden" name="action" value="PUT" /><input type="hidden" name="id" value="${school.id}" /><input type="hidden" name="pending" value="true" /><button type="submit" class="btn btn-warning" >Revoke</button></form>
 		  </c:otherwise>
 		  </c:choose>
-		  	<form method="POST" action="/admin/schools" ><input type="hidden" name="action" value="DELETE" /><input type="hidden" name="id" value="${school.id}" /><button type="submit" class="btn btn-danger" >Delete</button></form>
-      </div>
+		  	<form  class="btn-group" method="POST" action="/admin/schools" ><input type="hidden" name="action" value="DELETE" /><input type="hidden" name="id" value="${school.id}" /><button type="submit" class="btn btn-danger" >Delete</button></form>
+      </div></div>
   </div>
   </c:forEach>
-  <c:if test="${not empty cursor}">
-  <nav>
-    <ul class="pager">
-      <li><a href="?cursor=${fn:escapeXml(cursor)}">More</a></li>
-    </ul>
-  </nav>
-  </c:if>
   </c:otherwise>
   </c:choose>
 </div>

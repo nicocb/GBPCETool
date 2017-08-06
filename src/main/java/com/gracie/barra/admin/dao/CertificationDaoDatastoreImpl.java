@@ -16,10 +16,10 @@
 package com.gracie.barra.admin.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -29,13 +29,18 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
-import com.gracie.barra.admin.objects.Result;
+import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
+import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 
 public class CertificationDaoDatastoreImpl implements CertificationDao {
 
@@ -57,6 +62,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 				.comment((String) entity.getProperty(CertificationCriterion.COMMENT))
 				.action((String) entity.getProperty(CertificationCriterion.ACTION))
 				.rank((Long) entity.getProperty(CertificationCriterion.RANK))
+				.score((Long) entity.getProperty(CertificationCriterion.SCORE))
 
 				.build();
 	}
@@ -65,6 +71,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		return entity == null ? new SchoolCertificationCriterion.Builder().criterion(cc).build()
 				: new SchoolCertificationCriterion.Builder().id(entity.getKey().getId()).criterion(cc)
 						.comment((String) entity.getProperty(SchoolCertificationCriterion.COMMENT))
+						.picture((String) entity.getProperty(SchoolCertificationCriterion.PICTURE))
 						.pending((Boolean) entity.getProperty(SchoolCertificationCriterion.PENDING)).build();
 	}
 
@@ -76,6 +83,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		ccEntity.setProperty(CertificationCriterion.COMMENT, cc.getComment());
 		ccEntity.setProperty(CertificationCriterion.ACTION, cc.getAction());
 		ccEntity.setProperty(CertificationCriterion.RANK, cc.getRank());
+		ccEntity.setProperty(CertificationCriterion.SCORE, cc.getScore());
 
 		Key ccKey = datastore.put(ccEntity); // Save the Entity
 		return ccKey.getId(); // The ID of the Key
@@ -92,10 +100,12 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	}
 
 	@Override
-	public SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc) {
+	public SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc, Long schoolId) {
 		Entity entity = null;
-		Query query = new Query(SCC_KIND)
-				.setFilter(new FilterPredicate(SchoolCertificationCriterion.CRITERION_ID, FilterOperator.EQUAL, cc.getId()));
+		Collection<Filter> filters = new ArrayList<>();
+		filters.add(new FilterPredicate(SchoolCertificationCriterion.SCHOOL_ID, FilterOperator.EQUAL, schoolId));
+		filters.add(new FilterPredicate(SchoolCertificationCriterion.CRITERION_ID, FilterOperator.EQUAL, cc.getId()));
+		Query query = new Query(SCC_KIND).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
 
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		entity = preparedQuery.asSingleEntity();
@@ -110,6 +120,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		entity.setProperty(CertificationCriterion.COMMENT, certificationCriterion.getComment());
 		entity.setProperty(CertificationCriterion.ACTION, certificationCriterion.getAction());
 		entity.setProperty(CertificationCriterion.RANK, certificationCriterion.getRank());
+		entity.setProperty(CertificationCriterion.SCORE, certificationCriterion.getScore());
 
 		datastore.put(entity); // Update the Entity
 	}
@@ -132,39 +143,47 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	}
 
 	@Override
-	public Result<CertificationCriterion> listCertificationCriteria(String startCursorString) {
-		// Only show 10 at a time
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
-		if (startCursorString != null && !startCursorString.equals("")) {
-			// Where we left off
-			fetchOptions.startCursor(Cursor.fromWebSafeString(startCursorString));
-		}
+	public List<CertificationCriterion> listCertificationCriteria() {
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
 		// We only care about CertificationCriteria
 		// Use default Index "title"
-		Query query = new Query(CC_KIND).addSort(CertificationCriterion.DESCRIPTION, SortDirection.ASCENDING);
+		Query query = new Query(CC_KIND).addSort(CertificationCriterion.RANK, SortDirection.ASCENDING)
+				.addSort(CertificationCriterion.SCORE, SortDirection.DESCENDING)
+				.addSort(CertificationCriterion.DESCRIPTION, SortDirection.ASCENDING);
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
 
 		List<CertificationCriterion> resultCertificationCriteria = entitiesToCertificationCriteria(results);
-		Cursor cursor = results.getCursor(); // Where to start next time
-		if (cursor != null && resultCertificationCriteria.size() == 10) {
-			String cursorString = cursor.toWebSafeString(); // Cursors are
-															// WebSafe
-			return new Result<>(resultCertificationCriteria, cursorString);
-		} else {
-			return new Result<>(resultCertificationCriteria);
-		}
+		return resultCertificationCriteria;
 	}
 
 	@Override
-	public Result<SchoolCertificationCriterion> listSchoolCertificationCriteria(Long schoolId, String startCursorString) {
-		// Only show 10 at a time
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
-		if (startCursorString != null && !startCursorString.equals("")) {
-			// Where we left off
-			fetchOptions.startCursor(Cursor.fromWebSafeString(startCursorString));
+	public List<CertificationCriteriaByRank> listCertificationCriteriaByRank() {
+		List<CertificationCriteriaByRank> result = new ArrayList<>();
+		Long currentRank = -1L;
+		CertificationCriteriaByRank currentRankList = null;
+		List<CertificationCriterion> criteriaList = listCertificationCriteria();
+
+		for (CertificationCriterion certificationCriterion : criteriaList) {
+			if (!certificationCriterion.getRank().equals(currentRank)) {
+				currentRankList = new CertificationCriteriaByRank();
+				currentRank = certificationCriterion.getRank();
+				currentRankList.setRank(currentRank);
+				result.add(currentRankList);
+			}
+			currentRankList.getCriteria().add(certificationCriterion);
+			currentRankList.incScore(certificationCriterion.getScore());
 		}
-		Query query = new Query(CC_KIND).addSort(CertificationCriterion.DESCRIPTION, SortDirection.ASCENDING);
+		return result;
+	}
+
+	@Override
+	public List<SchoolCertificationCriterion> listSchoolCertificationCriteria(Long schoolId) {
+		// Only show 10 at a time
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
+		Query query = new Query(CC_KIND).addSort(CertificationCriterion.RANK, SortDirection.ASCENDING)
+				.addSort(CertificationCriterion.SCORE, SortDirection.DESCENDING)
+				.addSort(CertificationCriterion.DESCRIPTION, SortDirection.ASCENDING);
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
 
@@ -172,18 +191,87 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		// for each one get schooEnrichment
 		List<SchoolCertificationCriterion> resultSCC = new ArrayList<>();
 		for (CertificationCriterion certificationCriterion : resultCertificationCriteria) {
-			resultSCC.add(readSchoolCertificationCriterion(certificationCriterion));
+			resultSCC.add(readSchoolCertificationCriterion(certificationCriterion, schoolId));
 
 		}
-
-		Cursor cursor = results.getCursor(); // Where to start next time
-		if (cursor != null && resultCertificationCriteria.size() == 10) {
-			String cursorString = cursor.toWebSafeString(); // Cursors are
-															// WebSafe
-			return new Result<>(resultSCC, cursorString);
-		} else {
-			return new Result<>(resultSCC);
-		}
+		return resultSCC;
 	}
 
+	@Override
+	public List<SchoolCertificationCriteriaByRank> listSchoolCertificationCriteriaByRank(Long schoolId) {
+		List<SchoolCertificationCriteriaByRank> result = new ArrayList<>();
+		Long currentRank = -1L;
+		SchoolCertificationCriteriaByRank currentRankList = null;
+		List<SchoolCertificationCriterion> criteriaList = listSchoolCertificationCriteria(schoolId);
+
+		for (SchoolCertificationCriterion certificationCriterion : criteriaList) {
+			if (!certificationCriterion.getCriterion().getRank().equals(currentRank)) {
+				currentRankList = new SchoolCertificationCriteriaByRank();
+				currentRank = certificationCriterion.getCriterion().getRank();
+				currentRankList.setRank(currentRank);
+				result.add(currentRankList);
+			}
+			currentRankList.getCriteria().add(certificationCriterion);
+			currentRankList.incScore(certificationCriterion.getCriterion().getScore());
+			if (certificationCriterion.getPending() != null && !certificationCriterion.getPending()) {
+				currentRankList.incActualScore(certificationCriterion.getCriterion().getScore());
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public SchoolCertificationDashboard getSchoolCertificationDashboard(Long schoolId) {
+		SchoolCertificationDashboard result = null;
+		List<SchoolCertificationCriteriaByRank> criteria = listSchoolCertificationCriteriaByRank(schoolId);
+
+		if (criteria != null && criteria.size() > 0) {
+			result = new SchoolCertificationDashboard();
+			result.setCriteria(criteria);
+			for (SchoolCertificationCriteriaByRank schoolCriteriaByRank : result.getCriteria()) {
+				result.setOverallScore(result.getOverallScore() + schoolCriteriaByRank.getScore());
+
+				for (SchoolCertificationCriterion criterion : schoolCriteriaByRank.getCriteria()) {
+
+					if (criterion.getPending() == null) {
+						result.incNbMissing();
+					} else if (criterion.getPending()) {
+						result.incNbPending();
+					}
+				}
+
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public void updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture, String comment,
+			Boolean pending) {
+		Entity entity = null;
+		Collection<Filter> filters = new ArrayList<>();
+
+		filters.add(new FilterPredicate(SchoolCertificationCriterion.SCHOOL_ID, FilterOperator.EQUAL, schoolId));
+		filters.add(new FilterPredicate(SchoolCertificationCriterion.CRITERION_ID, FilterOperator.EQUAL, criterionId));
+		Query query = new Query(SCC_KIND).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
+
+		PreparedQuery preparedQuery = datastore.prepare(query);
+		entity = preparedQuery.asSingleEntity();
+
+		if (entity == null) {
+			entity = new Entity(SCC_KIND);
+			entity.setProperty(SchoolCertificationCriterion.SCHOOL_ID, schoolId);
+			entity.setProperty(SchoolCertificationCriterion.CRITERION_ID, criterionId);
+		}
+
+		entity.setProperty(SchoolCertificationCriterion.PENDING, pending);
+		if (picture != null) {
+			entity.setProperty(SchoolCertificationCriterion.PICTURE, picture);
+		}
+		if (comment != null) {
+			entity.setProperty(SchoolCertificationCriterion.COMMENT, comment);
+		}
+
+		datastore.put(entity); // Update the Entity
+	}
 }

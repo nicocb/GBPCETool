@@ -16,7 +16,6 @@
 package com.gracie.barra.school.action;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.gracie.barra.admin.objects.Result;
-import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
+import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 
@@ -40,18 +38,37 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			if (school == null) {
 				throw new ServletException("Session probably expired");
 			}
-			List<SchoolCertificationCriterion> schoolCertificationCriteria = null;
+			SchoolCertificationDashboard schoolCertificationDashboard = null;
 
 			try {
-				Result<SchoolCertificationCriterion> result = getCertificationDao()
-						.listSchoolCertificationCriteria(school.getId(), "0");
-				schoolCertificationCriteria = result.result;
+				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(school.getId());
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}
-			req.getSession().getServletContext().setAttribute("schoolCertificationCriteria", schoolCertificationCriteria);
+			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
+			req.setAttribute("schoolStatus", school.getPending() ? "Pending" : "Validated");
+			req.setAttribute("schoolId", school.getId());
 			req.setAttribute("page", "schoolCriteria");
 			req.getRequestDispatcher("/base.jsp").forward(req, resp);
 		}
+	}
+
+	@Override
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+		UserService userService = UserServiceFactory.getUserService();
+
+		if (userService.isUserLoggedIn()) {
+			String id = req.getParameter("id");
+			String picture = req.getParameter("picture");
+			String schoolId = req.getParameter("schoolId");
+
+			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId), picture, null,
+					true);
+
+		} else {
+			throw new ServletException("Should be logged to save school");
+		}
+		resp.sendRedirect("/schoolCriteria");
 	}
 }

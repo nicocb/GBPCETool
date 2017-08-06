@@ -21,6 +21,11 @@
       A web.xml is needed to explicitly set the order in which filters process requests. Any filters
       not included in web.xml will be loaded after filters listed below.
     -->
+    <welcome-file-list>
+    	<welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
+    
     <servlet>
       <servlet-name>schoolCriteria</servlet-name>
       <servlet-class>com.gracie.barra.school.action.SchoolCriteriaServlet</servlet-class>
@@ -37,7 +42,6 @@
     </servlet>
     <servlet-mapping>
       <servlet-name>school</servlet-name>
-      <url-pattern>/</url-pattern>
       <url-pattern>/school</url-pattern>
     </servlet-mapping>
     
@@ -51,6 +55,16 @@
       <url-pattern>/admin</url-pattern>
       <url-pattern>/admin/</url-pattern>
       <url-pattern>/admin/criteria</url-pattern>
+    </servlet-mapping>
+    <servlet>
+      <servlet-name>criteriaAdmin</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.SchoolCriteriaAdminServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>criteriaAdmin</servlet-name>
+      <url-pattern>/admin/schoolCriteriaAdmin</url-pattern>
+      <url-pattern>/admin/schoolCriteriaAdmin/*</url-pattern>
+      <url-pattern>/admin/schoolCriteriaAdminRefuse</url-pattern>
     </servlet-mapping>
     <servlet>
       <servlet-name>criterion</servlet-name>
