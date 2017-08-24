@@ -33,6 +33,9 @@ Copyright 2016 Google Inc.
 				<div class="navbar-brand"> School certification program ADMIN</div>
 			</div>
 			<ul class="nav navbar-nav">
+				<li><a href="/admin/events">Events</a></li>
+			</ul>
+			<ul class="nav navbar-nav">
 				<li><a href="/admin/criteria">Criteria</a></li>
 			</ul>
 			<ul class="nav navbar-nav">

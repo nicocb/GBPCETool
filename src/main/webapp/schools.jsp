@@ -18,6 +18,7 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <div class="container">
   <h3>Academies</h3>
+  <p>Highlight : ${highlighted}</p>
   <c:choose>
   <c:when test="${empty schools}">
   <p>No schools found</p>
@@ -26,7 +27,8 @@ Copyright 2016 Google Inc.
   <c:forEach items="${schools}" var="school">
   <div class="media">
       <div class="media-body">
-        <h4><a href="/admin/schoolCriteriaAdmin/${fn:escapeXml(school.id)}">${fn:escapeXml(school.name)}</a></h4>
+        <h4><a href="/admin/schoolCriteriaAdmin/${fn:escapeXml(school.id)}">${fn:escapeXml(school.name)}</a><c:if test="${highlight == school.id}"><span class="badge">new</span></c:if>
+        </h4>
         <p>${fn:escapeXml(school.description)}</p>
         <p>${fn:escapeXml(school.contactMail)}</p>
         <div class="btn-group" role="group" aria-label="..." align="center">
@@ -39,7 +41,8 @@ Copyright 2016 Google Inc.
 		  </c:otherwise>
 		  </c:choose>
 		  	<form  class="btn-group" method="POST" action="/admin/schools" ><input type="hidden" name="action" value="DELETE" /><input type="hidden" name="id" value="${school.id}" /><button type="submit" class="btn btn-danger" >Delete</button></form>
-      </div></div>
+      </div>
+      </div>
   </div>
   </c:forEach>
   </c:otherwise>

@@ -28,7 +28,8 @@ public interface CertificationDao {
 
 	SchoolCertificationDashboard getSchoolCertificationDashboard(Long schoolId);
 
-	void updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture, String comment, Boolean pending);
+	SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
+			String comment, Boolean pending);
 
 	SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc, Long schoolID);
 

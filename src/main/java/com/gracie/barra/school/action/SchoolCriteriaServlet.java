@@ -21,9 +21,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
+import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 
@@ -63,8 +67,21 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			String picture = req.getParameter("picture");
 			String schoolId = req.getParameter("schoolId");
 
-			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId), picture, null,
-					true);
+			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id),
+					Long.valueOf(schoolId), picture, null, true);
+
+			School school;
+			try {
+				school = getSchoolDao().getSchool(Long.valueOf(schoolId));
+				SchoolEvent se = new SchoolEvent.Builder()
+						.description("Criterion '" + criterion.getCriterion().getDescription() + "' for school '"
+								+ school.getName() + "' updated")
+						.object("CRITERION").objectId(criterion.getId()).schoolId(school.getId())
+						.status(SchoolEventStatus.PENDING).build();
+				getSchoolEventDao().createSchoolEvent(se);
+			} catch (NumberFormatException | EntityNotFoundException e) {
+				throw new ServletException("Couldn't find related school");
+			}
 
 		} else {
 			throw new ServletException("Should be logged to save school");

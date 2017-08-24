@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServlet;
 
 import com.gracie.barra.admin.dao.CertificationDao;
 import com.gracie.barra.admin.dao.CertificationDaoDatastoreImpl;
+import com.gracie.barra.admin.dao.SchoolEventDao;
+import com.gracie.barra.admin.dao.SchoolEventDaoDatastoreImpl;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.dao.SchoolDaoDatastoreImpl;
 
@@ -41,6 +43,10 @@ public abstract class AbstractGBServlet extends HttpServlet {
 			SchoolDao schoolDao = new SchoolDaoDatastoreImpl();
 
 			this.getServletContext().setAttribute("schoolDao", schoolDao);
+
+			SchoolEventDao schoolEventDao = new SchoolEventDaoDatastoreImpl();
+
+			this.getServletContext().setAttribute("schoolEventDao", schoolEventDao);
 		}
 
 	}
@@ -51,6 +57,10 @@ public abstract class AbstractGBServlet extends HttpServlet {
 
 	protected SchoolDao getSchoolDao() {
 		return (SchoolDao) this.getServletContext().getAttribute("schoolDao");
+	}
+
+	protected SchoolEventDao getSchoolEventDao() {
+		return (SchoolEventDao) this.getServletContext().getAttribute("schoolEventDao");
 	}
 
 	protected boolean nullOrEmpty(String id) {

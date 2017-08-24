@@ -24,6 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.gracie.barra.admin.dao.SchoolEventDao;
+import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.objects.School;
@@ -71,11 +74,21 @@ public class SchoolServlet extends AbstractGBServlet {
 					.contactMail(req.getParameter("contactMail")).userId(userService.getCurrentUser().getUserId()).build();
 
 			SchoolDao schoolDao = this.getSchoolDao();
+			SchoolEventDao schoolEventDao = this.getSchoolEventDao();
 			try {
 				if (school.getId() == null) {
-					schoolDao.createSchool(school);
+					Long schId = schoolDao.createSchool(school);
+					SchoolEvent se = new SchoolEvent.Builder()
+							.description(
+									"School '" + school.getName() + "' created by " + userService.getCurrentUser().getEmail())
+							.object("SCHOOL").objectId(schId).schoolId(schId).status(SchoolEventStatus.PENDING).build();
+					schoolEventDao.createSchoolEvent(se);
 				} else {
 					schoolDao.updateSchool(school);
+					SchoolEvent se = new SchoolEvent.Builder().description("School '" + school.getName() + "' updated")
+							.object("SCHOOL").objectId(school.getId()).schoolId(school.getId()).status(SchoolEventStatus.PENDING)
+							.build();
+					schoolEventDao.createSchoolEvent(se);
 				}
 				resp.sendRedirect("/school"); // read what we just wrote
 			} catch (Exception e) {

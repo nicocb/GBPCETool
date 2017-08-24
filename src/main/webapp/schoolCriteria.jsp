@@ -22,6 +22,7 @@ Copyright 2016 Google Inc.
 			pending</span><span class="badge">${schoolCertificationDashboard.nbMissing}
 			not provided</span>
 	</h3>
+	<p>Highlight : ${highlighted}</p>
 	<c:choose>
 		<c:when test="${empty schoolCertificationDashboard}">
 			<p>No criteria found</p>
@@ -41,14 +42,15 @@ Copyright 2016 Google Inc.
 				var="criteriaByRank">
 				<div class="panel panel-default">
 					<div class="panel-heading">Stage ${criteriaByRank.rank} score
-						: ${criteriaByRank.actualScore}/${criteriaByRank.score}</div>
+						: ${criteriaByRank.actualScore}/${criteriaByRank.score}  <c:if test="${criteriaByRank.available == 'false'}">Complete stage ${criteriaByRank.rank -1} to activate</c:if></div>
 					<div class="panel-body">
 
 						<c:forEach items="${criteriaByRank.criteria}"
 							var="certificationCriterion">
 							<div class="media">
 								<div class="media-body">
-									<h4>${fn:escapeXml(certificationCriterion.criterion.description)}</h4>
+									<h4>${fn:escapeXml(certificationCriterion.criterion.description)} <c:if test="${highlight == certificationCriterion.id}"><span class="badge">new</span></c:if></h4>      
+									
 									<c:choose>
 										<c:when test="${empty certificationCriterion.pending}">
 											<p>Not provided</p>
@@ -87,7 +89,7 @@ Copyright 2016 Google Inc.
 													class="form-control" /> <input type="hidden" name="id"
 													value="${certificationCriterion.criterion.id}" /><input type="hidden" name="schoolId"
 													value="${schoolId}"/>
-												<button type="submit" class="btn btn-danger">Upload</button>
+												<c:if test="${criteriaByRank.available == 'true'}"><button type="submit" class="btn btn-danger">Upload</button></c:if>
 											</form>
 										</c:when>
 									</c:choose>

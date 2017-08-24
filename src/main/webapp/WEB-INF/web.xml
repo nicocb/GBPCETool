@@ -52,8 +52,6 @@
     </servlet>
     <servlet-mapping>
       <servlet-name>criteria</servlet-name>
-      <url-pattern>/admin</url-pattern>
-      <url-pattern>/admin/</url-pattern>
       <url-pattern>/admin/criteria</url-pattern>
     </servlet-mapping>
     <servlet>
@@ -81,7 +79,18 @@
     <servlet-mapping>
       <servlet-name>schools</servlet-name>
       <url-pattern>/admin/schools</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
+    <servlet>
+      <servlet-name>schoolEvents</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.SchoolEventsServlet</servlet-class>
+    </servlet>
+	<servlet-mapping>
+		<servlet-name>schoolEvents</servlet-name>
+		<url-pattern>/admin/events</url-pattern>
+		<url-pattern>/admin/eventsDelete</url-pattern>
+		<url-pattern>/admin</url-pattern>
+		<url-pattern>/admin/</url-pattern>
+	</servlet-mapping>
 
 
     <filter>

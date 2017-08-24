@@ -210,6 +210,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 				currentRank = certificationCriterion.getCriterion().getRank();
 				currentRankList.setRank(currentRank);
 				result.add(currentRankList);
+				currentRankList.setAvailable(result.size() == 1 || result.get(result.size() - 2).topScore());
 			}
 			currentRankList.getCriteria().add(certificationCriterion);
 			currentRankList.incScore(certificationCriterion.getCriterion().getScore());
@@ -246,8 +247,8 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	}
 
 	@Override
-	public void updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture, String comment,
-			Boolean pending) {
+	public SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
+			String comment, Boolean pending) {
 		Entity entity = null;
 		Collection<Filter> filters = new ArrayList<>();
 
@@ -273,5 +274,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		}
 
 		datastore.put(entity); // Update the Entity
+
+		return entityToSchoolCertificationCriterion(entity, readCertificationCriterion(criterionId));
 	}
 }

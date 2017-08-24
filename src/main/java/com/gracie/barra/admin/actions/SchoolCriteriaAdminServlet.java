@@ -42,6 +42,10 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}
+			String highlight = req.getParameter("highlight");
+			if (highlight != null) {
+				req.getSession().getServletContext().setAttribute("highlight", highlight);
+			}
 			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
 			req.setAttribute("page", "schoolCriteria");
 			req.setAttribute("schoolId", schoolId);
@@ -62,7 +66,8 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			String comment = req.getParameter("comment");
 			String schoolId = req.getParameter("schoolId");
 
-			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId),  null, comment, revoke ? null : false);
+			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId), null, comment,
+					revoke ? null : false);
 
 		} else {
 			throw new ServletException("Should be logged to save school");

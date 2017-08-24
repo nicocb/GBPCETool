@@ -8,6 +8,7 @@ public class SchoolCertificationCriteriaByRank {
 	private List<SchoolCertificationCriterion> criteria = new ArrayList<>();
 	private Long score = 0L;
 	private Long actualScore = 0L;
+	private Boolean available = false;
 
 	public Long getRank() {
 		return rank;
@@ -39,5 +40,17 @@ public class SchoolCertificationCriteriaByRank {
 
 	public Long getActualScore() {
 		return actualScore;
+	}
+
+	public Boolean getAvailable() {
+		return available;
+	}
+
+	public void setAvailable(Boolean available) {
+		this.available = available;
+	}
+
+	public boolean topScore() {
+		return actualScore == score;
 	}
 }
