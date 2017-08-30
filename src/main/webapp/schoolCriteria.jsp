@@ -47,9 +47,9 @@ Copyright 2016 Google Inc.
 
 						<c:forEach items="${criteriaByRank.criteria}"
 							var="certificationCriterion">
-							<div>
+							<div class="container-fluid">
 
-									<div class="row align-items-center">
+									<div class="row vertical-align">
 										<div class="col-md-8">
 											<label class="label label-info">${fn:escapeXml(certificationCriterion.criterion.description)} </label><c:if test="${highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
 										</div>
@@ -67,7 +67,7 @@ Copyright 2016 Google Inc.
 											</c:choose>
 										</div>
 										<div class="col-md-1">
-											<button onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-basic .btn-sm"><span class="glyphicon glyphicon-search" ></span></button>
+											<button onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-basic .btn-xs"><span class="glyphicon glyphicon-search" ></span></button>
 										</div>
 									</div>
 									<c:choose>
