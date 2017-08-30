@@ -24,7 +24,8 @@
   </system-properties>
 
   <static-files>
-    <include path="/static/**" />
+    <include path="/pics/**" />
+    <include path="/scripts/**" />
   </static-files>
 
   <resource-files>
