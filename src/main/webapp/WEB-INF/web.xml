@@ -21,44 +21,80 @@
       A web.xml is needed to explicitly set the order in which filters process requests. Any filters
       not included in web.xml will be loaded after filters listed below.
     -->
+    <welcome-file-list>
+        <welcome-file>welcome.jsp</welcome-file>
+    </welcome-file-list>
     <servlet>
-      <servlet-name>schoolCertification</servlet-name>
-      <servlet-class>com.gracie.barra.school.action.SchoolCertificationCriteriaServlet</servlet-class>
+      <servlet-name>welcome</servlet-name>
+      <servlet-class>com.gracie.barra.school.action.WelcomeServlet</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-      <servlet-name>schoolCertification</servlet-name>
-      <url-pattern>/schoolCertification</url-pattern>
+      <servlet-name>welcome</servlet-name>
+      <url-pattern>/welcome</url-pattern>
+    </servlet-mapping>       
+    <servlet>
+      <servlet-name>schoolCriteria</servlet-name>
+      <servlet-class>com.gracie.barra.school.action.SchoolCriteriaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>schoolCriteria</servlet-name>
+      <url-pattern>/schoolCriteria</url-pattern>
     </servlet-mapping>    
     <servlet>
       <servlet-name>school</servlet-name>
       <servlet-class>com.gracie.barra.school.action.SchoolServlet</servlet-class>
-      <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
       <servlet-name>school</servlet-name>
-      <url-pattern>/</url-pattern>
+      <url-pattern>/school</url-pattern>
     </servlet-mapping>
     
     <servlet>
-      <servlet-name>adminList</servlet-name>
-      <servlet-class>com.gracie.barra.admin.actions.ListCertificationCriteriaServlet</servlet-class>
-      <load-on-startup>1</load-on-startup>
+      <servlet-name>criteria</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.CriteriaServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-      <servlet-name>adminList</servlet-name>
-      <url-pattern>/admin</url-pattern>
-      <url-pattern>/admin/list</url-pattern>
+      <servlet-name>criteria</servlet-name>
+      <url-pattern>/admin/criteria</url-pattern>
     </servlet-mapping>
-    
     <servlet>
-      <servlet-name>createCriterion</servlet-name>
-      <servlet-class>com.gracie.barra.admin.actions.CreateCertificationCriterionServlet</servlet-class>
+      <servlet-name>criteriaAdmin</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.SchoolCriteriaAdminServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-      <servlet-name>createCriterion</servlet-name>
-      <url-pattern>/admin/createCriterion</url-pattern>
+      <servlet-name>criteriaAdmin</servlet-name>
+      <url-pattern>/admin/schoolCriteriaAdmin</url-pattern>
+      <url-pattern>/admin/schoolCriteriaAdmin/*</url-pattern>
+      <url-pattern>/admin/schoolCriteriaAdminRefuse</url-pattern>
     </servlet-mapping>
+    <servlet>
+      <servlet-name>criterion</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.CriterionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>criterion</servlet-name>
+      <url-pattern>/admin/criterion</url-pattern>
+    </servlet-mapping>
+    <servlet>
+      <servlet-name>schools</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.SchoolsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>schools</servlet-name>
+      <url-pattern>/admin/schools</url-pattern>
+    </servlet-mapping>    
+    <servlet>
+      <servlet-name>schoolEvents</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.SchoolEventsServlet</servlet-class>
+    </servlet>
+	<servlet-mapping>
+		<servlet-name>schoolEvents</servlet-name>
+		<url-pattern>/admin/events</url-pattern>
+		<url-pattern>/admin/eventsDelete</url-pattern>
+		<url-pattern>/admin</url-pattern>
+		<url-pattern>/admin/</url-pattern>
+	</servlet-mapping>
 
 
     <filter>

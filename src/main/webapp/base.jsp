@@ -14,44 +14,60 @@ Copyright 2016 Google Inc.
  limitations under the License.
 -->
 <!-- [START base] -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html lang="en">
-  <head>
-    <title>PCE - DASHBOARD</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-  </head>
-  <body>
-    <div class="navbar navbar-default">
-      <div class="container">
-        <div class="navbar-header">
-          <div class="navbar-brand">School certification program</div>
-        </div>
-        <ul class="nav navbar-nav">
-          <li><a href="/">School</a></li>
-          <c:if test="${isAuthConfigured}"><li><a href="/books/mine">My Books</a></li></c:if>
-        </ul>
-        <p class="navbar-text navbar-right">
-          <c:choose>
-          <c:when test="${not empty userEmail}">
-          <!-- using pageContext requires jsp-api artifact in pom.xml -->
-          <a href="/logout">
-            <c:if test="${not empty userImageUrl}">
-              <img class="img-circle" src="${fn:escapeXml(userImageUrl)}" width="24">
-            </c:if>
-            ${fn:escapeXml(userEmail)}
-          </a>
-          </c:when>
-          <c:otherwise>
-          <a href="/login">Login</a>
-          </c:otherwise>
-          </c:choose>
-        </p>
-      </div>
-    </div>
-    <c:import url="/${page}.jsp" />
-  </body>
+<head>
+<title>PCE - DASHBOARD</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+		href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<style>
+	.vertical-align {
+		display: flex;
+		align-items: center;
+	}
+	</style>
+</head>
+<body>
+	<div class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<div class="navbar-left"><img src="/pics/gb-logo.png" height="50" width="50"/></div>
+				
+				<div class="navbar-brand"> School certification program</div>
+			</div>
+			<ul class="nav navbar-nav">
+				<li><a href="/school">School</a></li>
+				<c:choose>
+					<c:when test="${schoolStatus == 'Validated'}">
+						<li><a href="/schoolCriteria">Certification</a></li>
+					</c:when>
+					<c:otherwise>
+						<li><a href="#">Certification grey</a></li>
+					</c:otherwise>
+				</c:choose>
+
+			</ul>
+			<p class="navbar-text navbar-right">
+				<c:choose>
+					<c:when test="${not empty userEmail}">
+						<!-- using pageContext requires jsp-api artifact in pom.xml -->
+						<a href="/logout"> <c:if test="${not empty userImageUrl}">
+								<img class="img-circle" src="${fn:escapeXml(userImageUrl)}"
+									width="24">
+							</c:if> ${fn:escapeXml(userEmail)}
+						</a>
+					</c:when>
+					<c:otherwise>
+						<a href="/login">Login</a>
+					</c:otherwise>
+				</c:choose>
+			</p>
+		</div>
+	</div>
+	<c:import url="/${page}.jsp" />
+</body>
 </html>
 <!-- [END base]-->

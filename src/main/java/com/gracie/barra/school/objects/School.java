@@ -21,7 +21,7 @@ public class School {
 		private String userId;
 		private String contactMail;
 		private String description;
-		private Boolean pending;
+		private Boolean pending = true;
 
 		public Builder id(Long id) {
 			this.id = id;
@@ -117,8 +117,8 @@ public class School {
 
 	@Override
 	public String toString() {
-		return "School [id=" + id + ", name=" + name + ", userId=" + userId + ", contactMail=" + contactMail
-				+ ", description=" + description + ", pending=" + pending + "]";
+		return "School [id=" + id + ", name=" + name + ", userId=" + userId + ", contactMail=" + contactMail + ", description="
+				+ description + ", pending=" + pending + "]";
 	}
 
 }

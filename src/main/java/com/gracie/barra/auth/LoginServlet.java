@@ -27,29 +27,27 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-
 @SuppressWarnings("serial")
 public class LoginServlet extends HttpServlet {
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws IOException, ServletException {
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 
-    UserService userService = UserServiceFactory.getUserService();
-    if (userService.isUserLoggedIn()) {
-      // Save the relevant profile info and store it in the session.
-      User user = userService.getCurrentUser();
-      req.getSession().setAttribute("userEmail", user.getEmail());
-      req.getSession().setAttribute("userId", user.getUserId());
+		UserService userService = UserServiceFactory.getUserService();
+		if (userService.isUserLoggedIn()) {
+			// Save the relevant profile info and store it in the session.
+			User user = userService.getCurrentUser();
+			req.getSession().setAttribute("userEmail", user.getEmail());
+			req.getSession().setAttribute("userId", user.getUserId());
 
-      String destination = (String) req.getSession().getAttribute("loginDestination");
-      if (destination == null) {
-        destination = "/";
-      }
+			String destination = (String) req.getSession().getAttribute("loginDestination");
+			if (destination == null) {
+				destination = "/school";
+			}
 
-      resp.sendRedirect(destination);
-    } else {
-      resp.sendRedirect(userService.createLoginURL("/login"));
-    }
-  }
+			resp.sendRedirect(destination);
+		} else {
+			resp.sendRedirect(userService.createLoginURL("/login"));
+		}
+	}
 }
 // [END example]

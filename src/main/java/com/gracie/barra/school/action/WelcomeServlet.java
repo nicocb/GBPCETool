@@ -13,24 +13,22 @@
  * limitations under the License.
  */
 
-package com.gracie.barra.admin.objects;
+package com.gracie.barra.school.action;
 
-import java.util.List;
+import java.io.IOException;
 
-// [START example]
-public class Result<K> {
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-  public String cursor;
-  public List<K> result;
+import com.gracie.barra.base.actions.AbstractGBServlet;
 
-  public Result(List<K> result, String cursor) {
-    this.result = result;
-    this.cursor = cursor;
-  }
+@SuppressWarnings("serial")
+public class WelcomeServlet extends AbstractGBServlet {
 
-  public Result(List<K> result) {
-    this.result = result;
-    this.cursor = null;
-  }
+	@Override
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		req.getRequestDispatcher("/welcome.jsp").forward(req, resp);
+	}
+
 }
-// [END example]
