@@ -16,13 +16,13 @@ Copyright 2016 Google Inc.
 <!-- [START list] -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<script src="/scripts/gbScripts.js"></script>
 <div class="container">
 	<h3>
 		Criteria <span class="badge">${schoolCertificationDashboard.nbPending}
 			pending</span><span class="badge">${schoolCertificationDashboard.nbMissing}
 			not provided</span>
 	</h3>
-	<p>Highlight : ${highlighted}</p>
 	<c:choose>
 		<c:when test="${empty schoolCertificationDashboard}">
 			<p>No criteria found</p>
@@ -47,25 +47,32 @@ Copyright 2016 Google Inc.
 
 						<c:forEach items="${criteriaByRank.criteria}"
 							var="certificationCriterion">
-							<div class="media">
-								<div class="media-body">
-									<h4>${fn:escapeXml(certificationCriterion.criterion.description)} <c:if test="${highlight == certificationCriterion.id}"><span class="badge">new</span></c:if></h4>      
-									
-									<c:choose>
-										<c:when test="${empty certificationCriterion.pending}">
-											<p>Not provided</p>
-										</c:when>
-										<c:when test="${certificationCriterion.pending == 'true'}">
-											<p>Pending</p>
-										</c:when>
-										<c:when test="${certificationCriterion.pending == 'false'}">
-											<p>Validated</p>
-										</c:when>
-									</c:choose>
+							<div>
 
+									<div class="row align-items-center">
+										<div class="col-md-8">
+											<label class="label label-info">${fn:escapeXml(certificationCriterion.criterion.description)} </label><c:if test="${highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
+										</div>
+										<div class="col-md-3">
+											<c:choose>
+												<c:when test="${empty certificationCriterion.pending}">
+													<label class="label label-danger">Not provided</label>
+												</c:when>
+												<c:when test="${certificationCriterion.pending == 'true'}">
+													<label class="label label-warning">Pending</label>
+												</c:when>
+												<c:when test="${certificationCriterion.pending == 'false'}">
+													<label class="label label-success">Validated</label>
+												</c:when>
+											</c:choose>
+										</div>
+										<div class="col-md-1">
+											<button onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-basic .btn-sm"><span class="glyphicon glyphicon-search" ></span></button>
+										</div>
+									</div>
 									<c:choose>
 										<c:when test="${mode == 'admin'}">
-											<form method="POST" action="/admin/schoolCriteriaAdmin">
+											<form method="POST" action="/admin/schoolCriteriaAdmin"  style="display:none" id="${fn:escapeXml(certificationCriterion.criterion.id)}">
 												<input type="text" name="comment" id="comment"
 													value="${fn:escapeXml(certificationCriterion.comment)}"
 													class="form-control" /> <input type="text" name="picture"
@@ -80,7 +87,7 @@ Copyright 2016 Google Inc.
 											</form>
 										</c:when>
 										<c:when test="${empty mode}">
-											<form method="POST" action="/schoolCriteria">
+											<form method="POST" action="/schoolCriteria" style="display:none" id="${fn:escapeXml(certificationCriterion.criterion.id)}">
 												<input type="text" name="comment" id="comment"
 													value="${fn:escapeXml(certificationCriterion.comment)}"
 													class="form-control" disabled/>
@@ -93,7 +100,6 @@ Copyright 2016 Google Inc.
 											</form>
 										</c:when>
 									</c:choose>
-								</div>
 							</div>
 						</c:forEach>
 					</div>
