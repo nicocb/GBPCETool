@@ -16,11 +16,20 @@
 package com.gracie.barra.school.action;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.util.Streams;
+
+import com.google.api.client.util.Strings;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -30,6 +39,7 @@ import com.gracie.barra.admin.objects.SchoolEvent;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
+import com.gracie.barra.school.util.CloudStorageHelper;
 
 @SuppressWarnings("serial")
 public class SchoolCriteriaServlet extends AbstractGBServlet {
@@ -63,9 +73,27 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 		UserService userService = UserServiceFactory.getUserService();
 
 		if (userService.isUserLoggedIn()) {
-			String id = req.getParameter("id");
-			String picture = req.getParameter("picture");
-			String schoolId = req.getParameter("schoolId");
+			assert ServletFileUpload.isMultipartContent(req);
+			CloudStorageHelper storageHelper = getStorageHelper();
+
+			String picture = null;
+			Map<String, String> params = new HashMap<String, String>();
+			try {
+				FileItemIterator iter = new ServletFileUpload().getItemIterator(req);
+				while (iter.hasNext()) {
+					FileItemStream item = iter.next();
+					if (item.isFormField()) {
+						params.put(item.getFieldName(), Streams.asString(item.openStream()));
+					} else if (!Strings.isNullOrEmpty(item.getName())) {
+						picture = storageHelper.uploadFile(item, "pce-tool");
+					}
+				}
+			} catch (FileUploadException e) {
+				throw new IOException(e);
+			}
+
+			String id = params.get("id");
+			String schoolId = params.get("schoolId");
 
 			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id),
 					Long.valueOf(schoolId), picture, null, true);

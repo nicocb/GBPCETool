@@ -63,7 +63,8 @@ Copyright 2016 Google Inc.
 												</c:when>
 												<c:when test="${certificationCriterion.pending == 'false'}">
 													<label class="label label-success">Validated</label>
-												</c:when>
+												</c:when> 
+												
 											</c:choose>
 										</div>
 										<div class="col-md-1">
@@ -87,10 +88,14 @@ Copyright 2016 Google Inc.
 											</form>
 										</c:when>
 										<c:when test="${empty mode}">
-											<form method="POST" action="/schoolCriteria" style="display:none" id="${fn:escapeXml(certificationCriterion.criterion.id)}">
+											<form method="POST" action="/schoolCriteria" style="display:none" id="${fn:escapeXml(certificationCriterion.criterion.id)}"  enctype="multipart/form-data">
 												<input type="text" name="comment" id="comment"
 													value="${fn:escapeXml(certificationCriterion.comment)}"
 													class="form-control" disabled/>
+													    <div class="form-group">
+													      <label for="image">School picture : </label>
+													      <input type="file" name="file" id="file" class="form-control" />
+													    </div>
 												<input type="text" name="picture" id="picture"
 													value="${fn:escapeXml(certificationCriterion.picture)}"
 													class="form-control" /> <input type="hidden" name="id"

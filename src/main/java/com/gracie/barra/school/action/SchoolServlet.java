@@ -56,7 +56,7 @@ public class SchoolServlet extends AbstractGBServlet {
 			req.getSession().getServletContext().setAttribute("school", school);
 			req.setAttribute("page", "school");
 		} else {
-			req.setAttribute("page", "welcome");
+			req.setAttribute("page", "pleaselogin");
 		}
 		req.getRequestDispatcher("/base.jsp").forward(req, resp);
 	}

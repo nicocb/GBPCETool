@@ -26,6 +26,7 @@ import com.gracie.barra.admin.dao.SchoolEventDao;
 import com.gracie.barra.admin.dao.SchoolEventDaoDatastoreImpl;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.dao.SchoolDaoDatastoreImpl;
+import com.gracie.barra.school.util.CloudStorageHelper;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGBServlet extends HttpServlet {
@@ -47,6 +48,10 @@ public abstract class AbstractGBServlet extends HttpServlet {
 			SchoolEventDao schoolEventDao = new SchoolEventDaoDatastoreImpl();
 
 			this.getServletContext().setAttribute("schoolEventDao", schoolEventDao);
+
+			CloudStorageHelper storageHelper = new CloudStorageHelper();
+
+			this.getServletContext().setAttribute("storageHelper", storageHelper);
 		}
 
 	}
@@ -61,6 +66,10 @@ public abstract class AbstractGBServlet extends HttpServlet {
 
 	protected SchoolEventDao getSchoolEventDao() {
 		return (SchoolEventDao) this.getServletContext().getAttribute("schoolEventDao");
+	}
+
+	protected CloudStorageHelper getStorageHelper() {
+		return (CloudStorageHelper) this.getServletContext().getAttribute("storageHelper");
 	}
 
 	protected boolean nullOrEmpty(String id) {
