@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 
@@ -67,7 +68,7 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			String schoolId = req.getParameter("schoolId");
 
 			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId), null, comment,
-					revoke ? null : false);
+					revoke ? SchoolCertificationCriterionStatus.NOT_VALIDATED : SchoolCertificationCriterionStatus.VALIDATED);
 
 		} else {
 			throw new ServletException("Should be logged to save school");

@@ -16,6 +16,7 @@ Copyright 2016 Google Inc.
 <!-- [START list] -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="/scripts/gbScripts.js"></script>
 <div class="container">
 	<h3>
@@ -52,59 +53,72 @@ Copyright 2016 Google Inc.
 									<div class="row vertical-align">
 										<div class="col-md-8">
 											<label class="label label-info">${fn:escapeXml(certificationCriterion.criterion.description)} </label><c:if test="${highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
+											<label class="label label-info">${fn:escapeXml(certificationCriterion.criterion.action)} </label><c:if test="${highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
+											<label class="label label-info">${fn:escapeXml(certificationCriterion.criterion.comment)} </label><c:if test="${highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
 										</div>
 										<div class="col-md-3">
-											<c:choose>
-												<c:when test="${empty certificationCriterion.pending}">
-													<label class="label label-danger">Not provided</label>
-												</c:when>
-												<c:when test="${certificationCriterion.pending == 'true'}">
-													<label class="label label-warning">Pending</label>
-												</c:when>
-												<c:when test="${certificationCriterion.pending == 'false'}">
-													<label class="label label-success">Validated</label>
-												</c:when> 
-												
-											</c:choose>
+											<label class="label label-${certificationCriterion.status.style}">${certificationCriterion.status.description}</label>
 										</div>
 										<div class="col-md-1">
 											<button onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-basic .btn-xs"><span class="glyphicon glyphicon-search" ></span></button>
 										</div>
 									</div>
-									<c:choose>
-										<c:when test="${mode == 'admin'}">
-											<form method="POST" action="/admin/schoolCriteriaAdmin"  style="display:none" id="${fn:escapeXml(certificationCriterion.criterion.id)}">
-												<input type="text" name="comment" id="comment"
-													value="${fn:escapeXml(certificationCriterion.comment)}"
-													class="form-control" /> <input type="text" name="picture"
-													id="picture"
-													value="${fn:escapeXml(certificationCriterion.picture)}"
-													class="form-control" disabled/> <input type="hidden" name="id"
+<%-- 										<c:if test="${mode == 'admin'}"> --%>
+<%-- 											<form method="POST" action="/admin/schoolCriteriaAdmin"  style="display:none" id="${fn:escapeXml(certificationCriterion.criterion.id)}"> --%>
+<!-- 												<input type="text" name="comment" id="comment" -->
+<%-- 													value="${fn:escapeXml(certificationCriterion.comment)}" --%>
+<!-- 													class="form-control" /> <input type="text" name="picture" -->
+<!-- 													id="picture" -->
+<%-- 													value="${fn:escapeXml(certificationCriterion.picture)}" --%>
+<!-- 													class="form-control" disabled/> <input type="hidden" name="id" -->
+<%-- 													value="${certificationCriterion.criterion.id}" /><input type="hidden" name="schoolId" --%>
+<%-- 													value="${schoolId}"/> --%>
+<!-- 												<button type="submit" class="btn btn-success">Validate</button> -->
+<!-- 												<button type="submit" class="btn btn-danger" -->
+<!-- 													formaction="/admin/schoolCriteriaAdminRefuse">Refuse</button> -->
+<!-- 											</form> -->
+<%-- 										</c:if> --%>
+										<div class="media" style="display:none"
+													id="${fn:escapeXml(certificationCriterion.criterion.id)}">
+											<div class="media-left">
+												<img alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
+													src="${fn:escapeXml(certificationCriterion.picture)}" >
+											</div>
+											<div class="media-body">
+												<form method="POST" action="/schoolCriteria"
+													${mode == 'admin'?'':'enctype="multipart/form-data"'}>
+													<div class="form-group">
+													  <label for="comment">Comment:</label>
+													  <textarea class="form-control" rows="5" name="comment"  id="comment" >${fn:escapeXml(certificationCriterion.comment)}</textarea>
+													</div>
+													
+													<input type="hidden" name="id"
 													value="${certificationCriterion.criterion.id}" /><input type="hidden" name="schoolId"
 													value="${schoolId}"/>
-												<button type="submit" class="btn btn-success">Validate</button>
-												<button type="submit" class="btn btn-danger"
-													formaction="/admin/schoolCriteriaAdminRefuse">Refuse</button>
-											</form>
-										</c:when>
-										<c:when test="${empty mode}">
-											<form method="POST" action="/schoolCriteria" style="display:none" id="${fn:escapeXml(certificationCriterion.criterion.id)}"  enctype="multipart/form-data">
-												<input type="text" name="comment" id="comment"
-													value="${fn:escapeXml(certificationCriterion.comment)}"
-													class="form-control" disabled/>
-													    <div class="form-group">
-													      <label for="image">School picture : </label>
-													      <input type="file" name="file" id="file" class="form-control" />
-													    </div>
-												<input type="text" name="picture" id="picture"
-													value="${fn:escapeXml(certificationCriterion.picture)}"
-													class="form-control" /> <input type="hidden" name="id"
-													value="${certificationCriterion.criterion.id}" /><input type="hidden" name="schoolId"
-													value="${schoolId}"/>
-												<c:if test="${criteriaByRank.available == 'true'}"><button type="submit" class="btn btn-danger">Upload</button></c:if>
-											</form>
-										</c:when>
-									</c:choose>
+													
+													<c:if test="${criteriaByRank.available == 'true' && mode != 'admin'}">
+														<div class="form-group">
+															<label for="image">School picture : </label> 
+															<div class="input-group">
+												                <label class="input-group-btn">
+												                    <span class="btn btn-primary">
+												                        Browse… <input type="file" style="display: none;" >
+												                    </span>
+												                </label>
+												                <input type="text" class="form-control" >
+												                <button type="submit" class="input-group-btn btn-danger">Upload</button>
+												            </div>
+														</div>
+														
+													</c:if>
+													<c:if test="${mode == 'admin'}">
+														<button type="submit" class="btn btn-success" formAction="/admin/schoolCriteriaAdmin">Validate</button>
+														<button type="submit" class="btn btn-danger"
+															formaction="/admin/schoolCriteriaAdminRefuse">Refuse</button>
+													</c:if>
+												</form>
+											</div>
+										</div>
 							</div>
 						</c:forEach>
 					</div>

@@ -9,7 +9,6 @@
   <version>1.0-SNAPSHOT</version>       <!-- xx.xx.xx -SNAPSHOT means development -->
 
   <properties>
-    <appengine-maven.version>1.9.48</appengine-maven.version>
     <google-cloud.version>0.10.0-alpha</google-cloud.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source> <!-- REQUIRED -->
@@ -31,11 +30,6 @@
           <artifactId>google-api-client-appengine</artifactId>
           <version>1.21.0</version>
         </dependency>
-        <dependency>
-		    <groupId>com.google.appengine</groupId>
-		    <artifactId>appengine-api-1.0-sdk</artifactId>
-		    <version>1.9.50</version>
-		</dependency>
       </dependencies>
     </profile>
   </profiles>
@@ -75,7 +69,7 @@
     <dependency>                        <!-- Google Cloud Client Library for Java -->
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage</artifactId>
-      <version>1.2.1</version>
+      <version>1.4.0</version>
     </dependency>
 
     <dependency>                        <!-- Google Core Libraries for Java -->
@@ -83,7 +77,7 @@
         <artifactId>guava</artifactId>  <!-- https://github.com/google/guava/wiki -->
         <!-- Guava v21.0 doesn't support Java7 -->
         <version>20.0</version>
-        <scope>compile</scope>
+<!--         <scope>compile</scope> -->
     </dependency>
 
     <dependency>                        <!-- http://www.joda.org/joda-time/ -->
@@ -120,8 +114,18 @@
         <groupId>com.google.appengine</groupId>
         <artifactId>appengine-maven-plugin</artifactId>
         <version>${appengine-maven.version}</version>
+				<configuration>
+					<port>8081</port>
+					<jvmFlags>
+						<jvmFlag>-Xdebug</jvmFlag>
+						<jvmFlag>-Xrunjdwp:transport=dt_socket,address=1789,server=y,suspend=n</jvmFlag>
+					</jvmFlags>
+				</configuration>
+        
       </plugin>
     </plugins>
+    
+    
   </build>
   
     <dependencyManagement>

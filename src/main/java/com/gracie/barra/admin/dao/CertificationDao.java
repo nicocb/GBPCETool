@@ -6,6 +6,7 @@ import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 
 public interface CertificationDao {
@@ -29,7 +30,7 @@ public interface CertificationDao {
 	SchoolCertificationDashboard getSchoolCertificationDashboard(Long schoolId);
 
 	SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
-			String comment, Boolean pending);
+			String comment, SchoolCertificationCriterionStatus status);
 
 	SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc, Long schoolID);
 

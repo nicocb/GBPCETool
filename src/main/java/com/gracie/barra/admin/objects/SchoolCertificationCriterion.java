@@ -5,8 +5,8 @@ public class SchoolCertificationCriterion {
 	Long id;
 	Long schoolId;
 	CertificationCriterion criterion;
+	SchoolCertificationCriterionStatus status;
 	String picture;
-	Boolean pending = null;
 	String comment;
 
 	public static final String ID = "id";
@@ -14,14 +14,14 @@ public class SchoolCertificationCriterion {
 	public static final String CRITERION_ID = "criterion_id";
 	public static final String COMMENT = "comment";
 	public static final String PICTURE = "picture";
-	public static final String PENDING = "pending";
+	public static final String STATUS = "status";
 
 	public static class Builder {
 		private Long id;
 		private Long schoolId;
 		private CertificationCriterion criterion;
 		private String picture;
-		private Boolean pending;
+		private SchoolCertificationCriterionStatus status;
 		private String comment;
 
 		public Builder schoolId(Long schoolId) {
@@ -44,8 +44,8 @@ public class SchoolCertificationCriterion {
 			return this;
 		}
 
-		public Builder pending(Boolean pending) {
-			this.pending = pending;
+		public Builder status(SchoolCertificationCriterionStatus status) {
+			this.status = status;
 			return this;
 		}
 
@@ -62,7 +62,7 @@ public class SchoolCertificationCriterion {
 	private SchoolCertificationCriterion(Builder builder) {
 		this.criterion = builder.criterion;
 		this.picture = builder.picture;
-		this.pending = builder.pending;
+		this.status = builder.status;
 		this.comment = builder.comment;
 		this.id = builder.id;
 		this.schoolId = builder.schoolId;
@@ -84,12 +84,12 @@ public class SchoolCertificationCriterion {
 		this.picture = picture;
 	}
 
-	public Boolean getPending() {
-		return pending;
+	public SchoolCertificationCriterionStatus getStatus() {
+		return status;
 	}
 
-	public void setPending(Boolean pending) {
-		this.pending = pending;
+	public void setStatus(SchoolCertificationCriterionStatus status) {
+		this.status = status;
 	}
 
 	public String getComment() {
@@ -106,6 +106,28 @@ public class SchoolCertificationCriterion {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public enum SchoolCertificationCriterionStatus {
+		NOT_PROVIDED("Not provided", "Default"), PENDING("Pending", "Warning"), VALIDATED("Validated",
+				"Success"), NOT_VALIDATED("Not Validated", "Danger");
+
+		private String description;
+		private String style;
+
+		SchoolCertificationCriterionStatus(String descrition, String style) {
+			this.description = descrition;
+			this.style = style;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public String getStyle() {
+			return style;
+		}
+
 	}
 
 }

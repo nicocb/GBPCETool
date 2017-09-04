@@ -34,6 +34,7 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.admin.objects.SchoolEvent;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
@@ -96,7 +97,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			String schoolId = params.get("schoolId");
 
 			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id),
-					Long.valueOf(schoolId), picture, null, true);
+					Long.valueOf(schoolId), picture, null, SchoolCertificationCriterionStatus.PENDING);
 
 			School school;
 			try {

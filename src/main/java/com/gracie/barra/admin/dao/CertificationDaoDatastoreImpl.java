@@ -40,6 +40,7 @@ import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 
 public class CertificationDaoDatastoreImpl implements CertificationDao {
@@ -72,7 +73,9 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 				: new SchoolCertificationCriterion.Builder().id(entity.getKey().getId()).criterion(cc)
 						.comment((String) entity.getProperty(SchoolCertificationCriterion.COMMENT))
 						.picture((String) entity.getProperty(SchoolCertificationCriterion.PICTURE))
-						.pending((Boolean) entity.getProperty(SchoolCertificationCriterion.PENDING)).build();
+						.status(SchoolCertificationCriterionStatus
+								.values()[((Long) entity.getProperty(SchoolCertificationCriterion.STATUS)).intValue()])
+						.build();
 	}
 
 	@Override
@@ -214,7 +217,8 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 			}
 			currentRankList.getCriteria().add(certificationCriterion);
 			currentRankList.incScore(certificationCriterion.getCriterion().getScore());
-			if (certificationCriterion.getPending() != null && !certificationCriterion.getPending()) {
+			if (certificationCriterion.getStatus() != null
+					&& certificationCriterion.getStatus() == SchoolCertificationCriterionStatus.VALIDATED) {
 				currentRankList.incActualScore(certificationCriterion.getCriterion().getScore());
 			}
 		}
@@ -234,9 +238,9 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 
 				for (SchoolCertificationCriterion criterion : schoolCriteriaByRank.getCriteria()) {
 
-					if (criterion.getPending() == null) {
+					if (criterion.getStatus() == SchoolCertificationCriterionStatus.PENDING) {
 						result.incNbMissing();
-					} else if (criterion.getPending()) {
+					} else if (criterion.getStatus() != SchoolCertificationCriterionStatus.VALIDATED) {
 						result.incNbPending();
 					}
 				}
@@ -248,7 +252,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 
 	@Override
 	public SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
-			String comment, Boolean pending) {
+			String comment, SchoolCertificationCriterionStatus status) {
 		Entity entity = null;
 		Collection<Filter> filters = new ArrayList<>();
 
@@ -265,7 +269,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 			entity.setProperty(SchoolCertificationCriterion.CRITERION_ID, criterionId);
 		}
 
-		entity.setProperty(SchoolCertificationCriterion.PENDING, pending);
+		entity.setProperty(SchoolCertificationCriterion.STATUS, status.ordinal());
 		if (picture != null) {
 			entity.setProperty(SchoolCertificationCriterion.PICTURE, picture);
 		}
