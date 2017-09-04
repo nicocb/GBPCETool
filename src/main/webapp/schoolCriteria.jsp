@@ -102,7 +102,7 @@ Copyright 2016 Google Inc.
 															<div class="input-group">
 												                <label class="input-group-btn">
 												                    <span class="btn btn-primary">
-												                        Browse… <input type="file" style="display: none;" >
+												                        Browse… <input type="file" name="picture" style="display: none;" >
 												                    </span>
 												                </label>
 												                <input type="text" class="form-control" >

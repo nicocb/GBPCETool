@@ -269,7 +269,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 			entity.setProperty(SchoolCertificationCriterion.CRITERION_ID, criterionId);
 		}
 
-		entity.setProperty(SchoolCertificationCriterion.STATUS, status.ordinal());
+		entity.setProperty(SchoolCertificationCriterion.STATUS, Long.valueOf(status.ordinal()));
 		if (picture != null) {
 			entity.setProperty(SchoolCertificationCriterion.PICTURE, picture);
 		}
