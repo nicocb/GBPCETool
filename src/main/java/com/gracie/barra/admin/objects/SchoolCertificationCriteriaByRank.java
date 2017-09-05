@@ -3,18 +3,20 @@ package com.gracie.barra.admin.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
+
 public class SchoolCertificationCriteriaByRank {
-	private Long rank;
+	private CertificationCriterionRank rank;
 	private List<SchoolCertificationCriterion> criteria = new ArrayList<>();
 	private Long score = 0L;
 	private Long actualScore = 0L;
 	private Boolean available = false;
 
-	public Long getRank() {
+	public CertificationCriterionRank getRank() {
 		return rank;
 	}
 
-	public void setRank(Long rank) {
+	public void setRank(CertificationCriterionRank rank) {
 		this.rank = rank;
 	}
 

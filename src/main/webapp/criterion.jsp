@@ -40,9 +40,13 @@ Copyright 2016 Google Inc.
 
     <div class="form-group">
       <label for="rank">Rank</label>
-      <input type="text" name="rank" id="rank" value="${fn:escapeXml(criterion.rank)}" class="form-control" />
+	  <select class="form-control" name="rank" id="rank" value="${criterion.rank.id}">
+	  	<c:forEach items="${rankList}" var="currentRank">
+	    	<option value="${currentRank.id}" ${currentRank.id == criterion.rank.id? 'selected':''}>${currentRank.description}</option>
+	    </c:forEach>
+	  </select>
     </div>
-
+ 
     <div class="form-group">
       <label for="score">Score</label>
       <input type="text" name="score" id="score" value="${fn:escapeXml(criterion.score)}" class="form-control" />

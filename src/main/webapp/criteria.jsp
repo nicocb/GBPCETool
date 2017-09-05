@@ -30,8 +30,7 @@ Copyright 2016 Google Inc.
 			<c:forEach items="${certificationCriteriaByRank}"
 				var="certificationCriteria">
 				<div class="panel panel-default">
-					<div class="panel-heading">Stage
-						${certificationCriteria.rank} max score : ${certificationCriteria.score}</div>
+					<div class="panel-heading">${certificationCriteria.rank.description} max score : ${certificationCriteria.score}</div>
 					<div class="panel-body">
 						<c:forEach items="${certificationCriteria.criteria}" var="criterion">
 							<div class="media">
@@ -40,7 +39,7 @@ Copyright 2016 Google Inc.
 									<a href="/admin/criterion?id=${criterion.id}"><h4>${fn:escapeXml(criterion.description)}</h4></a>
 									<p>${fn:escapeXml(criterion.comment)}</p>
 									<p>${fn:escapeXml(criterion.action)}</p>
-									<p>${fn:escapeXml(criterion.rank)}</p>
+									<p>${fn:escapeXml(criterion.rank.description)}</p>
 									<p>${fn:escapeXml(criterion.score)}</p>
 								</div>
 								<div class="btn-group" role="group" aria-label="..." >

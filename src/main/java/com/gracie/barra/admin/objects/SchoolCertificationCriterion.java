@@ -110,7 +110,7 @@ public class SchoolCertificationCriterion {
 
 	public enum SchoolCertificationCriterionStatus {
 		NOT_PROVIDED("Not provided", "Default"), PENDING("Pending", "Warning"), VALIDATED("Validated",
-				"Success"), NOT_VALIDATED("Not Validated", "Danger");
+				"Success"), NOT_VALIDATED("Not validated", "Danger");
 
 		private String description;
 		private String style;

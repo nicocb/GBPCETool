@@ -11,7 +11,7 @@
 		<h3 align="center">GB PCE Tool</h3>
 
 
-		<img alt="GB Marseille" src="/pics/school.jpg" class="img-responsive" align="center"/>
+		<img alt="GB Marseille" src="/pics/school.jpg" class="img-responsive center-block"/>
 
 		<div class="text-center">
 			<div class="btn-group" role="group" aria-label="..." align="center">

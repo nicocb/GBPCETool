@@ -38,6 +38,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
+import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
@@ -62,20 +63,25 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 				.id(entity.getKey().getId()).description((String) entity.getProperty(CertificationCriterion.DESCRIPTION))
 				.comment((String) entity.getProperty(CertificationCriterion.COMMENT))
 				.action((String) entity.getProperty(CertificationCriterion.ACTION))
-				.rank((Long) entity.getProperty(CertificationCriterion.RANK))
+				.rank(CertificationCriterionRank.fromId((Long) entity.getProperty(CertificationCriterion.RANK)))
 				.score((Long) entity.getProperty(CertificationCriterion.SCORE))
 
 				.build();
 	}
 
 	private SchoolCertificationCriterion entityToSchoolCertificationCriterion(Entity entity, CertificationCriterion cc) {
+		Long status = 0L;
+		if (entity != null) {
+			status = (Long) entity.getProperty(SchoolCertificationCriterion.STATUS);
+		}
+		if (status == null) {
+			status = 0L;
+		}
 		return entity == null ? new SchoolCertificationCriterion.Builder().criterion(cc).build()
 				: new SchoolCertificationCriterion.Builder().id(entity.getKey().getId()).criterion(cc)
 						.comment((String) entity.getProperty(SchoolCertificationCriterion.COMMENT))
 						.picture((String) entity.getProperty(SchoolCertificationCriterion.PICTURE))
-						.status(SchoolCertificationCriterionStatus
-								.values()[((Long) entity.getProperty(SchoolCertificationCriterion.STATUS)).intValue()])
-						.build();
+						.status(SchoolCertificationCriterionStatus.values()[status.intValue()]).build();
 	}
 
 	@Override
@@ -85,7 +91,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		ccEntity.setProperty(CertificationCriterion.DESCRIPTION, cc.getDescription());
 		ccEntity.setProperty(CertificationCriterion.COMMENT, cc.getComment());
 		ccEntity.setProperty(CertificationCriterion.ACTION, cc.getAction());
-		ccEntity.setProperty(CertificationCriterion.RANK, cc.getRank());
+		ccEntity.setProperty(CertificationCriterion.RANK, cc.getRank().getId());
 		ccEntity.setProperty(CertificationCriterion.SCORE, cc.getScore());
 
 		Key ccKey = datastore.put(ccEntity); // Save the Entity
@@ -122,7 +128,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		entity.setProperty(CertificationCriterion.DESCRIPTION, certificationCriterion.getDescription());
 		entity.setProperty(CertificationCriterion.COMMENT, certificationCriterion.getComment());
 		entity.setProperty(CertificationCriterion.ACTION, certificationCriterion.getAction());
-		entity.setProperty(CertificationCriterion.RANK, certificationCriterion.getRank());
+		entity.setProperty(CertificationCriterion.RANK, certificationCriterion.getRank().getId());
 		entity.setProperty(CertificationCriterion.SCORE, certificationCriterion.getScore());
 
 		datastore.put(entity); // Update the Entity
@@ -163,7 +169,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	@Override
 	public List<CertificationCriteriaByRank> listCertificationCriteriaByRank() {
 		List<CertificationCriteriaByRank> result = new ArrayList<>();
-		Long currentRank = -1L;
+		CertificationCriterionRank currentRank = null;
 		CertificationCriteriaByRank currentRankList = null;
 		List<CertificationCriterion> criteriaList = listCertificationCriteria();
 
@@ -203,7 +209,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	@Override
 	public List<SchoolCertificationCriteriaByRank> listSchoolCertificationCriteriaByRank(Long schoolId) {
 		List<SchoolCertificationCriteriaByRank> result = new ArrayList<>();
-		Long currentRank = -1L;
+		CertificationCriterionRank currentRank = null;
 		SchoolCertificationCriteriaByRank currentRankList = null;
 		List<SchoolCertificationCriterion> criteriaList = listSchoolCertificationCriteria(schoolId);
 

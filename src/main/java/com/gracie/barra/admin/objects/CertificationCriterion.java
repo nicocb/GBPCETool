@@ -5,7 +5,7 @@ public class CertificationCriterion {
 	private String description;
 	private String comment;
 	private String action;
-	private Long rank;
+	private CertificationCriterionRank rank;
 	private Long score;
 
 	public static final String ID = "id";
@@ -19,7 +19,7 @@ public class CertificationCriterion {
 		private String description;
 		private String comment;
 		private String action;
-		private Long rank;
+		private CertificationCriterionRank rank;
 		private Long score;
 		private Long id;
 
@@ -38,7 +38,7 @@ public class CertificationCriterion {
 			return this;
 		}
 
-		public Builder rank(Long rank) {
+		public Builder rank(CertificationCriterionRank rank) {
 			this.rank = rank;
 			return this;
 		}
@@ -99,11 +99,11 @@ public class CertificationCriterion {
 		this.id = id;
 	}
 
-	public Long getRank() {
+	public CertificationCriterionRank getRank() {
 		return rank;
 	}
 
-	public void setRank(Long rank) {
+	public void setRank(CertificationCriterionRank rank) {
 		this.rank = rank;
 	}
 
@@ -113,6 +113,29 @@ public class CertificationCriterion {
 
 	public void setScore(Long score) {
 		this.score = score;
+	}
+
+	public enum CertificationCriterionRank {
+		TRAINING_CENTER("Training Center"), OFFICIAL_SCHOOL("Official School"), PREMIUM_SCHOOL("Premium School");
+
+		private String description;
+
+		CertificationCriterionRank(String descrition) {
+			this.description = descrition;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public static CertificationCriterionRank fromId(Long id) {
+			return CertificationCriterionRank.values()[id.intValue() - 1];
+		}
+
+		public Long getId() {
+			return Long.valueOf(ordinal() + 1L);
+		}
+
 	}
 
 }

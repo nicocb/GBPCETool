@@ -60,6 +60,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}
+			req.getSession().getServletContext().setAttribute("highlight", null);
 			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
 			req.setAttribute("schoolStatus", school.getPending() ? "Pending" : "Validated");
 			req.setAttribute("schoolId", school.getId());
@@ -95,9 +96,11 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 
 			String id = params.get("id");
 			String schoolId = params.get("schoolId");
+			String comment = params.get("comment");
 
 			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id),
-					Long.valueOf(schoolId), picture, null, SchoolCertificationCriterionStatus.PENDING);
+					Long.valueOf(schoolId), picture, comment, picture != null ? SchoolCertificationCriterionStatus.PENDING
+							: SchoolCertificationCriterionStatus.NOT_PROVIDED);
 
 			School school;
 			try {

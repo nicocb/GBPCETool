@@ -44,9 +44,8 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}
 			String highlight = req.getParameter("highlight");
-			if (highlight != null) {
-				req.getSession().getServletContext().setAttribute("highlight", highlight);
-			}
+			req.getSession().getServletContext().setAttribute("highlight", highlight);
+
 			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
 			req.setAttribute("page", "schoolCriteria");
 			req.setAttribute("schoolId", schoolId);
