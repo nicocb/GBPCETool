@@ -21,52 +21,97 @@ Copyright 2016 Google Inc.
 <title>PCE - DASHBOARD</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link rel="stylesheet"
-		href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-	<style>
-	.vertical-align {
-		display: flex;
-		align-items: center;
-	}
-	</style>
+		href="/css/gb.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/scripts/gbScripts.js"></script>
 </head>
 <body>
-	<div class="navbar navbar-default">
-		<div class="container">
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
 			<div class="navbar-header">
-				<div class="navbar-left"><img src="/pics/gb-logo.png" height="50" width="50"/></div>
-				
-				<div class="navbar-brand"> School certification program</div>
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#gb-navbar-collapse"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<div class="pull-left">
+					<img src="/pics/gb-logo.png" height="50" width="50" />
+				</div>
 			</div>
-			<ul class="nav navbar-nav">
-				<li><a href="/school">School</a></li>
-				<c:choose>
-					<c:when test="${schoolStatus == 'Validated'}">
-						<li><a href="/schoolCriteria">Certification</a></li>
-					</c:when>
-					<c:otherwise>
-						<li><a href="#">Certification grey</a></li>
-					</c:otherwise>
-				</c:choose>
+			<div class="navbar-collapse collapse"
+				id="gb-navbar-collapse" aria-expanded="false"
+				style="height: 1px;">
+				<h4 class="navbar-text">School certification program</h4>
+				<ul class="nav navbar-nav">
+					<li><a href="/school">School</a></li>
+					<li><a ${schoolStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li>
 
-			</ul>
-			<p class="navbar-text navbar-right">
-				<c:choose>
-					<c:when test="${not empty userEmail}">
-						<!-- using pageContext requires jsp-api artifact in pom.xml -->
-						<a href="/logout"> <c:if test="${not empty userImageUrl}">
-								<img class="img-circle" src="${fn:escapeXml(userImageUrl)}"
-									width="24">
-							</c:if> ${fn:escapeXml(userEmail)}
-						</a>
-					</c:when>
-					<c:otherwise>
-						<a href="/login">Login</a>
-					</c:otherwise>
-				</c:choose>
-			</p>
+				</ul>
+				<p class="navbar-text navbar-right">
+					<c:choose>
+						<c:when test="${not empty userEmail}">
+							<a href="/logout"> <c:if test="${not empty userImageUrl}">
+									<img class="img-circle" src="${fn:escapeXml(userImageUrl)}"
+										width="24">
+								</c:if> ${fn:escapeXml(userEmail)}
+							</a>
+						</c:when>
+						<c:otherwise>
+							<a href="/login">Login</a>
+						</c:otherwise>
+					</c:choose>
+				</div>
 		</div>
-	</div>
+	</nav>
+
+<!-- 	<div class="navbar navbar-default"> -->
+<!-- 		<div class="container-fluid"> -->
+
+<!-- 			<div class="navbar-header"> -->
+<!-- 				<button type="button" class="navbar-toggle collapsed" -->
+<!-- 					data-toggle="collapse" data-target="#navbar-collapse-gb" -->
+<!-- 					aria-expanded="false"> -->
+<!-- 					<span class="sr-only">Toggle navigation</span> <span -->
+<!-- 						class="icon-bar"></span> <span class="icon-bar"></span> <span -->
+<!-- 						class="icon-bar"></span> -->
+<!-- 				</button> -->
+<!-- 				<div class="navbar-left"> -->
+<!-- 					<img src="/pics/gb-logo.png" height="50" width="50" /> -->
+<!-- 				</div> -->
+<!-- 				<h4 class="navbar-text">School certification program</h4> -->
+<!-- 			</div> -->
+<!-- 			<div class="collapse navbar-collapse" -->
+<!-- 				id="navbar-collapse-gb"> -->
+<!-- 				<ul class="nav navbar-nav"> -->
+<!-- 					<li><a href="/school">School</a></li> -->
+<!-- 					<li><a -->
+<%-- 						${schoolStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li> --%>
+
+<!-- 				</ul> -->
+<!-- 				<p class="navbar-text navbar-right"> -->
+<%-- 					<c:choose> --%>
+<%-- 						<c:when test="${not empty userEmail}"> --%>
+<!-- 							using pageContext requires jsp-api artifact in pom.xml -->
+<%-- 							<a href="/logout"> <c:if test="${not empty userImageUrl}"> --%>
+<%-- 									<img class="img-circle" src="${fn:escapeXml(userImageUrl)}" --%>
+<!-- 										width="24"> -->
+<%-- 								</c:if> ${fn:escapeXml(userEmail)} --%>
+<!-- 							</a> -->
+<%-- 						</c:when> --%>
+<%-- 						<c:otherwise> --%>
+<!-- 							<a href="/login">Login</a> -->
+<%-- 						</c:otherwise> --%>
+<%-- 					</c:choose> --%>
+<!-- 				</p> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
 	<c:import url="/${page}.jsp" />
 </body>
 </html>
