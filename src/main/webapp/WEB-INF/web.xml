@@ -111,9 +111,19 @@
     </filter>
     <filter-mapping>
       <filter-name>AuthEnrichFilter</filter-name>
-      <url-pattern>*</url-pattern>
+      <url-pattern>/*</url-pattern>
     </filter-mapping>
-        <filter>
+
+	<filter>
+		<filter-name>charsetEncoding</filter-name>
+		<filter-class>com.gracie.barra.util.CharsetEncodingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>charsetEncoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+    
+    <filter>
       <filter-name>LogoutFilter</filter-name>
       <filter-class>com.gracie.barra.auth.LogoutFilter</filter-class>
     </filter>

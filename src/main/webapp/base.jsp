@@ -70,48 +70,6 @@ Copyright 2016 Google Inc.
 		</div>
 	</nav>
 
-<!-- 	<div class="navbar navbar-default"> -->
-<!-- 		<div class="container-fluid"> -->
-
-<!-- 			<div class="navbar-header"> -->
-<!-- 				<button type="button" class="navbar-toggle collapsed" -->
-<!-- 					data-toggle="collapse" data-target="#navbar-collapse-gb" -->
-<!-- 					aria-expanded="false"> -->
-<!-- 					<span class="sr-only">Toggle navigation</span> <span -->
-<!-- 						class="icon-bar"></span> <span class="icon-bar"></span> <span -->
-<!-- 						class="icon-bar"></span> -->
-<!-- 				</button> -->
-<!-- 				<div class="navbar-left"> -->
-<!-- 					<img src="/pics/gb-logo.png" height="50" width="50" /> -->
-<!-- 				</div> -->
-<!-- 				<h4 class="navbar-text">School certification program</h4> -->
-<!-- 			</div> -->
-<!-- 			<div class="collapse navbar-collapse" -->
-<!-- 				id="navbar-collapse-gb"> -->
-<!-- 				<ul class="nav navbar-nav"> -->
-<!-- 					<li><a href="/school">School</a></li> -->
-<!-- 					<li><a -->
-<%-- 						${schoolStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li> --%>
-
-<!-- 				</ul> -->
-<!-- 				<p class="navbar-text navbar-right"> -->
-<%-- 					<c:choose> --%>
-<%-- 						<c:when test="${not empty userEmail}"> --%>
-<!-- 							using pageContext requires jsp-api artifact in pom.xml -->
-<%-- 							<a href="/logout"> <c:if test="${not empty userImageUrl}"> --%>
-<%-- 									<img class="img-circle" src="${fn:escapeXml(userImageUrl)}" --%>
-<!-- 										width="24"> -->
-<%-- 								</c:if> ${fn:escapeXml(userEmail)} --%>
-<!-- 							</a> -->
-<%-- 						</c:when> --%>
-<%-- 						<c:otherwise> --%>
-<!-- 							<a href="/login">Login</a> -->
-<%-- 						</c:otherwise> --%>
-<%-- 					</c:choose> --%>
-<!-- 				</p> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
 	<c:import url="/${page}.jsp" />
 </body>
 </html>

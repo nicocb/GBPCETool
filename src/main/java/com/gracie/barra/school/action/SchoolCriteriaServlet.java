@@ -40,7 +40,7 @@ import com.gracie.barra.admin.objects.SchoolEvent;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
-import com.gracie.barra.school.util.CloudStorageHelper;
+import com.gracie.barra.util.CloudStorageHelper;
 
 @SuppressWarnings("serial")
 public class SchoolCriteriaServlet extends AbstractGBServlet {
@@ -85,7 +85,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 				while (iter.hasNext()) {
 					FileItemStream item = iter.next();
 					if (item.isFormField()) {
-						params.put(item.getFieldName(), Streams.asString(item.openStream()));
+						params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
 					} else if (!Strings.isNullOrEmpty(item.getName())) {
 						picture = storageHelper.uploadFile(item, "pce-tool");
 					}

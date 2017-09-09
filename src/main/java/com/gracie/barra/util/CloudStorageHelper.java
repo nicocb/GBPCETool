@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.gracie.barra.school.util;
+package com.gracie.barra.util;
 
 import java.io.IOException;
 import java.util.ArrayList;

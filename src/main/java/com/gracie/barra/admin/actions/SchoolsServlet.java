@@ -45,6 +45,7 @@ public class SchoolsServlet extends AbstractGBServlet {
 		req.getSession().getServletContext().setAttribute("schools", schools);
 
 		req.setAttribute("page", "schools");
+		req.setCharacterEncoding("UTF-8");
 		req.getRequestDispatcher("/baseAdmin.jsp").forward(req, resp);
 	}
 

@@ -26,7 +26,7 @@ import com.gracie.barra.admin.dao.SchoolEventDao;
 import com.gracie.barra.admin.dao.SchoolEventDaoDatastoreImpl;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.dao.SchoolDaoDatastoreImpl;
-import com.gracie.barra.school.util.CloudStorageHelper;
+import com.gracie.barra.util.CloudStorageHelper;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGBServlet extends HttpServlet {

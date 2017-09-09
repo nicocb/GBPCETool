@@ -16,7 +16,6 @@
 package com.gracie.barra.school.action;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +32,6 @@ import com.gracie.barra.school.objects.School;
 
 @SuppressWarnings("serial")
 public class SchoolServlet extends AbstractGBServlet {
-
-	private static final Logger log = Logger.getLogger(SchoolServlet.class.getName());
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
