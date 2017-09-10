@@ -116,7 +116,8 @@ public class CertificationCriterion {
 	}
 
 	public enum CertificationCriterionRank {
-		TRAINING_CENTER("Training Center"), OFFICIAL_SCHOOL("Official School"), PREMIUM_SCHOOL("Premium School");
+		IN_PROGRESS("In Progress"), TRAINING_CENTER("Training Center"), OFFICIAL_SCHOOL("Official School"), PREMIUM_SCHOOL(
+				"Premium School");
 
 		private String description;
 
@@ -129,11 +130,11 @@ public class CertificationCriterion {
 		}
 
 		public static CertificationCriterionRank fromId(Long id) {
-			return CertificationCriterionRank.values()[id.intValue() - 1];
+			return CertificationCriterionRank.values()[id.intValue()];
 		}
 
 		public Long getId() {
-			return Long.valueOf(ordinal() + 1L);
+			return Long.valueOf(ordinal());
 		}
 
 	}

@@ -62,7 +62,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			}
 			req.getSession().getServletContext().setAttribute("highlight", null);
 			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
-			req.setAttribute("schoolStatus", school.getPending() ? "Pending" : "Validated");
+			req.setAttribute("schoolStatus", school.getStatus().getDescription());
 			req.setAttribute("schoolId", school.getId());
 			req.setAttribute("page", "schoolCriteria");
 			req.getRequestDispatcher("/base.jsp").forward(req, resp);
@@ -107,7 +107,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 				school = getSchoolDao().getSchool(Long.valueOf(schoolId));
 				SchoolEvent se = new SchoolEvent.Builder()
 						.description("Criterion '" + criterion.getCriterion().getDescription() + "' for school '"
-								+ school.getName() + "' updated")
+								+ school.getSchoolName() + "' updated")
 						.object("CRITERION").objectId(criterion.getId()).schoolId(school.getId())
 						.status(SchoolEventStatus.PENDING).build();
 				getSchoolEventDao().createSchoolEvent(se);

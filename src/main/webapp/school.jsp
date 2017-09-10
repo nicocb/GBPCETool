@@ -18,31 +18,73 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <div class="container">
   <h3>
-    Academy details (${fn:escapeXml(schoolStatus)})
+    Academy details <label class="label label-${empty school.status?'Default':school.status.style}">${empty school.status?'Not provided':school.status.description}</label>
   </h3>
  
-
-  Make sure you describe your academy in the best possible way and you enter a valid e-mail address for communication.
-  Once this information provided we will validate the school existence and give you access to certification form.
-
   <form method="POST" action="${destination}">
-
-    <div class="form-group">
-      <label for="action">Name</label>
-      <input type="text" name="name" id="name" value="${fn:escapeXml(school.name)}" class="form-control" />
-    </div>
-
-    <div class="form-group">
-      <label for="description">Description</label>
-      <input type="text" name="description" id="description" value="${fn:escapeXml(school.description)}" class="form-control" />
-    </div>
-
-
-    <div class="form-group">
-      <label for="contactMail">Contact Mail</label>
-      <input type="text" name="contactMail" id="contactMail" value="${fn:escapeXml(school.contactMail)}" class="form-control" />
-    </div>
-    
+	<div class="panel panel-default">
+		<div class="panel-heading">Contact :</div>
+		<div class="panel-body">
+		    <div class="form-group">
+		      <label for="contactName">Your Name</label>
+		      <input type="text" name="contactName" id="contactName" value="${fn:escapeXml(school.contactName)}" class="form-control" />
+		    </div>
+		    <div class="form-group">
+		      <label for="contactMail">Your email</label>
+		      <input type="text" name="contactMail" id="contactMail" value="${fn:escapeXml(school.contactMail)}" class="form-control" />
+		    </div>
+		    <div class="form-group">
+		      <label for="contactPhone">Your phone number</label>
+		      <input type="text" name="contactPhone" id="contactPhone" value="${fn:escapeXml(school.contactPhone)}" class="form-control" />
+		    </div>
+		 </div>
+	</div>
+ 	<div class="panel panel-default">
+		<div class="panel-heading">School :</div>
+		<div class="panel-body">
+		    <div class="form-group">
+		      <label for="schoolName">School Name</label>
+		      <input type="text" name="schoolName" id="schoolName" value="${fn:escapeXml(school.schoolName)}" class="form-control" />
+		    </div>
+ 		    <div class="form-group">
+		      <label for="schoolAddress">School Address</label>
+		      <input type="text" name="schoolAddress" id="schoolAddress" value="${fn:escapeXml(school.schoolAddress)}" class="form-control" />
+		    </div>
+ 		    <div class="form-group">
+		      <label for="schoolMail">School Mail</label>
+		      <input type="text" name="schoolMail" id="schoolMail" value="${fn:escapeXml(school.schoolMail)}" class="form-control" />
+		    </div>
+ 		    <div class="form-group">
+		      <label for="schoolPhone">School Phone Number</label>
+		      <input type="text" name="schoolPhone" id="schoolPhone" value="${fn:escapeXml(school.schoolPhone)}" class="form-control" />
+		    </div>
+ 		    <div class="form-group">
+		      <label for="schoolWeb">School Website</label>
+		      <input type="text" name="schoolWeb" id="schoolWeb" value="${fn:escapeXml(school.schoolWeb)}" class="form-control" />
+		    </div>
+ 		 </div>
+	</div>   
+	<div class="panel panel-default">
+		<div class="panel-heading">Instructor :</div>
+		<div class="panel-body">
+		    <div class="form-group">
+		      <label for="instructorName">Instructor Name</label>
+		      <input type="text" name="instructorName" id="instructorName" value="${fn:escapeXml(school.instructorName)}" class="form-control" />
+		    </div>
+		    <div class="form-group">
+		      <label for="instructorBelt">Instructor Belt</label>
+			  <select class="form-control" name="instructorBelt" id="instructorBelt">
+			  	<c:forEach items="${beltList}" var="currentBelt">
+			    	<option value="${currentBelt}" ${currentBelt == school.instructorBelt? 'selected':''}>${currentBelt.description}</option>
+			    </c:forEach>
+			  </select>
+		    </div>
+		    <div class="form-group">
+		      <label for="instructorProfessor">Name of the person who promoted the instructor</label>
+		      <input type="text" name="instructorProfessor" id="instructorProfessor" value="${fn:escapeXml(school.instructorProfessor)}" class="form-control" />
+		    </div>
+		 </div>
+	</div>
     <div class="form-group hidden">
       <input type="hidden" name="id" value="${school.id}" />
     </div>

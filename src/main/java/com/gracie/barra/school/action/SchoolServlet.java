@@ -29,6 +29,8 @@ import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.objects.School;
+import com.gracie.barra.school.objects.School.Belt;
+import com.gracie.barra.school.objects.School.SchoolStatus;
 
 @SuppressWarnings("serial")
 public class SchoolServlet extends AbstractGBServlet {
@@ -45,8 +47,9 @@ public class SchoolServlet extends AbstractGBServlet {
 			} else {
 				req.setAttribute("action", "Update");
 				req.setAttribute("destination", "school");
-				req.setAttribute("schoolStatus", school.getPending() ? "Pending" : "Validated");
-				if (!school.getPending()) {
+				req.setAttribute("schoolStatus",
+						school.getStatus() == null ? "Not provided" : school.getStatus().getDescription());
+				if (school.getStatus() == SchoolStatus.VALIDATED) {
 					req.setAttribute("schoolValidated", "true");
 				}
 			}
@@ -55,6 +58,7 @@ public class SchoolServlet extends AbstractGBServlet {
 		} else {
 			req.setAttribute("page", "pleaselogin");
 		}
+		req.setAttribute("beltList", Belt.values());
 		req.getRequestDispatcher("/base.jsp").forward(req, resp);
 	}
 
@@ -67,8 +71,16 @@ public class SchoolServlet extends AbstractGBServlet {
 			String id = req.getParameter("id");
 
 			School school = new School.Builder().id(nullOrEmpty(id) ? null : Long.valueOf(id))
-					.description(req.getParameter("description")).name(req.getParameter("name"))
-					.contactMail(req.getParameter("contactMail")).userId(userService.getCurrentUser().getUserId()).build();
+					.userId(userService.getCurrentUser().getUserId()).contactMail(req.getParameter(School.CONTACT_MAIL))
+					.contactName(req.getParameter(School.CONTACT_NAME)).contactPhone(req.getParameter(School.CONTACT_PHONE))
+					.instructorBelt(Belt.valueOf(req.getParameter(School.INSTRUCTOR_BELT)))
+					.instructorName(req.getParameter(School.INSTRUCTOR_NAME))
+					.instructorProfessor(req.getParameter(School.INSTRUCTOR_PROFESSOR))
+					.schoolAddress(req.getParameter(School.SCHOOL_ADDRESS)).schoolMail(req.getParameter(School.SCHOOL_MAIL))
+					.schoolName(req.getParameter(School.SCHOOL_NAME)).schoolPhone(req.getParameter(School.SCHOOL_PHONE))
+					.schoolWeb(req.getParameter(School.SCHOOL_WEB))
+
+					.build();
 
 			SchoolDao schoolDao = this.getSchoolDao();
 			SchoolEventDao schoolEventDao = this.getSchoolEventDao();
@@ -76,13 +88,13 @@ public class SchoolServlet extends AbstractGBServlet {
 				if (school.getId() == null) {
 					Long schId = schoolDao.createSchool(school);
 					SchoolEvent se = new SchoolEvent.Builder()
-							.description(
-									"School '" + school.getName() + "' created by " + userService.getCurrentUser().getEmail())
+							.description("School '" + school.getSchoolName() + "' created by "
+									+ userService.getCurrentUser().getEmail())
 							.object("SCHOOL").objectId(schId).schoolId(schId).status(SchoolEventStatus.PENDING).build();
 					schoolEventDao.createSchoolEvent(se);
 				} else {
 					schoolDao.updateSchool(school);
-					SchoolEvent se = new SchoolEvent.Builder().description("School '" + school.getName() + "' updated")
+					SchoolEvent se = new SchoolEvent.Builder().description("School '" + school.getSchoolName() + "' updated")
 							.object("SCHOOL").objectId(school.getId()).schoolId(school.getId()).status(SchoolEventStatus.PENDING)
 							.build();
 					schoolEventDao.createSchoolEvent(se);

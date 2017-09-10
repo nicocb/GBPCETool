@@ -43,6 +43,8 @@ import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
+import com.gracie.barra.school.objects.School;
+import com.gracie.barra.school.objects.ScoredSchool;
 
 public class CertificationDaoDatastoreImpl implements CertificationDao {
 
@@ -241,14 +243,19 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 			result.setCriteria(criteria);
 			for (SchoolCertificationCriteriaByRank schoolCriteriaByRank : result.getCriteria()) {
 				result.setOverallScore(result.getOverallScore() + schoolCriteriaByRank.getScore());
+				result.setScore(result.getScore() + schoolCriteriaByRank.getActualScore());
 
 				for (SchoolCertificationCriterion criterion : schoolCriteriaByRank.getCriteria()) {
 
 					if (criterion.getStatus() == SchoolCertificationCriterionStatus.PENDING) {
-						result.incNbMissing();
-					} else if (criterion.getStatus() != SchoolCertificationCriterionStatus.VALIDATED) {
 						result.incNbPending();
+					} else if (criterion.getStatus() != SchoolCertificationCriterionStatus.VALIDATED) {
+						result.incNbMissing();
 					}
+				}
+
+				if (schoolCriteriaByRank.getActualScore() == schoolCriteriaByRank.getScore()) {
+					result.setRank(schoolCriteriaByRank.getRank());
 				}
 
 			}
@@ -286,5 +293,17 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		datastore.put(entity); // Update the Entity
 
 		return entityToSchoolCertificationCriterion(entity, readCertificationCriterion(criterionId));
+	}
+
+	@Override
+	public ScoredSchool scoreSchool(School school) {
+		ScoredSchool sSchool = new ScoredSchool();
+		sSchool.setSchool(school);
+
+		SchoolCertificationDashboard dash = getSchoolCertificationDashboard(school.getId());
+		sSchool.setNbPending(dash.getNbPending());
+		sSchool.setScore(dash.getScore());
+		sSchool.setRank(dash.getRank());
+		return sSchool;
 	}
 }

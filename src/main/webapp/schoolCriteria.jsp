@@ -43,27 +43,25 @@ Copyright 2016 Google Inc.
 					<div class="panel-heading"><strong>${criteriaByRank.rank.description}</strong> score
 						: ${criteriaByRank.actualScore}/${criteriaByRank.score}  <c:if test="${criteriaByRank.available == 'false'}">Complete other stages to activate</c:if></div>
 					<div class="panel-body">
-						<table class="table table-striped">
 						<c:forEach items="${criteriaByRank.criteria}"
 							var="certificationCriterion">
-							<tr><td>
-							<div class="container-fluid">
+							<div class="container-fluid bgcolored" >
 
 									<div class="row vertical-align">
-										<div class="col-md-8">
+										<div class="col-md-8 col-xs-6">
 											${fn:escapeXml(certificationCriterion.criterion.description)} 
 											<c:if test="${not empty certificationCriterion.criterion.comment}"><small>(${fn:escapeXml(certificationCriterion.criterion.comment)}) </small></c:if>
 										</div>
-										<div class="col-md-3">
+										<div class="col-md-3 col-xs-4">
 											<label class="label label-${empty certificationCriterion.status.style?'Default':certificationCriterion.status.style}">${empty certificationCriterion.status.description?'Not provided':certificationCriterion.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
 										</div>
-										<div class="col-md-1">
-											<button onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-basic .btn-xs"><span class="glyphicon glyphicon-search" ></span></button>
+										<div class="col-md-1 col-xs-1">
+											<button onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-default btn-sm btn-primary-spacing pull-right"><span class="glyphicon glyphicon-triangle-bottom" ></span></button>
 										</div>
 									</div>
-										<div class="panel panel-default" id="${fn:escapeXml(certificationCriterion.criterion.id)}" style="display:none">
-										<c:if test="${not empty certificationCriterion.criterion.action}"><div class="panel-heading">
-												<h4>${fn:escapeXml(certificationCriterion.criterion.action)} :</h4>
+										<div class="panel panel-primary panel-criteria" id="${fn:escapeXml(certificationCriterion.criterion.id)}" style="display:none">
+										<c:if test="${not empty certificationCriterion.criterion.action}"><div class="panel-heading panel-heading-criteria">
+												<h5>${fn:escapeXml(certificationCriterion.criterion.action)} :</h5>
 										</div></c:if>
 										<div class="panel-body">
 										<div class="media" >
@@ -116,9 +114,7 @@ Copyright 2016 Google Inc.
 										</div>
 									</div></div>
 							</div>
-							</td></tr>
 						</c:forEach>
-						</table>
 					</div>
 				</div>
 			</c:forEach>
@@ -126,4 +122,3 @@ Copyright 2016 Google Inc.
 		</c:otherwise>
 	</c:choose>
 </div>
-<!-- [END list] -->

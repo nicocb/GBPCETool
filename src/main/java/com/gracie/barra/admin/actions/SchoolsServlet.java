@@ -25,16 +25,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.base.actions.AbstractGBServlet;
-import com.gracie.barra.school.objects.School;
+import com.gracie.barra.school.objects.School.SchoolStatus;
+import com.gracie.barra.school.objects.SchoolsByRank;
 
 @SuppressWarnings("serial")
 public class SchoolsServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		List<School> schools = null;
+		List<SchoolsByRank> schools = null;
 		try {
-			schools = getSchoolDao().listSchools();
+			schools = getSchoolDao().listSchoolsByRank();
 		} catch (Exception e) {
 			throw new ServletException("Error listing schools", e);
 		}
@@ -60,7 +61,8 @@ public class SchoolsServlet extends AbstractGBServlet {
 			case "PUT":
 				String status = req.getParameter("pending");
 				try {
-					getSchoolDao().updateSchoolStatus(Long.valueOf(id), Boolean.valueOf(status));
+					getSchoolDao().updateSchoolStatus(Long.valueOf(id),
+							Boolean.valueOf(status) ? SchoolStatus.PENDING : SchoolStatus.VALIDATED);
 				} catch (Exception e) {
 					throw new ServletException("Error updating school ", e);
 				}

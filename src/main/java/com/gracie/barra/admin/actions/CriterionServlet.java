@@ -29,6 +29,7 @@ public class CriterionServlet extends AbstractGBServlet {
 		}
 
 		List<CertificationCriterionRank> rankList = new ArrayList<>(Arrays.asList(CertificationCriterionRank.values()));
+		rankList.remove(0);
 		req.getSession().getServletContext().setAttribute("rankList", rankList);
 		req.getSession().getServletContext().setAttribute("criterion", criterion);
 		req.setAttribute("destination", "criterion");
@@ -40,8 +41,7 @@ public class CriterionServlet extends AbstractGBServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		CertificationCriterion certificationCriterion = new CertificationCriterion.Builder()
 				.description(req.getParameter("description")).action(req.getParameter("action"))
-				.comment(req.getParameter("comment"))
-				.rank(CertificationCriterionRank.fromId(Long.valueOf(req.getParameter("rank"))))
+				.comment(req.getParameter("comment")).rank(CertificationCriterionRank.valueOf(req.getParameter("rank")))
 				.score(Long.valueOf(req.getParameter("score"))).build();
 
 		String id = req.getParameter("id");

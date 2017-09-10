@@ -1,4 +1,21 @@
-	.vertical-align {
-		display: flex;
-		align-items: center;
-	}
+.vertical-align {
+	display: flex;
+	align-items: center;
+}
+
+.bgcolored {
+	background-color: whiteSmoke;
+	margin-bottom: 1px;
+}
+
+.btn-primary-spacing {
+	margin: 2px;
+}
+
+.panel-criteria {
+	 margin-top:3px;
+}
+.panel-heading-criteria {
+	 padding: 1px 15px;
+}
+

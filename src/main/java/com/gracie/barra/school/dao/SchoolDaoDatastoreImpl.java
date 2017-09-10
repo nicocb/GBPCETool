@@ -1,8 +1,11 @@
 package com.gracie.barra.school.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -18,25 +21,64 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.gracie.barra.admin.dao.CertificationDao;
+import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
 import com.gracie.barra.school.objects.School;
+import com.gracie.barra.school.objects.School.Belt;
+import com.gracie.barra.school.objects.School.SchoolStatus;
+import com.gracie.barra.school.objects.SchoolsByRank;
+import com.gracie.barra.school.objects.ScoredSchool;
 
 public class SchoolDaoDatastoreImpl implements SchoolDao {
 
 	private static final Logger log = Logger.getLogger(SchoolDaoDatastoreImpl.class.getName());
 
+	CertificationDao certificationDao;
+
 	private DatastoreService datastore;
 	private static final String SCHOOL_KIND = "School";
 
-	public SchoolDaoDatastoreImpl() {
+	public SchoolDaoDatastoreImpl(CertificationDao certificationDao) {
 		datastore = DatastoreServiceFactory.getDatastoreService();
+		this.certificationDao = certificationDao;
 	}
 
-	public School entityToSchool(Entity entity) {
+	private School entityToSchool(Entity entity) {
+		Long belt = (Long) entity.getProperty(School.INSTRUCTOR_BELT);
+		Long status = (Long) entity.getProperty(School.STATUS);
+
 		return new School.Builder() // Convert to CertificationCriterion form
 				.id(entity.getKey().getId()).userId((String) entity.getProperty(School.USERID))
-				.name((String) entity.getProperty(School.NAME)).contactMail((String) entity.getProperty(School.CONTACTMAIL))
-				.description((String) entity.getProperty(School.DESCRIPTION))
-				.pending((Boolean) entity.getProperty(School.PENDING)).build();
+				.contactMail((String) entity.getProperty(School.CONTACT_MAIL))
+				.contactName((String) entity.getProperty(School.CONTACT_NAME))
+				.contactPhone((String) entity.getProperty(School.CONTACT_PHONE))
+				.instructorBelt(belt == null ? null : Belt.values()[belt.intValue()])
+				.instructorName((String) entity.getProperty(School.INSTRUCTOR_NAME))
+				.instructorProfessor((String) entity.getProperty(School.INSTRUCTOR_PROFESSOR))
+				.schoolAddress((String) entity.getProperty(School.SCHOOL_ADDRESS))
+				.schoolMail((String) entity.getProperty(School.SCHOOL_MAIL))
+				.schoolName((String) entity.getProperty(School.SCHOOL_NAME))
+				.schoolPhone((String) entity.getProperty(School.SCHOOL_PHONE))
+				.schoolWeb((String) entity.getProperty(School.SCHOOL_WEB))
+				.status(status == null ? null : SchoolStatus.values()[status.intValue()])
+				.dateCreated((Date) entity.getProperty(School.DATE_CREATED))
+				.dateValidated((Date) entity.getProperty(School.DATE_VALIDATED)).build();
+	}
+
+	private void schoolToEntity(School school, Entity entity) {
+		entity.setProperty(School.USERID, school.getUserId());
+		entity.setProperty(School.CONTACT_MAIL, school.getContactMail());
+		entity.setProperty(School.CONTACT_NAME, school.getContactName());
+		entity.setProperty(School.CONTACT_PHONE, school.getContactPhone());
+		entity.setProperty(School.INSTRUCTOR_BELT, school.getInstructorBelt().ordinal());
+		entity.setProperty(School.INSTRUCTOR_NAME, school.getInstructorName());
+		entity.setProperty(School.INSTRUCTOR_PROFESSOR, school.getInstructorProfessor());
+		entity.setProperty(School.SCHOOL_NAME, school.getSchoolName());
+		entity.setProperty(School.SCHOOL_ADDRESS, school.getSchoolAddress());
+		entity.setProperty(School.SCHOOL_MAIL, school.getSchoolMail());
+		entity.setProperty(School.SCHOOL_PHONE, school.getSchoolPhone());
+		entity.setProperty(School.SCHOOL_WEB, school.getSchoolWeb());
+
 	}
 
 	public List<School> entitiesToSchools(Iterator<Entity> results) {
@@ -69,11 +111,9 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 	public Long createSchool(School school) {
 		Entity entity = new Entity(SCHOOL_KIND); // Key will be assigned once
 													// written
-		entity.setProperty(School.USERID, school.getUserId());
-		entity.setProperty(School.NAME, school.getName());
-		entity.setProperty(School.CONTACTMAIL, school.getContactMail());
-		entity.setProperty(School.DESCRIPTION, school.getDescription());
-		entity.setProperty(School.PENDING, school.getPending());
+		schoolToEntity(school, entity);
+		entity.setProperty(School.STATUS, SchoolStatus.PENDING.ordinal());
+		entity.setProperty(School.DATE_CREATED, new Date());
 
 		Key ccKey = datastore.put(entity); // Save the Entity
 		return ccKey.getId(); // The ID of the Key
@@ -84,21 +124,18 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		Key key = KeyFactory.createKey(SCHOOL_KIND, school.getId());
 		Entity entity = datastore.get(key);
 		// Entity
-		entity.setProperty(School.USERID, school.getUserId());
-		entity.setProperty(School.NAME, school.getName());
-		entity.setProperty(School.CONTACTMAIL, school.getContactMail());
-		entity.setProperty(School.DESCRIPTION, school.getDescription());
+		schoolToEntity(school, entity);
 
 		datastore.put(entity); // Update the Entity
-		log.info("Updated entity " + entity);
 
 	}
 
 	@Override
-	public void updateSchoolStatus(Long id, Boolean pending) throws EntityNotFoundException {
+	public void updateSchoolStatus(Long id, SchoolStatus pending) throws EntityNotFoundException {
 		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
 		Entity entity = datastore.get(key);
-		entity.setProperty(School.PENDING, pending);
+		entity.setProperty(School.STATUS, pending.ordinal());
+		entity.setProperty(School.DATE_VALIDATED, new Date());
 
 		datastore.put(entity); // Update the Entity
 		log.info("Updated entity " + entity);
@@ -107,16 +144,39 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 
 	@Override
 	public List<School> listSchools() {
-		// Only show 10 at a time
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(100);
 
-		Query query = new Query(SCHOOL_KIND).addSort(School.PENDING, SortDirection.ASCENDING).addSort(School.NAME,
+		Query query = new Query(SCHOOL_KIND).addSort(School.STATUS, SortDirection.ASCENDING).addSort(School.SCHOOL_NAME,
 				SortDirection.ASCENDING);
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
 
 		List<School> result = entitiesToSchools(results);
 		return result;
+	}
+
+	@Override
+	public List<SchoolsByRank> listSchoolsByRank() {
+		List<School> schools = listSchools();
+		List<SchoolsByRank> schoolsBR = new ArrayList<>();
+		Map<CertificationCriterionRank, SchoolsByRank> ranks = new HashMap<>();
+
+		for (School school : schools) {
+			ScoredSchool sSchool = certificationDao.scoreSchool(school);
+			SchoolsByRank current = ranks.get(sSchool.getRank());
+			if (current == null) {
+				current = new SchoolsByRank();
+				current.setRank(sSchool.getRank());
+				ranks.put(sSchool.getRank(), current);
+			}
+			current.getSchools().add(sSchool);
+		}
+		for (CertificationCriterionRank rank : CertificationCriterionRank.values()) {
+			if (ranks.get(rank) != null) {
+				schoolsBR.add(ranks.get(rank));
+			}
+		}
+		return schoolsBR;
 	}
 
 	@Override
