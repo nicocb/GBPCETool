@@ -14,45 +14,126 @@ Copyright 2016 Google Inc.
  limitations under the License.
 -->
 <!-- [START list] -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <div class="container">
-  <h3>Academies</h3>
-  <c:choose>
-  <c:when test="${empty schools}">
-  <p>No schools found</p>
-  </c:when>
-  <c:otherwise>
-  <c:forEach items="${schools}" var="schoolsByRank">
-  		<p>Rank : ${schoolsByRank.rank}</p>
-	  <c:forEach items="${schoolsByRank.schools}" var="sschool">
-	  <div class="media">
-	      <div class="media-body">
-	        <h4><a href="/admin/schoolCriteriaAdmin/${fn:escapeXml(sschool.school.id)}">${fn:escapeXml(sschool.school.schoolName)}</a><c:if test="${highlight == sschool.school.id}"><span class="badge">new</span></c:if>
-	        </h4>
-	        <p>Rank : ${fn:escapeXml(sschool.rank.description)}</p>
-	        <p>Score : ${fn:escapeXml(sschool.score)}</p>
-	        <p>Pending : ${fn:escapeXml(sschool.nbPending)}</p>
-	        <p>Contact Name : ${fn:escapeXml(sschool.school.contactName)}</p>
-	        <p>Contact Name : ${fn:escapeXml(sschool.school.contactMail)}</p>
-	        <p>Creation Date : ${fn:escapeXml(sschool.school.dateCreated)}</p>
-	        <p>Validation Date : ${fn:escapeXml(sschool.school.dateValidated)}</p>
-	        <div class="btn-group" role="group" aria-label="..." align="center">
-	          <c:choose>
-			  <c:when test="${sschool.school.status == 'PENDING'}">
-			  	<form  class="btn-group" method="POST" action="/admin/schools" ><input type="hidden" name="action" value="PUT" /><input type="hidden" name="id" value="${sschool.school.id}" /><input type="hidden" name="pending" value="false" /><button type="submit" class="btn btn-success" >Validate</button></form>
-			  </c:when>
-			  <c:otherwise>
-			  	<form  class="btn-group" method="POST" action="/admin/schools" ><input type="hidden" name="action" value="PUT" /><input type="hidden" name="id" value="${sschool.school.id}" /><input type="hidden" name="pending" value="true" /><button type="submit" class="btn btn-warning" >Revoke</button></form>
-			  </c:otherwise>
-			  </c:choose>
-			  	<form  class="btn-group" method="POST" action="/admin/schools" ><input type="hidden" name="action" value="DELETE" /><input type="hidden" name="id" value="${sschool.school.id}" /><button type="submit" class="btn btn-danger" >Delete</button></form>
-	      </div>
-	      </div>
-	  </div>
-	  </c:forEach>
-  </c:forEach>
-  </c:otherwise>
-  </c:choose>
+	<h3>Academies</h3>
+	<c:choose>
+		<c:when test="${empty schools}">
+			<p>No schools found</p>
+		</c:when>
+		<c:otherwise>
+			<c:forEach items="${schools}" var="schoolsByRank">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Rank : ${schoolsByRank.rank}</strong>  
+					</div>
+					<div class="panel-body">
+						<c:forEach items="${schoolsByRank.schools}" var="sschool">
+							<div class="container-fluid bgcolored" >
+								<div class="row vertical-align">
+									<div class="col-md-8 col-xs-6">
+										<h4><strong><a href="/admin/schoolCriteriaAdmin/${fn:escapeXml(sschool.school.id)}">${fn:escapeXml(sschool.school.schoolName)}</a></strong>
+										<c:if test="${highlight == sschool.school.id}">
+											<span class="badge">new</span>
+										</c:if>	</h4>
+									</div>
+									<div class="col-md-3 col-xs-4">
+										<label class="label label-${empty sschool.school.status?'Default':sschool.school.status.style}">${empty sschool.school.status?'Not provided':sschool.school.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
+									</div>
+									<div class="col-md-1 col-xs-1">
+										
+										<button onclick="switchForm('${fn:escapeXml(sschool.school.id)}')" type="button" class="btn btn-default btn-sm btn-primary-spacing pull-right"><span class="glyphicon glyphicon-triangle-bottom" ></span></button>
+									</div>
+								</div>
+							</div>
+							<div class="panel panel-primary panel-criteria" id="${sschool.school.id}" style="display:none">
+								<div class="panel-heading panel-heading-criteria">
+									<p>Rank : ${fn:escapeXml(sschool.rank.description)}</p>
+									<p>Score : ${fn:escapeXml(sschool.score)}</p>
+									<p>Pending : ${fn:escapeXml(sschool.nbPending)}</p>
+								</div>
+								<div class="panel-body">
+
+									
+									<div class="panel panel-default">
+									<div class="panel-heading">Contact :</div>
+									<div class="panel-body">
+										<p>Contact Name :
+											${fn:escapeXml(sschool.school.contactName)}</p>
+										<p>Contact Mail :
+											${fn:escapeXml(sschool.school.contactMail)}</p>
+										<p>Contact Phone :
+											${fn:escapeXml(sschool.school.contactPhone)}</p>
+									</div></div>
+									<div class="panel panel-default">
+									<div class="panel-heading">School :</div>
+									<div class="panel-body">
+										<p>School Name :
+											${fn:escapeXml(sschool.school.schoolName)}</p>
+										<p>School Address :
+											${fn:escapeXml(sschool.school.schoolAddress)}</p>
+										<p>School Mail :
+											${fn:escapeXml(sschool.school.schoolMail)}</p>
+										<p>School Phone Number :
+											${fn:escapeXml(sschool.school.schoolPhone)}</p>
+										<p>School Website :
+											${fn:escapeXml(sschool.school.schoolWeb)}</p>
+									</div></div>									
+									<div class="panel panel-default">
+									<div class="panel-heading">Instructor :</div>
+									<div class="panel-body">
+										<p>Instructor Name :
+											${fn:escapeXml(sschool.school.instructorName)}</p>
+										<p>Instructor Belt :
+											${fn:escapeXml(sschool.school.instructorBelt.description)}</p>
+										<p>Instructor Professor :
+											${fn:escapeXml(sschool.school.instructorProfessor)}</p>
+									</div></div>									
+									<div class="panel panel-default">
+									<div class="panel-heading">Creation :</div>
+									<div class="panel-body">
+										<p>Creation Date :
+											${fn:escapeXml(sschool.school.dateCreated)}</p>
+										<p>Validation Date :
+											${fn:escapeXml(sschool.school.dateValidated)}</p>
+									</div></div>									
+
+									<div class="btn-group" role="group" aria-label="..." align="center">
+												<c:choose>
+													<c:when test="${sschool.school.status == 'PENDING'}">
+														<form class="btn-group" method="POST"
+															action="/admin/schools">
+															<input type="hidden" name="action" value="PUT" /><input
+																type="hidden" name="id" value="${sschool.school.id}" /><input
+																type="hidden" name="pending" value="false" />
+															<button type="submit" class="btn btn-success">Validate</button>
+														</form>
+													</c:when>
+													<c:otherwise>
+														<form class="btn-group" method="POST"
+															action="/admin/schools">
+															<input type="hidden" name="action" value="PUT" /><input
+																type="hidden" name="id" value="${sschool.school.id}" /><input
+																type="hidden" name="pending" value="true" />
+															<button type="submit" class="btn btn-warning">Revoke</button>
+														</form>
+													</c:otherwise>
+												</c:choose>
+												<form class="btn-group" method="POST" action="/admin/schools">
+													<input type="hidden" name="action" value="DELETE" /><input
+														type="hidden" name="id" value="${sschool.school.id}" />
+													<button type="submit" class="btn btn-danger">Delete</button>
+												</form>
+									</div>
+								</div>
+							</div>
+							
+						</c:forEach>
+					</div>
+				</div>
+			</c:forEach>
+		</c:otherwise>
+	</c:choose>
 </div>
 <!-- [END list] -->
