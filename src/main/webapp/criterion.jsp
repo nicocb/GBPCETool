@@ -42,7 +42,7 @@ Copyright 2016 Google Inc.
       <label for="rank">Rank</label>
 	  <select class="form-control" name="rank" id="rank" value="${criterion.rank.id}">
 	  	<c:forEach items="${rankList}" var="currentRank">
-	    	<option value="${currentRank.id}" ${currentRank.id == criterion.rank.id? 'selected':''}>${currentRank.description}</option>
+	    	<option value="${currentRank}" ${currentRank.id == criterion.rank.id? 'selected':''}>${currentRank.description}</option>
 	    </c:forEach>
 	  </select>
     </div>
