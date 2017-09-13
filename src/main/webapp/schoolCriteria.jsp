@@ -17,11 +17,30 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <div class="container">
-	<h3>
-		Criteria <span class="badge">${schoolCertificationDashboard.nbPending}
-			pending</span><span class="badge">${schoolCertificationDashboard.nbMissing}
-			not provided</span>
-	</h3>
+	<div class="container-fluid" >
+		<div class="row vertical-align">
+			<div class="col-md-4 col-xs-4">
+				<h3>My Status :  </h3><span class="badge">${schoolCertificationDashboard.nbPending}
+						pending</span><span class="badge">${schoolCertificationDashboard.nbMissing}
+						not provided</span>
+			</div>
+			<div class="col-md-1 col-xs-1">
+				<c:choose>
+					<c:when test="${schoolCertificationDashboard.rank.id > '0'}">
+						<div class="container">
+							<c:if test="${schoolCertificationDashboard.rank.id >= '1'}"><img alt="Star" src="/pics/star.png" height="30" /></c:if>
+							<c:if test="${schoolCertificationDashboard.rank.id >= '2'}"><img alt="Star" src="/pics/star.png" height="30" /><img alt="Star" src="/pics/star.png" height="30" /></c:if>
+							<c:if test="${schoolCertificationDashboard.rank.id >= '3'}"><img alt="Star" src="/pics/star.png" height="30" /><img alt="Star" src="/pics/star.png" height="30" /></c:if>			
+						</div>
+						<img class="center-block" alt="${schoolCertificationDashboard.rank.description}" height="50" src="/pics/stage${schoolCertificationDashboard.rank.id}.png"/>
+					</c:when>
+					<c:otherwise>
+						<h4>In Progress</h4> 
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+	</div>
 	<c:choose>
 		<c:when test="${empty schoolCertificationDashboard}">
 			<p>No criteria found</p>
@@ -40,19 +59,32 @@ Copyright 2016 Google Inc.
 			<c:forEach items="${schoolCertificationDashboard.criteria}"
 				var="criteriaByRank">
 				<div class="panel panel-default">
-					<div class="panel-heading"><strong>${criteriaByRank.rank.description}</strong> score
-						: ${criteriaByRank.actualScore}/${criteriaByRank.score}  <c:if test="${criteriaByRank.available == 'false'}">Complete other stages to activate</c:if></div>
+					<div class="panel-heading panel-heading-custom" >
+						<div class="container-fluid" >
+							<div class="row vertical-align">
+								<div class="col-md-8 col-xs-8">
+									<img alt="${criteriaByRank.rank.description}" src="/pics/stage${criteriaByRank.rank.id}.png" height="40"/>
+									<img alt="${criteriaByRank.validated?'Validated':'In Progress'}" src="/pics/${criteriaByRank.validated?'completed':'incomplete'}.png" height="50"/>
+								</div>
+								<div class="col-md-8 col-xs-8">
+									<h5><strong>Score
+										: ${criteriaByRank.actualScore}%</strong> (max : ${criteriaByRank.score}%)  <c:if test="${criteriaByRank.available == 'false'}"> Complete other stages to activate</c:if>
+									</h5>
+								</div>
+							</div>
+						</div>
+					</div>
 					<div class="panel-body">
 						<c:forEach items="${criteriaByRank.criteria}"
 							var="certificationCriterion">
 							<div class="container-fluid bgcolored" >
 
 									<div class="row vertical-align">
-										<div class="col-md-8 col-xs-6">
+										<div class="col-md-7 col-xs-6">
 											${fn:escapeXml(certificationCriterion.criterion.description)} 
 											<c:if test="${not empty certificationCriterion.criterion.comment}"><small>(${fn:escapeXml(certificationCriterion.criterion.comment)}) </small></c:if>
 										</div>
-										<div class="col-md-3 col-xs-4">
+										<div class="col-md-4 col-xs-4">
 											<label class="label label-${empty certificationCriterion.status.style?'Default':certificationCriterion.status.style}">${empty certificationCriterion.status.description?'Not provided':certificationCriterion.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
 										</div>
 										<div class="col-md-1 col-xs-1">

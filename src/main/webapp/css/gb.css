@@ -19,3 +19,6 @@
 	 padding: 1px 15px;
 }
 
+.panel-default > .panel-heading-custom {
+background: #ffffff;  }
+
