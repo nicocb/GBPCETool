@@ -5,6 +5,9 @@ function switchForm(id)
     } else {
     	document.getElementById(id).style.display="block";
     }
+    
+    $('#'+id+'-btn').find('span').toggleClass('glyphicon-triangle-bottom').toggleClass('glyphicon-triangle-top');
+
 }
 
 function resizeImg (img)

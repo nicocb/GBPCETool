@@ -19,20 +19,22 @@ Copyright 2016 Google Inc.
 <div class="container">
 	<div class="container-fluid" >
 		<div class="row vertical-align">
-			<div class="col-md-4 col-xs-4">
+			<div class="col-md-4 col-xs-8">
 				<h3>My Status :  </h3><span class="badge">${schoolCertificationDashboard.nbPending}
 						pending</span><span class="badge">${schoolCertificationDashboard.nbMissing}
 						not provided</span>
 			</div>
-			<div class="col-md-1 col-xs-1">
+			<div class="col-md-4 col-xs-4">
 				<c:choose>
 					<c:when test="${schoolCertificationDashboard.rank.id > '0'}">
-						<div class="container">
+						<div class="container-fluid centerstars">
 							<c:if test="${schoolCertificationDashboard.rank.id >= '1'}"><img alt="Star" src="/pics/star.png" height="30" /></c:if>
 							<c:if test="${schoolCertificationDashboard.rank.id >= '2'}"><img alt="Star" src="/pics/star.png" height="30" /><img alt="Star" src="/pics/star.png" height="30" /></c:if>
 							<c:if test="${schoolCertificationDashboard.rank.id >= '3'}"><img alt="Star" src="/pics/star.png" height="30" /><img alt="Star" src="/pics/star.png" height="30" /></c:if>			
 						</div>
-						<img class="center-block" alt="${schoolCertificationDashboard.rank.description}" height="50" src="/pics/stage${schoolCertificationDashboard.rank.id}.png"/>
+						<div class="container-fluid centerstars">
+							<img class="center-block" alt="${schoolCertificationDashboard.rank.description}" height="50" src="/pics/stage${schoolCertificationDashboard.rank.id}.png"/>
+						</div>
 					</c:when>
 					<c:otherwise>
 						<h4>In Progress</h4> 
@@ -46,7 +48,7 @@ Copyright 2016 Google Inc.
 			<p>No criteria found</p>
 		</c:when>
 		<c:otherwise>
-			<div class="progress">
+			<div class="progress panel-criteria">
 				<div class="progress-bar progress-bar-success" style="width: ${schoolCertificationDashboard.criteria[0].actualScore}%">
 				</div>
 				<c:if test="${fn:length(schoolCertificationDashboard.criteria) > 1}">
@@ -88,7 +90,7 @@ Copyright 2016 Google Inc.
 											<label class="label label-${empty certificationCriterion.status.style?'Default':certificationCriterion.status.style}">${empty certificationCriterion.status.description?'Not provided':certificationCriterion.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
 										</div>
 										<div class="col-md-1 col-xs-1">
-											<button onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-default btn-sm btn-primary-spacing pull-right"><span class="glyphicon glyphicon-triangle-bottom" ></span></button>
+											<button id='${fn:escapeXml(certificationCriterion.criterion.id)}-btn' onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-default btn-sm btn-primary-spacing pull-right"><span class="glyphicon glyphicon-triangle-bottom" ></span></button>
 										</div>
 									</div>
 										<div class="panel panel-primary panel-criteria" id="${fn:escapeXml(certificationCriterion.criterion.id)}" style="display:none">
@@ -104,8 +106,8 @@ Copyright 2016 Google Inc.
 												</div>
 											</c:if>
 											<div class="media-body">
-
-												<c:if test="${criteriaByRank.available == 'true'}">	
+												<c:choose>
+												<c:when test="${criteriaByRank.available == 'true' || mode == 'admin'}">	
 												
 													<form method="POST" action="/schoolCriteria"
 														${mode == 'admin'?'':'enctype="multipart/form-data"'}>
@@ -141,7 +143,14 @@ Copyright 2016 Google Inc.
 														</c:if>
 													</form>
 												
-												</c:if>
+												</c:when>
+												<c:otherwise>
+													<div class="form-group">
+														  <label for="comment">Comment :</label>
+														  <textarea class="form-control"  rows="5" name="comment"  id="comment" >${fn:escapeXml(certificationCriterion.comment)}</textarea>
+													</div>
+												</c:otherwise>
+												</c:choose>
 											</div>
 										</div>
 									</div></div>

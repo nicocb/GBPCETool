@@ -221,7 +221,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 				currentRank = certificationCriterion.getCriterion().getRank();
 				currentRankList.setRank(currentRank);
 				result.add(currentRankList);
-				currentRankList.setAvailable(result.size() == 1 || result.get(result.size() - 2).topScore());
+				currentRankList.setAvailable(result.size() == 1 || result.get(result.size() - 2).getValidated());
 			}
 			currentRankList.getCriteria().add(certificationCriterion);
 			currentRankList.incScore(certificationCriterion.getCriterion().getScore());
@@ -254,7 +254,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 					}
 				}
 
-				if (schoolCriteriaByRank.getActualScore() == schoolCriteriaByRank.getScore()) {
+				if (schoolCriteriaByRank.getValidated()) {
 					result.setRank(schoolCriteriaByRank.getRank());
 				}
 

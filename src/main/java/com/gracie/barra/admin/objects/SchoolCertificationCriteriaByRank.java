@@ -53,10 +53,7 @@ public class SchoolCertificationCriteriaByRank {
 	}
 
 	public Boolean getValidated() {
-		return score == actualScore;
+		return available && score == actualScore;
 	}
 
-	public boolean topScore() {
-		return actualScore == score;
-	}
 }
