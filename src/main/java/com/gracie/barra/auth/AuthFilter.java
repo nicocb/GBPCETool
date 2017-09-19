@@ -43,11 +43,11 @@ public class AuthFilter implements Filter {
 		HttpServletResponse resp = (HttpServletResponse) servletResp;
 
 		UserService userService = UserServiceFactory.getUserService();
-		if (userService.isUserLoggedIn()) {
+		if (userService.isUserLoggedIn() && userService.isUserAdmin()) {
 			chain.doFilter(servletReq, servletResp);
 		} else {
-			req.getSession().setAttribute("loginDestination", "/");
-			resp.sendRedirect(userService.createLoginURL("/login"));
+			req.setAttribute("page", "pleaseadmin");
+			req.getRequestDispatcher("/baseAdmin.jsp").forward(req, resp);
 		}
 	}
 

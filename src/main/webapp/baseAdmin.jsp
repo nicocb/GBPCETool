@@ -13,17 +13,7 @@ Copyright 2016 Google Inc.
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<!-- 
-			<ul class="nav navbar-nav">
-				<li><a href="/admin/events">Events</a></li>
-			</ul>
-			<ul class="nav navbar-nav">
-				<li><a href="/admin/criteria">Criteria</a></li>
-			</ul>
-			<ul class="nav navbar-nav">
-				<li><a href="/admin/schools">Schools</a></li>
-			</ul>
- -->
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html lang="en">
