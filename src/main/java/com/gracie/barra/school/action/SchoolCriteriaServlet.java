@@ -37,6 +37,7 @@ import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
@@ -77,7 +78,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 		if (userService.isUserLoggedIn()) {
 			assert ServletFileUpload.isMultipartContent(req);
 			CloudStorageHelper storageHelper = getStorageHelper();
-
+			boolean hasFile = false;
 			String picture = null;
 			Map<String, String> params = new HashMap<String, String>();
 			try {
@@ -88,6 +89,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 						params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
 					} else if (!Strings.isNullOrEmpty(item.getName())) {
 						picture = storageHelper.uploadFile(item, "pce-tool");
+						hasFile = true;
 					}
 				}
 			} catch (FileUploadException e) {
@@ -108,8 +110,8 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 				SchoolEvent se = new SchoolEvent.Builder()
 						.description("Criterion '" + criterion.getCriterion().getDescription() + "' for school '"
 								+ school.getSchoolName() + "' updated")
-						.object("CRITERION").objectId(criterion.getId()).schoolId(school.getId())
-						.status(SchoolEventStatus.PENDING).build();
+						.object(hasFile ? SchoolEventObject.PICTURE : SchoolEventObject.COMMENT).objectId(criterion.getId())
+						.schoolId(school.getId()).status(SchoolEventStatus.PENDING).build();
 				getSchoolEventDao().createSchoolEvent(se);
 			} catch (NumberFormatException | EntityNotFoundException e) {
 				throw new ServletException("Couldn't find related school");

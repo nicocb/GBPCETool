@@ -7,7 +7,7 @@ public class SchoolEvent {
 	private Date date;
 	private String description;
 	private Long schoolId;
-	private String object;
+	private SchoolEventObject object;
 	private Long objectId;
 	private SchoolEventStatus status = SchoolEventStatus.PENDING;
 
@@ -24,7 +24,7 @@ public class SchoolEvent {
 		private Date date;
 		private String description;
 		private Long schoolId;
-		private String object;
+		private SchoolEventObject object;
 		private Long objectId;
 		private SchoolEventStatus status;
 
@@ -48,7 +48,7 @@ public class SchoolEvent {
 			return this;
 		}
 
-		public Builder object(String object) {
+		public Builder object(SchoolEventObject object) {
 			this.object = object;
 			return this;
 		}
@@ -106,11 +106,11 @@ public class SchoolEvent {
 		this.schoolId = schoolId;
 	}
 
-	public String getObject() {
+	public SchoolEventObject getObject() {
 		return object;
 	}
 
-	public void setObject(String object) {
+	public void setObject(SchoolEventObject object) {
 		this.object = object;
 	}
 
@@ -132,6 +132,10 @@ public class SchoolEvent {
 
 	public enum SchoolEventStatus {
 		PENDING, CLICKED, TREATED
+	}
+
+	public enum SchoolEventObject {
+		SCHOOL, PICTURE, COMMENT
 	}
 
 }

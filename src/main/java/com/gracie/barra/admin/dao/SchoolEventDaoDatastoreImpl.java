@@ -16,6 +16,7 @@
 package com.gracie.barra.admin.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -29,10 +30,17 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
+import com.gracie.barra.admin.objects.SchoolEventsByObject;
 
 public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 
@@ -51,7 +59,8 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 											// form
 				.id(entity.getKey().getId()).date((Date) entity.getProperty(SchoolEvent.DATE))
 				.description((String) entity.getProperty(SchoolEvent.DESCRIPTION))
-				.object((String) entity.getProperty(SchoolEvent.OBJECT))
+				.object(SchoolEventObject
+						.valueOf(((String) entity.getProperty(SchoolEvent.OBJECT)).replace("CRITERION", "PICTURE")))
 				.objectId((Long) entity.getProperty(SchoolEvent.OBJECT_ID))
 				.schoolId((Long) entity.getProperty(SchoolEvent.SCHOOL_ID))
 				.status(SchoolEventStatus.values()[((Long) entity.getProperty(SchoolEvent.STATUS)).intValue()]).build();
@@ -59,10 +68,13 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 
 	@Override
 	public Long createSchoolEvent(SchoolEvent cc) {
-		Entity seEntity = new Entity(SE_KIND);
+		Entity seEntity = findSchoolEvent(cc);
+		if (seEntity == null) {
+			seEntity = new Entity(SE_KIND);
+		}
 		seEntity.setProperty(SchoolEvent.DATE, new Date());
 		seEntity.setProperty(SchoolEvent.DESCRIPTION, cc.getDescription());
-		seEntity.setProperty(SchoolEvent.OBJECT, cc.getObject());
+		seEntity.setProperty(SchoolEvent.OBJECT, cc.getObject().toString());
 		seEntity.setProperty(SchoolEvent.OBJECT_ID, cc.getObjectId());
 		seEntity.setProperty(SchoolEvent.SCHOOL_ID, cc.getSchoolId());
 		seEntity.setProperty(SchoolEvent.STATUS, cc.getStatus().ordinal());
@@ -87,7 +99,7 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 		Entity seEntity = new Entity(key);
 		seEntity.setProperty(SchoolEvent.DATE, schoolEvent.getDate());
 		seEntity.setProperty(SchoolEvent.DESCRIPTION, schoolEvent.getDescription());
-		seEntity.setProperty(SchoolEvent.OBJECT, schoolEvent.getObject());
+		seEntity.setProperty(SchoolEvent.OBJECT, schoolEvent.getObject().toString());
 		seEntity.setProperty(SchoolEvent.OBJECT_ID, schoolEvent.getObjectId());
 		seEntity.setProperty(SchoolEvent.SCHOOL_ID, schoolEvent.getSchoolId());
 		seEntity.setProperty(SchoolEvent.STATUS, schoolEvent.getStatus().ordinal());
@@ -113,16 +125,41 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 	}
 
 	@Override
-	public List<SchoolEvent> listSchoolEvents() {
+	public List<SchoolEventsByObject> listSchoolEvents() {
+		List<SchoolEventsByObject> result = new ArrayList<>();
+
 		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
 		// We only care about CertificationCriteria
 		// Use default Index "title"
-		Query query = new Query(SE_KIND).addSort(SchoolEvent.DATE, SortDirection.DESCENDING).addSort(SchoolEvent.STATUS);
+		Query query = new Query(SE_KIND).addSort(SchoolEvent.OBJECT, SortDirection.DESCENDING)
+				.addSort(SchoolEvent.DATE, SortDirection.DESCENDING).addSort(SchoolEvent.STATUS);
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
 
 		List<SchoolEvent> resultCertificationCriteria = entitiesToSchoolEvents(results);
-		return resultCertificationCriteria;
+
+		SchoolEventObject current = null;
+		SchoolEventsByObject currentList = null;
+
+		for (SchoolEvent schoolEvent : resultCertificationCriteria) {
+			if (schoolEvent.getObject() != current) {
+				current = schoolEvent.getObject();
+				currentList = new SchoolEventsByObject(current);
+				result.add(currentList);
+			}
+			currentList.getEvents().add(schoolEvent);
+		}
+		return result;
+	}
+
+	public Entity findSchoolEvent(SchoolEvent se) {
+		Collection<Filter> filters = new ArrayList<>();
+		filters.add(new FilterPredicate(SchoolEvent.OBJECT_ID, FilterOperator.EQUAL, se.getObjectId()));
+		filters.add(new FilterPredicate(SchoolEvent.OBJECT, FilterOperator.EQUAL, se.getObject().toString()));
+		Query query = new Query(SE_KIND).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
+
+		PreparedQuery preparedQuery = datastore.prepare(query);
+		return preparedQuery.asSingleEntity();
 	}
 
 }

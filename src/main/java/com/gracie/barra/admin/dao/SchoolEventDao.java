@@ -3,6 +3,7 @@ package com.gracie.barra.admin.dao;
 import java.util.List;
 
 import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEventsByObject;
 
 public interface SchoolEventDao {
 
@@ -14,6 +15,6 @@ public interface SchoolEventDao {
 
 	void deleteSchoolEvent(Long schoolEvent);
 
-	List<SchoolEvent> listSchoolEvents();
+	List<SchoolEventsByObject> listSchoolEvents();
 
 }

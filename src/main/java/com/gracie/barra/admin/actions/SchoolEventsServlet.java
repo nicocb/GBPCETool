@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gracie.barra.admin.objects.SchoolEvent;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
+import com.gracie.barra.admin.objects.SchoolEventsByObject;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 
 @SuppressWarnings("serial")
@@ -31,7 +32,7 @@ public class SchoolEventsServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		List<SchoolEvent> schoolEvents = null;
+		List<SchoolEventsByObject> schoolEvents = null;
 		try {
 			schoolEvents = getSchoolEventDao().listSchoolEvents();
 		} catch (Exception e) {
@@ -59,10 +60,11 @@ public class SchoolEventsServlet extends AbstractGBServlet {
 				getSchoolEventDao().updateSchoolEvent(event);
 			}
 			switch (event.getObject()) {
-			case "SCHOOL":
+			case SCHOOL:
 				resp.sendRedirect("/admin/schools?highlight=" + event.getSchoolId());
 				break;
-			case "CRITERION":
+			case COMMENT:
+			case PICTURE:
 				resp.sendRedirect("/admin/schoolCriteriaAdmin/" + event.getSchoolId() + "?highlight=" + event.getObjectId());
 				break;
 

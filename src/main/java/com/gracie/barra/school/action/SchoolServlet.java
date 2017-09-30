@@ -25,6 +25,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.admin.dao.SchoolEventDao;
 import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.dao.SchoolDao;
@@ -90,13 +91,14 @@ public class SchoolServlet extends AbstractGBServlet {
 					SchoolEvent se = new SchoolEvent.Builder()
 							.description("School '" + school.getSchoolName() + "' created by "
 									+ userService.getCurrentUser().getEmail())
-							.object("SCHOOL").objectId(schId).schoolId(schId).status(SchoolEventStatus.PENDING).build();
+							.object(SchoolEventObject.SCHOOL).objectId(schId).schoolId(schId).status(SchoolEventStatus.PENDING)
+							.build();
 					schoolEventDao.createSchoolEvent(se);
 				} else {
 					schoolDao.updateSchool(school);
 					SchoolEvent se = new SchoolEvent.Builder().description("School '" + school.getSchoolName() + "' updated")
-							.object("SCHOOL").objectId(school.getId()).schoolId(school.getId()).status(SchoolEventStatus.PENDING)
-							.build();
+							.object(SchoolEventObject.SCHOOL).objectId(school.getId()).schoolId(school.getId())
+							.status(SchoolEventStatus.PENDING).build();
 					schoolEventDao.createSchoolEvent(se);
 				}
 				resp.sendRedirect("/school"); // read what we just wrote
