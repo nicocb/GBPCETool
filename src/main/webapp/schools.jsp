@@ -52,6 +52,8 @@ Copyright 2016 Google Inc.
 									<p>Rank : ${fn:escapeXml(sschool.rank.description)}</p>
 									<p>Score : ${fn:escapeXml(sschool.score)}</p>
 									<p>Pending : ${fn:escapeXml(sschool.nbPending)}</p>
+									<p>Agreement status : ${fn:escapeXml(sschool.school.agreementStatus.description)}</p>
+
 								</div>
 								<div class="panel-body">
 
@@ -72,7 +74,7 @@ Copyright 2016 Google Inc.
 										<p>School Name :
 											${fn:escapeXml(sschool.school.schoolName)}</p>
 										<p>School Address :
-											${fn:escapeXml(sschool.school.schoolAddress)}</p>
+											${fn:escapeXml(sschool.school.schoolAddress)} ${fn:escapeXml(sschool.school.schoolZip)} ${fn:escapeXml(sschool.school.schoolCity)} ${fn:escapeXml(sschool.school.schoolCountry)} </p>
 										<p>School Mail :
 											${fn:escapeXml(sschool.school.schoolMail)}</p>
 										<p>School Phone Number :
@@ -100,26 +102,27 @@ Copyright 2016 Google Inc.
 									</div></div>									
 
 									<div class="btn-group" role="group" aria-label="..." align="center">
-												<c:choose>
-													<c:when test="${sschool.school.status == 'PENDING'}">
-														<form class="btn-group" method="POST"
-															action="/admin/schools">
-															<input type="hidden" name="action" value="PUT" /><input
-																type="hidden" name="id" value="${sschool.school.id}" /><input
-																type="hidden" name="pending" value="false" />
-															<button type="submit" class="btn btn-success">Validate</button>
-														</form>
-													</c:when>
-													<c:otherwise>
-														<form class="btn-group" method="POST"
-															action="/admin/schools">
-															<input type="hidden" name="action" value="PUT" /><input
-																type="hidden" name="id" value="${sschool.school.id}" /><input
-																type="hidden" name="pending" value="true" />
-															<button type="submit" class="btn btn-warning">Revoke</button>
-														</form>
-													</c:otherwise>
-												</c:choose>
+												<form class="btn-group" method="POST"
+													action="/admin/schools">
+													<input type="hidden" name="action" value="PUT" /><input
+														type="hidden" name="id" value="${sschool.school.id}" /><input
+														type="hidden" name="pending" value="${sschool.school.status == 'VALIDATED'}" />
+													<button type="submit" class="btn btn-${sschool.school.status == 'VALIDATED'?'warning':'success'}">${sschool.school.status == 'VALIDATED'?'Revoke':'Validate'} school</button>
+												</form>
+												<form class="btn-group" method="POST"
+													action="/admin/schools">
+													<input type="hidden" name="action" value="init" /><input
+														type="hidden" name="id" value="${sschool.school.id}" /><input
+														type="hidden" name="validated" value="${sschool.school.initialFeeStatus == 'VALIDATED'}" />
+													<button type="submit" class="btn btn-${sschool.school.initialFeeStatus == 'VALIDATED'?'warning':'success'}">${sschool.school.initialFeeStatus == 'VALIDATED'?'Revoke':'Validate'} initial fee</button>
+												</form>
+												<form class="btn-group" method="POST"
+													action="/admin/schools">
+													<input type="hidden" name="action" value="monthly" /><input
+														type="hidden" name="id" value="${sschool.school.id}" /><input
+														type="hidden" name="validated" value="${sschool.school.monthlyFeeStatus == 'VALIDATED'}" />
+													<button type="submit" class="btn btn-${sschool.school.monthlyFeeStatus == 'VALIDATED'?'warning':'success'}">${sschool.school.monthlyFeeStatus == 'VALIDATED'?'Revoke':'Validate'} monthly fee</button>
+												</form>
 												<form class="btn-group" method="POST" action="/admin/schools">
 													<input type="hidden" name="action" value="DELETE" /><input
 														type="hidden" name="id" value="${sschool.school.id}" />

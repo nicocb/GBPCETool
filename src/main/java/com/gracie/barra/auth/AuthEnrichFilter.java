@@ -46,7 +46,6 @@ public class AuthEnrichFilter implements Filter {
 			User user = userService.getCurrentUser();
 			req.getSession().setAttribute("userEmail", user.getEmail());
 			req.getSession().setAttribute("userId", user.getUserId());
-
 		}
 		chain.doFilter(servletReq, servletResp);
 	}

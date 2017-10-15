@@ -28,6 +28,9 @@ Copyright 2016 Google Inc.
 				<c:choose>
 					<c:when test="${schoolCertificationDashboard.rank.id > '0'}">
 						<div class="container-fluid centerstars">
+							<h4>Actual score : ${schoolCertificationDashboard.score}%</h4>
+						</div>
+						<div class="container-fluid centerstars">
 							<c:if test="${schoolCertificationDashboard.rank.id >= '1'}"><img alt="Star" src="/pics/star.png" height="30" /></c:if>
 							<c:if test="${schoolCertificationDashboard.rank.id >= '2'}"><img alt="Star" src="/pics/star.png" height="30" /><img alt="Star" src="/pics/star.png" height="30" /></c:if>
 							<c:if test="${schoolCertificationDashboard.rank.id >= '3'}"><img alt="Star" src="/pics/star.png" height="30" /><img alt="Star" src="/pics/star.png" height="30" /></c:if>			

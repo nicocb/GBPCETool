@@ -49,6 +49,14 @@
       <servlet-name>school</servlet-name>
       <url-pattern>/school</url-pattern>
     </servlet-mapping>
+    <servlet>
+      <servlet-name>admission</servlet-name>
+      <servlet-class>com.gracie.barra.school.action.AdmissionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>admission</servlet-name>
+      <url-pattern>/admission</url-pattern>
+    </servlet-mapping>
     
     <servlet>
       <servlet-name>criteria</servlet-name>

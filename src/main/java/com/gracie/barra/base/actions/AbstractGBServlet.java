@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 
 import com.gracie.barra.admin.dao.CertificationDao;
 import com.gracie.barra.admin.dao.CertificationDaoDatastoreImpl;
@@ -26,6 +27,7 @@ import com.gracie.barra.admin.dao.SchoolEventDao;
 import com.gracie.barra.admin.dao.SchoolEventDaoDatastoreImpl;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.dao.SchoolDaoDatastoreImpl;
+import com.gracie.barra.school.objects.School;
 import com.gracie.barra.util.CloudStorageHelper;
 
 @SuppressWarnings("serial")
@@ -54,6 +56,13 @@ public abstract class AbstractGBServlet extends HttpServlet {
 			this.getServletContext().setAttribute("storageHelper", storageHelper);
 		}
 
+	}
+
+	protected void injectSchoolStatus(HttpServletRequest req, School school) {
+		req.setAttribute("schoolStatus",
+				school == null || school.getStatus() == null ? "Not provided" : school.getStatus().getDescription());
+		req.setAttribute("agreementStatus", school == null || school.getAgreementStatus() == null ? "Not provided"
+				: school.getAgreementStatus().getDescription());
 	}
 
 	protected CertificationDao getCertificationDao() {

@@ -50,7 +50,8 @@ Copyright 2016 Google Inc.
 				<h4 class="navbar-text">School certification program</h4>
 				<ul class="nav navbar-nav">
 					<li><a href="/school">School</a></li>
-					<li><a ${schoolStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li>
+					<li ${schoolStatus == 'Validated'?'':'class="disabled"'}><a ${schoolStatus == 'Validated'?'href="/admission"':''}>Admission</a></li>
+					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li>
 
 				</ul>
 				<p class="navbar-text navbar-right">
@@ -59,7 +60,7 @@ Copyright 2016 Google Inc.
 							<a href="/logout"> <c:if test="${not empty userImageUrl}">
 									<img class="img-circle" src="${fn:escapeXml(userImageUrl)}"
 										width="24">
-								</c:if> ${fn:escapeXml(userEmail)}
+								</c:if> ${fn:escapeXml(userEmail)} <span style="font-size:1.2em;" class="glyphicon glyphicon-log-out"></span>
 							</a>
 						</c:when>
 						<c:otherwise>

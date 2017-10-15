@@ -23,4 +23,10 @@ public interface SchoolDao {
 	School getSchool(Long id) throws EntityNotFoundException;
 
 	List<SchoolsByRank> listSchoolsByRank();
+
+	void updateSchoolInitialFeeStatus(Long id, SchoolStatus pending) throws EntityNotFoundException;
+
+	void updateSchoolMonthlyFeeStatus(Long id, SchoolStatus pending) throws EntityNotFoundException;
+
+	public void updateSchoolAgreementStatus(Long id, SchoolStatus validated) throws EntityNotFoundException;
 }

@@ -12,6 +12,9 @@ public class School {
 
 	private String schoolName;
 	private String schoolAddress;
+	private String schoolCity;
+	private String schoolZip;
+	private String schoolCountry;
 	private String schoolMail;
 	private String schoolPhone;
 	private String schoolWeb;
@@ -24,6 +27,9 @@ public class School {
 	private Date dateValidated;
 
 	private SchoolStatus status;
+	private SchoolStatus agreementStatus = SchoolStatus.NOT_PROVIDED;
+	private SchoolStatus initialFeeStatus = SchoolStatus.NOT_PROVIDED;
+	private SchoolStatus monthlyFeeStatus = SchoolStatus.NOT_PROVIDED;
 
 	public static final String ID = "id";
 	public static final String USERID = "userId";
@@ -33,6 +39,9 @@ public class School {
 
 	public static final String SCHOOL_NAME = "schoolName";
 	public static final String SCHOOL_ADDRESS = "schoolAddress";
+	public static final String SCHOOL_CITY = "schoolCity";
+	public static final String SCHOOL_ZIP = "schoolZip";
+	public static final String SCHOOL_COUNTRY = "schoolCountry";
 	public static final String SCHOOL_MAIL = "schoolMail";
 	public static final String SCHOOL_PHONE = "schoolPhone";
 	public static final String SCHOOL_WEB = "schoolWeb";
@@ -42,6 +51,9 @@ public class School {
 	public static final String INSTRUCTOR_PROFESSOR = "instructorProfessor";
 
 	public static final String STATUS = "status";
+	public static final String AGREEMENT_STATUS = "agreementStatus";
+	public static final String INITIAL_FEE_STATUS = "initialFeeStatus";
+	public static final String MONTHLY_FEE_STATUS = "monthlyFeeStatus";
 	public static final String DATE_CREATED = "dateCreated";
 	public static final String DATE_VALIDATED = "dateValidated";
 
@@ -53,6 +65,9 @@ public class School {
 		private String contactPhone;
 		private String schoolName;
 		private String schoolAddress;
+		private String schoolCity;
+		private String schoolZip;
+		private String schoolCountry;
 		private String schoolMail;
 		private String schoolPhone;
 		private String schoolWeb;
@@ -62,6 +77,9 @@ public class School {
 		private Date dateCreated;
 		private Date dateValidated;
 		private SchoolStatus status;
+		private SchoolStatus agreementStatus;
+		private SchoolStatus initialFeeStatus;
+		private SchoolStatus monthlyFeeStatus;
 
 		public Builder id(Long id) {
 			this.id = id;
@@ -95,6 +113,21 @@ public class School {
 
 		public Builder schoolAddress(String schoolAddress) {
 			this.schoolAddress = schoolAddress;
+			return this;
+		}
+
+		public Builder schoolCity(String schoolCity) {
+			this.schoolCity = schoolCity;
+			return this;
+		}
+
+		public Builder schoolZip(String schoolZip) {
+			this.schoolZip = schoolZip;
+			return this;
+		}
+
+		public Builder schoolCountry(String schoolCountry) {
+			this.schoolCountry = schoolCountry;
 			return this;
 		}
 
@@ -143,6 +176,21 @@ public class School {
 			return this;
 		}
 
+		public Builder agreementStatus(SchoolStatus agreementStatus) {
+			this.agreementStatus = agreementStatus;
+			return this;
+		}
+
+		public Builder initialFeeStatus(SchoolStatus initialFeeStatus) {
+			this.initialFeeStatus = initialFeeStatus;
+			return this;
+		}
+
+		public Builder monthlyFeeStatus(SchoolStatus monthlyFeeStatus) {
+			this.monthlyFeeStatus = monthlyFeeStatus;
+			return this;
+		}
+
 		public School build() {
 			return new School(this);
 		}
@@ -156,6 +204,9 @@ public class School {
 		this.contactPhone = builder.contactPhone;
 		this.schoolName = builder.schoolName;
 		this.schoolAddress = builder.schoolAddress;
+		this.schoolCity = builder.schoolCity;
+		this.schoolZip = builder.schoolZip;
+		this.schoolCountry = builder.schoolCountry;
 		this.schoolMail = builder.schoolMail;
 		this.schoolPhone = builder.schoolPhone;
 		this.schoolWeb = builder.schoolWeb;
@@ -165,6 +216,9 @@ public class School {
 		this.dateCreated = builder.dateCreated;
 		this.dateValidated = builder.dateValidated;
 		this.status = builder.status;
+		this.agreementStatus = builder.agreementStatus == null ? SchoolStatus.NOT_PROVIDED : builder.agreementStatus;
+		this.initialFeeStatus = builder.initialFeeStatus == null ? SchoolStatus.NOT_PROVIDED : builder.initialFeeStatus;
+		this.monthlyFeeStatus = builder.monthlyFeeStatus == null ? SchoolStatus.NOT_PROVIDED : builder.monthlyFeeStatus;
 	}
 
 	public String getContactMail() {
@@ -293,6 +347,54 @@ public class School {
 
 	public void setStatus(SchoolStatus status) {
 		this.status = status;
+	}
+
+	public String getSchoolCity() {
+		return schoolCity;
+	}
+
+	public void setSchoolCity(String schoolCity) {
+		this.schoolCity = schoolCity;
+	}
+
+	public String getSchoolZip() {
+		return schoolZip;
+	}
+
+	public void setSchoolZip(String schoolZip) {
+		this.schoolZip = schoolZip;
+	}
+
+	public String getSchoolCountry() {
+		return schoolCountry;
+	}
+
+	public void setSchoolCountry(String schoolCountry) {
+		this.schoolCountry = schoolCountry;
+	}
+
+	public SchoolStatus getAgreementStatus() {
+		return agreementStatus;
+	}
+
+	public void setAgreementStatus(SchoolStatus agreementStatus) {
+		this.agreementStatus = agreementStatus;
+	}
+
+	public SchoolStatus getInitialFeeStatus() {
+		return initialFeeStatus;
+	}
+
+	public void setInitialFeeStatus(SchoolStatus initialFeeStatus) {
+		this.initialFeeStatus = initialFeeStatus;
+	}
+
+	public SchoolStatus getMonthlyFeeStatus() {
+		return monthlyFeeStatus;
+	}
+
+	public void setMonthlyFeeStatus(SchoolStatus monthlyFeeStatus) {
+		this.monthlyFeeStatus = monthlyFeeStatus;
 	}
 
 	public enum SchoolStatus {

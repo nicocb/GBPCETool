@@ -50,14 +50,40 @@ Copyright 2016 Google Inc.
 		      <label for="schoolAddress">School Address</label>
 		      <input type="text" name="schoolAddress" id="schoolAddress" value="${fn:escapeXml(school.schoolAddress)}" class="form-control" />
 		    </div>
- 		    <div class="form-group">
-		      <label for="schoolMail">School Mail</label>
-		      <input type="text" name="schoolMail" id="schoolMail" value="${fn:escapeXml(school.schoolMail)}" class="form-control" />
+		    <div class="row">
+		    	<div class="col-md-4">
+		 		    <div class="form-group">
+				      <label for="schoolCity">City</label>
+				      <input type="text" name="schoolCity" id="schoolCity" value="${fn:escapeXml(school.schoolCity)}" class="form-control" />
+				    </div>
+		    	</div>
+		    	<div class="col-md-4">
+		 		    <div class="form-group">
+				      <label for="schoolZip">ZipCode</label>
+				      <input type="text" name="schoolZip" id="schoolZip" value="${fn:escapeXml(school.schoolZip)}" class="form-control" />
+				    </div>
+				</div>
+				<div class="col-md-4">
+		 		    <div class="form-group">
+				      <label for="schoolCountry">Country</label>
+				      <input type="text" name="schoolCountry" id="schoolCountry" value="${fn:escapeXml(school.schoolCountry)}" class="form-control" />
+				    </div>
+				</div>
 		    </div>
- 		    <div class="form-group">
-		      <label for="schoolPhone">School Phone Number</label>
-		      <input type="text" name="schoolPhone" id="schoolPhone" value="${fn:escapeXml(school.schoolPhone)}" class="form-control" />
-		    </div>
+		    <div class="row">
+		    	<div class="col-md-6">
+		 		    <div class="form-group">
+				      <label for="schoolMail">School Mail</label>
+				      <input type="text" name="schoolMail" id="schoolMail" value="${fn:escapeXml(school.schoolMail)}" class="form-control" />
+				    </div>
+				</div>
+		 		<div class="col-md-6">
+		 		    <div class="form-group">
+				      <label for="schoolPhone">School Phone Number</label>
+				      <input type="text" name="schoolPhone" id="schoolPhone" value="${fn:escapeXml(school.schoolPhone)}" class="form-control" />
+				    </div>
+				</div>
+		    </div>		    
  		    <div class="form-group">
 		      <label for="schoolWeb">School Website</label>
 		      <input type="text" name="schoolWeb" id="schoolWeb" value="${fn:escapeXml(school.schoolWeb)}" class="form-control" />

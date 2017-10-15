@@ -11,8 +11,8 @@
   <properties>
     <google-cloud.version>0.10.0-alpha</google-cloud.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source> <!-- REQUIRED -->
-    <maven.compiler.target>1.7</maven.compiler.target> <!-- REQUIRED -->
+    <maven.compiler.source>1.8</maven.compiler.source> <!-- REQUIRED -->
+    <maven.compiler.target>1.8</maven.compiler.target> <!-- REQUIRED -->
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.failOnWarning>true</maven.compiler.failOnWarning>
@@ -91,6 +91,12 @@
       <artifactId>commons-fileupload</artifactId>
       <version>1.3.3</version>
     </dependency>
+    
+    <dependency> 
+  <groupId>com.drewnoakes</groupId> 
+  <artifactId>metadata-extractor</artifactId> 
+  <version>2.7.2</version> 
+</dependency>
 
 
     <!-- Selenium chokes without this, for some reason. -->
@@ -119,6 +125,7 @@
 					<jvmFlags>
 						<jvmFlag>-Xdebug</jvmFlag>
 						<jvmFlag>-Xrunjdwp:transport=dt_socket,address=1789,server=y,suspend=n</jvmFlag>
+						<jvmFlag>-Djava.awt.headless=true</jvmFlag>
 					</jvmFlags>
 				</configuration>
         

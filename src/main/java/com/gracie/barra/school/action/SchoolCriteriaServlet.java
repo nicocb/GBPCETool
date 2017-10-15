@@ -28,7 +28,10 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.io.IOUtils;
 
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.MetadataException;
 import com.google.api.client.util.Strings;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.users.UserService;
@@ -74,12 +77,14 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		UserService userService = UserServiceFactory.getUserService();
-
+		School school = null;
 		if (userService.isUserLoggedIn()) {
 			assert ServletFileUpload.isMultipartContent(req);
 			CloudStorageHelper storageHelper = getStorageHelper();
 			boolean hasFile = false;
 			String picture = null;
+			String extension = "jpg";
+			byte[] pic = null;
 			Map<String, String> params = new HashMap<String, String>();
 			try {
 				FileItemIterator iter = new ServletFileUpload().getItemIterator(req);
@@ -88,23 +93,29 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 					if (item.isFormField()) {
 						params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
 					} else if (!Strings.isNullOrEmpty(item.getName())) {
-						picture = storageHelper.uploadFile(item, "pce-tool");
+						extension = CloudStorageHelper.checkFileExtension(item.getName());
+						pic = IOUtils.toByteArray(item.openStream());
 						hasFile = true;
 					}
 				}
 			} catch (FileUploadException e) {
-				throw new IOException(e);
+				throw new ServletException("Couldn't read file");
 			}
 
 			String id = params.get("id");
 			String schoolId = params.get("schoolId");
 			String comment = params.get("comment");
 
+			try {
+				picture = storageHelper.uploadFile(pic, "pce-tool", schoolId + "-" + id, extension);
+			} catch (MetadataException | ImageProcessingException e1) {
+				throw new ServletException("Couldn't read image file");
+			}
+
 			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id),
 					Long.valueOf(schoolId), picture, comment, picture != null ? SchoolCertificationCriterionStatus.PENDING
 							: SchoolCertificationCriterionStatus.NOT_PROVIDED);
 
-			School school;
 			try {
 				school = getSchoolDao().getSchool(Long.valueOf(schoolId));
 				SchoolEvent se = new SchoolEvent.Builder()
@@ -120,6 +131,7 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 		} else {
 			throw new ServletException("Should be logged to save school");
 		}
+		injectSchoolStatus(req, school);
 		resp.sendRedirect("/schoolCriteria");
 	}
 }

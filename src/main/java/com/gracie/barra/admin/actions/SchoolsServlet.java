@@ -57,11 +57,32 @@ public class SchoolsServlet extends AbstractGBServlet {
 
 		if (userService.isUserLoggedIn()) {
 			String id = req.getParameter("id");
+			String status;
 			switch (req.getParameter("action")) {
 			case "PUT":
-				String status = req.getParameter("pending");
+				status = req.getParameter("pending");
 				try {
 					getSchoolDao().updateSchoolStatus(Long.valueOf(id),
+							Boolean.valueOf(status) ? SchoolStatus.PENDING : SchoolStatus.VALIDATED);
+				} catch (Exception e) {
+					throw new ServletException("Error updating school ", e);
+				}
+
+				break;
+			case "init":
+				status = req.getParameter("validated");
+				try {
+					getSchoolDao().updateSchoolInitialFeeStatus(Long.valueOf(id),
+							Boolean.valueOf(status) ? SchoolStatus.PENDING : SchoolStatus.VALIDATED);
+				} catch (Exception e) {
+					throw new ServletException("Error updating school ", e);
+				}
+
+				break;
+			case "monthly":
+				status = req.getParameter("validated");
+				try {
+					getSchoolDao().updateSchoolMonthlyFeeStatus(Long.valueOf(id),
 							Boolean.valueOf(status) ? SchoolStatus.PENDING : SchoolStatus.VALIDATED);
 				} catch (Exception e) {
 					throw new ServletException("Error updating school ", e);

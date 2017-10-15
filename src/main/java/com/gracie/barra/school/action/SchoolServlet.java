@@ -31,7 +31,6 @@ import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.objects.School;
 import com.gracie.barra.school.objects.School.Belt;
-import com.gracie.barra.school.objects.School.SchoolStatus;
 
 @SuppressWarnings("serial")
 public class SchoolServlet extends AbstractGBServlet {
@@ -39,26 +38,22 @@ public class SchoolServlet extends AbstractGBServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		UserService userService = UserServiceFactory.getUserService();
+		School school = null;
 		if (userService.isUserLoggedIn()) {
-			School school = getSchoolDao().getSchoolByUser(userService.getCurrentUser().getUserId());
+			school = getSchoolDao().getSchoolByUser(userService.getCurrentUser().getUserId());
 			if (school == null) {
 				req.setAttribute("action", "Create");
 				req.setAttribute("destination", "school");
-				req.setAttribute("schoolStatus", "Not provided");
 			} else {
 				req.setAttribute("action", "Update");
 				req.setAttribute("destination", "school");
-				req.setAttribute("schoolStatus",
-						school.getStatus() == null ? "Not provided" : school.getStatus().getDescription());
-				if (school.getStatus() == SchoolStatus.VALIDATED) {
-					req.setAttribute("schoolValidated", "true");
-				}
 			}
 			req.getSession().getServletContext().setAttribute("school", school);
 			req.setAttribute("page", "school");
 		} else {
 			req.setAttribute("page", "pleaselogin");
 		}
+		injectSchoolStatus(req, school);
 		req.setAttribute("beltList", Belt.values());
 		req.getRequestDispatcher("/base.jsp").forward(req, resp);
 	}
@@ -79,7 +74,8 @@ public class SchoolServlet extends AbstractGBServlet {
 					.instructorProfessor(req.getParameter(School.INSTRUCTOR_PROFESSOR))
 					.schoolAddress(req.getParameter(School.SCHOOL_ADDRESS)).schoolMail(req.getParameter(School.SCHOOL_MAIL))
 					.schoolName(req.getParameter(School.SCHOOL_NAME)).schoolPhone(req.getParameter(School.SCHOOL_PHONE))
-					.schoolWeb(req.getParameter(School.SCHOOL_WEB))
+					.schoolWeb(req.getParameter(School.SCHOOL_WEB)).schoolCity(req.getParameter(School.SCHOOL_CITY))
+					.schoolZip(req.getParameter(School.SCHOOL_ZIP)).schoolCountry(req.getParameter(School.SCHOOL_COUNTRY))
 
 					.build();
 

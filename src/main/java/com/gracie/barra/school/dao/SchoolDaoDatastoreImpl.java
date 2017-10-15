@@ -46,6 +46,9 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 	private School entityToSchool(Entity entity) {
 		Long belt = (Long) entity.getProperty(School.INSTRUCTOR_BELT);
 		Long status = (Long) entity.getProperty(School.STATUS);
+		Long agreementStatus = (Long) entity.getProperty(School.AGREEMENT_STATUS);
+		Long initialFeeStatus = (Long) entity.getProperty(School.INITIAL_FEE_STATUS);
+		Long monthlyFeeStatus = (Long) entity.getProperty(School.MONTHLY_FEE_STATUS);
 
 		return new School.Builder() // Convert to CertificationCriterion form
 				.id(entity.getKey().getId()).userId((String) entity.getProperty(School.USERID))
@@ -56,11 +59,17 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 				.instructorName((String) entity.getProperty(School.INSTRUCTOR_NAME))
 				.instructorProfessor((String) entity.getProperty(School.INSTRUCTOR_PROFESSOR))
 				.schoolAddress((String) entity.getProperty(School.SCHOOL_ADDRESS))
+				.schoolCountry((String) entity.getProperty(School.SCHOOL_COUNTRY))
+				.schoolZip((String) entity.getProperty(School.SCHOOL_ZIP))
+				.schoolCity((String) entity.getProperty(School.SCHOOL_CITY))
 				.schoolMail((String) entity.getProperty(School.SCHOOL_MAIL))
 				.schoolName((String) entity.getProperty(School.SCHOOL_NAME))
 				.schoolPhone((String) entity.getProperty(School.SCHOOL_PHONE))
 				.schoolWeb((String) entity.getProperty(School.SCHOOL_WEB))
 				.status(status == null ? null : SchoolStatus.values()[status.intValue()])
+				.agreementStatus(agreementStatus == null ? null : SchoolStatus.values()[agreementStatus.intValue()])
+				.initialFeeStatus(initialFeeStatus == null ? null : SchoolStatus.values()[initialFeeStatus.intValue()])
+				.monthlyFeeStatus(monthlyFeeStatus == null ? null : SchoolStatus.values()[monthlyFeeStatus.intValue()])
 				.dateCreated((Date) entity.getProperty(School.DATE_CREATED))
 				.dateValidated((Date) entity.getProperty(School.DATE_VALIDATED)).build();
 	}
@@ -75,9 +84,15 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		entity.setProperty(School.INSTRUCTOR_PROFESSOR, school.getInstructorProfessor());
 		entity.setProperty(School.SCHOOL_NAME, school.getSchoolName());
 		entity.setProperty(School.SCHOOL_ADDRESS, school.getSchoolAddress());
+		entity.setProperty(School.SCHOOL_COUNTRY, school.getSchoolCountry());
+		entity.setProperty(School.SCHOOL_CITY, school.getSchoolCity());
+		entity.setProperty(School.SCHOOL_ZIP, school.getSchoolZip());
 		entity.setProperty(School.SCHOOL_MAIL, school.getSchoolMail());
 		entity.setProperty(School.SCHOOL_PHONE, school.getSchoolPhone());
 		entity.setProperty(School.SCHOOL_WEB, school.getSchoolWeb());
+		entity.setProperty(School.AGREEMENT_STATUS, school.getAgreementStatus().ordinal());
+		entity.setProperty(School.INITIAL_FEE_STATUS, school.getInitialFeeStatus().ordinal());
+		entity.setProperty(School.MONTHLY_FEE_STATUS, school.getMonthlyFeeStatus().ordinal());
 
 	}
 
@@ -138,7 +153,33 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		entity.setProperty(School.DATE_VALIDATED, new Date());
 
 		datastore.put(entity); // Update the Entity
-		log.info("Updated entity " + entity);
+	}
+
+	@Override
+	public void updateSchoolInitialFeeStatus(Long id, SchoolStatus pending) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
+		Entity entity = datastore.get(key);
+		entity.setProperty(School.INITIAL_FEE_STATUS, pending.ordinal());
+
+		datastore.put(entity); // Update the Entity
+	}
+
+	@Override
+	public void updateSchoolMonthlyFeeStatus(Long id, SchoolStatus pending) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
+		Entity entity = datastore.get(key);
+		entity.setProperty(School.MONTHLY_FEE_STATUS, pending.ordinal());
+
+		datastore.put(entity); // Update the Entity
+	}
+
+	@Override
+	public void updateSchoolAgreementStatus(Long id, SchoolStatus validated) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
+		Entity entity = datastore.get(key);
+		entity.setProperty(School.AGREEMENT_STATUS, validated.ordinal());
+
+		datastore.put(entity); // Update the Entity
 
 	}
 

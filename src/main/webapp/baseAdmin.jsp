@@ -63,7 +63,7 @@ Copyright 2016 Google Inc.
 							<a href="/logout"> <c:if test="${not empty userImageUrl}">
 									<img class="img-circle" src="${fn:escapeXml(userImageUrl)}"
 										width="24">
-								</c:if> ${fn:escapeXml(userEmail)}
+								</c:if> ${fn:escapeXml(userEmail)} <span style="font-size:1.2em;" class="glyphicon glyphicon-log-out"></span>
 							</a>
 						</c:when>
 						<c:otherwise>
