@@ -23,6 +23,8 @@ public class School {
 	private Belt instructorBelt;
 	private String instructorProfessor;
 
+	private String certificateURL;
+
 	private Date dateCreated;
 	private Date dateValidated;
 
@@ -50,6 +52,8 @@ public class School {
 	public static final String INSTRUCTOR_BELT = "instructorBelt";
 	public static final String INSTRUCTOR_PROFESSOR = "instructorProfessor";
 
+	public static final String CERTIFICATE_URL = "certificateURL";
+
 	public static final String STATUS = "status";
 	public static final String AGREEMENT_STATUS = "agreementStatus";
 	public static final String INITIAL_FEE_STATUS = "initialFeeStatus";
@@ -74,6 +78,7 @@ public class School {
 		private String instructorName;
 		private Belt instructorBelt;
 		private String instructorProfessor;
+		private String certificateURL;
 		private Date dateCreated;
 		private Date dateValidated;
 		private SchoolStatus status;
@@ -161,6 +166,11 @@ public class School {
 			return this;
 		}
 
+		public Builder certificateURL(String certificateURL) {
+			this.certificateURL = certificateURL;
+			return this;
+		}
+
 		public Builder dateCreated(Date dateCreated) {
 			this.dateCreated = dateCreated;
 			return this;
@@ -213,6 +223,7 @@ public class School {
 		this.instructorName = builder.instructorName;
 		this.instructorBelt = builder.instructorBelt;
 		this.instructorProfessor = builder.instructorProfessor;
+		this.certificateURL = builder.certificateURL;
 		this.dateCreated = builder.dateCreated;
 		this.dateValidated = builder.dateValidated;
 		this.status = builder.status;
@@ -323,6 +334,14 @@ public class School {
 
 	public void setInstructorProfessor(String instructorProfessor) {
 		this.instructorProfessor = instructorProfessor;
+	}
+
+	public String getCertificateURL() {
+		return certificateURL;
+	}
+
+	public void setCertificateURL(String certificateURL) {
+		this.certificateURL = certificateURL;
 	}
 
 	public Date getDateCreated() {

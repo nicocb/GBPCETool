@@ -64,10 +64,11 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}
+			injectSchoolStatus(req, school);
 			req.getSession().getServletContext().setAttribute("highlight", null);
 			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
-			req.setAttribute("schoolStatus", school.getStatus().getDescription());
 			req.setAttribute("schoolId", school.getId());
+			req.setAttribute("school", school);
 			req.setAttribute("page", "schoolCriteria");
 			req.getRequestDispatcher("/base.jsp").forward(req, resp);
 		}

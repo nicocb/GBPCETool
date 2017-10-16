@@ -58,6 +58,7 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 				.instructorBelt(belt == null ? null : Belt.values()[belt.intValue()])
 				.instructorName((String) entity.getProperty(School.INSTRUCTOR_NAME))
 				.instructorProfessor((String) entity.getProperty(School.INSTRUCTOR_PROFESSOR))
+				.certificateURL((String) entity.getProperty(School.CERTIFICATE_URL))
 				.schoolAddress((String) entity.getProperty(School.SCHOOL_ADDRESS))
 				.schoolCountry((String) entity.getProperty(School.SCHOOL_COUNTRY))
 				.schoolZip((String) entity.getProperty(School.SCHOOL_ZIP))
@@ -82,6 +83,7 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		entity.setProperty(School.INSTRUCTOR_BELT, school.getInstructorBelt().ordinal());
 		entity.setProperty(School.INSTRUCTOR_NAME, school.getInstructorName());
 		entity.setProperty(School.INSTRUCTOR_PROFESSOR, school.getInstructorProfessor());
+		entity.setProperty(School.CERTIFICATE_URL, school.getCertificateURL());
 		entity.setProperty(School.SCHOOL_NAME, school.getSchoolName());
 		entity.setProperty(School.SCHOOL_ADDRESS, school.getSchoolAddress());
 		entity.setProperty(School.SCHOOL_COUNTRY, school.getSchoolCountry());
@@ -178,6 +180,16 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
 		Entity entity = datastore.get(key);
 		entity.setProperty(School.AGREEMENT_STATUS, validated.ordinal());
+
+		datastore.put(entity); // Update the Entity
+
+	}
+
+	@Override
+	public void updateSchoolCertificateURL(Long id, String url) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
+		Entity entity = datastore.get(key);
+		entity.setProperty(School.CERTIFICATE_URL, url);
 
 		datastore.put(entity); // Update the Entity
 

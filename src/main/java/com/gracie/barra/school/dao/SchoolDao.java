@@ -29,4 +29,6 @@ public interface SchoolDao {
 	void updateSchoolMonthlyFeeStatus(Long id, SchoolStatus pending) throws EntityNotFoundException;
 
 	public void updateSchoolAgreementStatus(Long id, SchoolStatus validated) throws EntityNotFoundException;
+
+	public void updateSchoolCertificateURL(Long id, String url) throws EntityNotFoundException;
 }

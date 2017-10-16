@@ -129,6 +129,25 @@ Copyright 2016 Google Inc.
 													<button type="submit" class="btn btn-danger">Delete</button>
 												</form>
 									</div>
+									
+									<div class="form-group">
+										<form method="POST" action="/admin/schools" enctype="multipart/form-data">
+											<label for="certificate">Certificate : </label>
+											<div class="input-group">
+												<label class="input-group-btn"> 
+													<span class="btn btn-primary">Browse...<input type="file" name="certificate" style="display: none;"/>
+													</span>
+												</label> 
+												<input type="text" class="form-control">
+												<input
+															type="hidden" name="schoolId" value="${sschool.school.id}" />
+												<label class="input-group-btn"> 
+													<span class="btn btn-danger"> Send<button type="submit" style="display: none;"></button>
+													</span>
+												</label> 
+											</div>
+										</form>
+									</div>
 								</div>
 							</div>
 							

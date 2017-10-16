@@ -45,6 +45,7 @@ import com.drew.metadata.png.PngDirectory;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -60,16 +61,6 @@ public class CloudStorageHelper {
 		storage = StorageOptions.getDefaultInstance().getService();
 	}
 
-	/**
-	 * Uploads a file to Google Cloud Storage to the bucket specified in the
-	 * BUCKET_NAME environment variable, appending a timestamp to end of the
-	 * uploaded filename.
-	 * 
-	 * @param extension
-	 * 
-	 * @throws ImageProcessingException
-	 * @throws MetadataException
-	 */
 	public String uploadFile(byte[] bytes, final String bucketName, String id, String extension)
 			throws IOException, ServletException, MetadataException, ImageProcessingException {
 
@@ -93,6 +84,20 @@ public class CloudStorageHelper {
 						.setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER)))).build(),
 				new ByteArrayInputStream(imageIOResized(bytes, extension)));
 		log.info("Stored " + fileName);
+		return blobInfo.getMediaLink();
+	}
+
+	public String uploadPdf(byte[] bytes, final String bucketName, String id, String extension)
+			throws IOException, ServletException, MetadataException, ImageProcessingException {
+		final String fileName = "Certificate" + id + "." + extension;
+
+		Blob blobInfo = storage.create(
+				BlobInfo.newBuilder(bucketName, fileName)
+						// Modify access list to allow all users with link
+						// to
+						// read file
+						.setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER)))).build(),
+				new ByteArrayInputStream(bytes));
 		return blobInfo.getMediaLink();
 	}
 
