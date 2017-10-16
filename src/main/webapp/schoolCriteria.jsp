@@ -40,7 +40,7 @@ Copyright 2016 Google Inc.
 						</div>
 					</c:when>
 					<c:otherwise>
-						<h4>In Progress</h4> 
+						<h4>In Progress. Actual score : ${schoolCertificationDashboard.score}%</h4> 
 					</c:otherwise>
 				</c:choose>
 			</div>

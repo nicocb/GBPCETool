@@ -79,11 +79,11 @@ public class CloudStorageHelper {
 		// here
 		BlobInfo blobInfo;
 		BlobId bid = BlobId.of(bucketName, fileName);
-		log.info("Checking existence of " + fileName);
-		if (storage.get(bid) != null) {
-			log.info("Deleting " + fileName);
-			storage.delete(BlobId.of(bucketName, fileName));
-		}
+		// log.info("Checking existence of " + fileName);
+		// if (storage.get(bid) != null) {
+		// log.info("Deleting " + fileName);
+		// storage.delete(BlobId.of(bucketName, fileName));
+		// }
 		log.info("Storing " + fileName);
 		blobInfo = storage.create(
 				BlobInfo.newBuilder(bucketName, fileName)
@@ -91,7 +91,7 @@ public class CloudStorageHelper {
 						// to
 						// read file
 						.setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER)))).build(),
-				imageIOResized(bytes, extension));
+				new ByteArrayInputStream(imageIOResized(bytes, extension)));
 		log.info("Stored " + fileName);
 		return blobInfo.getMediaLink();
 	}
