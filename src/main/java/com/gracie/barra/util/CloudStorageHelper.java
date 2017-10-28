@@ -87,9 +87,7 @@ public class CloudStorageHelper {
 		return blobInfo.getMediaLink();
 	}
 
-	public String uploadPdf(byte[] bytes, final String bucketName, String id, String extension)
-			throws IOException, ServletException, MetadataException, ImageProcessingException {
-		final String fileName = "Certificate" + id + "." + extension;
+	public String uploadPdf(byte[] bytes, final String bucketName, String fileName) {
 
 		Blob blobInfo = storage.create(
 				BlobInfo.newBuilder(bucketName, fileName)
@@ -99,6 +97,11 @@ public class CloudStorageHelper {
 						.setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER)))).build(),
 				new ByteArrayInputStream(bytes));
 		return blobInfo.getMediaLink();
+	}
+
+	public void deletePdf(final String bucketName, String fileName) {
+
+		storage.delete(BlobId.of(bucketName, fileName));
 	}
 
 	/**

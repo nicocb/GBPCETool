@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.json.JSONObject;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -49,6 +52,12 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		Long agreementStatus = (Long) entity.getProperty(School.AGREEMENT_STATUS);
 		Long initialFeeStatus = (Long) entity.getProperty(School.INITIAL_FEE_STATUS);
 		Long monthlyFeeStatus = (Long) entity.getProperty(School.MONTHLY_FEE_STATUS);
+		Map<String, Map<String, String>> urls = null;
+		String json = (String) entity.getProperty(School.DOCUMENTS);
+		if (json != null) {
+			urls = new JSONObject(json).toMap().entrySet().stream()
+					.collect(Collectors.toMap(Map.Entry::getKey, e -> (Map<String, String>) e.getValue()));
+		}
 
 		return new School.Builder() // Convert to CertificationCriterion form
 				.id(entity.getKey().getId()).userId((String) entity.getProperty(School.USERID))
@@ -57,8 +66,7 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 				.contactPhone((String) entity.getProperty(School.CONTACT_PHONE))
 				.instructorBelt(belt == null ? null : Belt.values()[belt.intValue()])
 				.instructorName((String) entity.getProperty(School.INSTRUCTOR_NAME))
-				.instructorProfessor((String) entity.getProperty(School.INSTRUCTOR_PROFESSOR))
-				.certificateURL((String) entity.getProperty(School.CERTIFICATE_URL))
+				.instructorProfessor((String) entity.getProperty(School.INSTRUCTOR_PROFESSOR)).documents(urls)
 				.schoolAddress((String) entity.getProperty(School.SCHOOL_ADDRESS))
 				.schoolCountry((String) entity.getProperty(School.SCHOOL_COUNTRY))
 				.schoolZip((String) entity.getProperty(School.SCHOOL_ZIP))
@@ -83,7 +91,7 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		entity.setProperty(School.INSTRUCTOR_BELT, school.getInstructorBelt().ordinal());
 		entity.setProperty(School.INSTRUCTOR_NAME, school.getInstructorName());
 		entity.setProperty(School.INSTRUCTOR_PROFESSOR, school.getInstructorProfessor());
-		entity.setProperty(School.CERTIFICATE_URL, school.getCertificateURL());
+		entity.setProperty(School.DOCUMENTS, school.getDocuments().toString());
 		entity.setProperty(School.SCHOOL_NAME, school.getSchoolName());
 		entity.setProperty(School.SCHOOL_ADDRESS, school.getSchoolAddress());
 		entity.setProperty(School.SCHOOL_COUNTRY, school.getSchoolCountry());
@@ -186,10 +194,39 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 	}
 
 	@Override
-	public void updateSchoolCertificateURL(Long id, String url) throws EntityNotFoundException {
+	public void addDocumentUrl(Long id, String documentName, String fileName, String url) throws EntityNotFoundException {
 		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
 		Entity entity = datastore.get(key);
-		entity.setProperty(School.CERTIFICATE_URL, url);
+		String json = (String) entity.getProperty(School.DOCUMENTS);
+		JSONObject urlz = null;
+		if (json == null) {
+			urlz = new JSONObject();
+		} else {
+			urlz = new JSONObject(json);
+		}
+		Map<String, String> props = new HashMap<>();
+		props.put("fileName", fileName);
+		props.put("URL", url);
+		urlz.put(documentName, props);
+		entity.setProperty(School.DOCUMENTS, urlz.toString());
+
+		datastore.put(entity); // Update the Entity
+
+	}
+
+	@Override
+	public void removeDocument(Long id, String documentName) throws EntityNotFoundException {
+		Key key = KeyFactory.createKey(SCHOOL_KIND, id);
+		Entity entity = datastore.get(key);
+		String json = (String) entity.getProperty(School.DOCUMENTS);
+		JSONObject urlz = null;
+		if (json == null) {
+			urlz = new JSONObject();
+		} else {
+			urlz = new JSONObject(json);
+		}
+		urlz.remove(documentName);
+		entity.setProperty(School.DOCUMENTS, urlz.toString());
 
 		datastore.put(entity); // Update the Entity
 

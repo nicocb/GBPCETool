@@ -38,9 +38,6 @@ Copyright 2016 Google Inc.
 						<div class="container-fluid centerstars">
 							<img class="center-block" alt="${schoolCertificationDashboard.rank.description}" height="50" src="/pics/stage${schoolCertificationDashboard.rank.id}.png"/>
 						</div>
-						<div class="container-fluid centerstars">
-							<c:if test="${not empty school.certificateURL}"><a href='${school.certificateURL}'>Download</a></c:if>
-						</div>
 					</c:when>
 					<c:otherwise>
 						<h4>In Progress. Actual score : ${schoolCertificationDashboard.score}%</h4> 

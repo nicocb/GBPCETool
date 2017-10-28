@@ -42,7 +42,6 @@ public class LogoutFilter implements Filter {
 	public void doFilter(ServletRequest servletReq, ServletResponse servletResp, FilterChain chain)
 			throws IOException, ServletException {
 
-		log.info("logging out filter");
 		HttpServletRequest req = (HttpServletRequest) servletReq;
 		HttpServletResponse resp = (HttpServletResponse) servletResp;
 		String path = req.getRequestURI();
@@ -53,9 +52,8 @@ public class LogoutFilter implements Filter {
 		if (userService.isUserLoggedIn()) {
 			resp.sendRedirect(userService.createLogoutURL("/logout"));
 		} else if (path.startsWith("/logout")) {
-			resp.sendRedirect("/school");
+			resp.sendRedirect("/");
 		}
-		log.info("finished out filter");
 	}
 
 	@Override

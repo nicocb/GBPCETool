@@ -39,14 +39,19 @@ public class LoginServlet extends HttpServlet {
 			req.getSession().setAttribute("userEmail", user.getEmail());
 			req.getSession().setAttribute("userId", user.getUserId());
 
-			String destination = (String) req.getSession().getAttribute("loginDestination");
+			String destination = req.getParameter("loginDestination");
 			if (destination == null) {
-				destination = "/school";
+				destination = "school";
 			}
 
-			resp.sendRedirect(destination);
+			resp.sendRedirect("/" + destination);
 		} else {
-			resp.sendRedirect(userService.createLoginURL("/login"));
+			String destination = req.getParameter("loginDestination");
+			String dest = "/login";
+			if (destination != null) {
+				dest += "?loginDestination=" + destination;
+			}
+			resp.sendRedirect(userService.createLoginURL(dest));
 		}
 	}
 }

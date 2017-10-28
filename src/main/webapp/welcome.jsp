@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-<title>PCE - DASHBOARD</title>
+<title>SCP - DASHBOARD</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
@@ -8,10 +8,10 @@
 </head>
 <body>
 	<div class="container">
-		<h3 align="center">GB PCE Tool</h3>
+		<h3 align="center">GB SCP Tool</h3>
 
 
-		<img alt="Gracie Barra Certification Program" src="/pics/pce.png" class="img-responsive center-block"/>
+		<img alt="Gracie Barra Certification Program" src="/pics/scp.png" class="img-responsive center-block"/>
 
 		<div class="text-center">
 			<div class="btn-group" role="group" aria-label="..." align="center">

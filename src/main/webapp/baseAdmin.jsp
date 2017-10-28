@@ -18,7 +18,7 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html lang="en">
 <head>
-<title>PCE - DASHBOARD</title>
+<title>SCP - ADMIN DASHBOARD</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Latest compiled and minified CSS -->
@@ -67,7 +67,7 @@ Copyright 2016 Google Inc.
 							</a>
 						</c:when>
 						<c:otherwise>
-							<a href="/login">Login</a>
+							<a href="/login?loginDestination=admin">Login</a>
 						</c:otherwise>
 					</c:choose>
 				</div>

@@ -50,6 +50,14 @@
       <url-pattern>/school</url-pattern>
     </servlet-mapping>
     <servlet>
+      <servlet-name>documents</servlet-name>
+      <servlet-class>com.gracie.barra.school.action.DocumentsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>documents</servlet-name>
+      <url-pattern>/documents</url-pattern>
+    </servlet-mapping>
+    <servlet>
       <servlet-name>admission</servlet-name>
       <servlet-class>com.gracie.barra.school.action.AdmissionServlet</servlet-class>
     </servlet>

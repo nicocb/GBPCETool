@@ -1,19 +1,4 @@
-<!--
-Copyright 2016 Google Inc.
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-<!-- [START list] -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <div class="container">
@@ -129,24 +114,67 @@ Copyright 2016 Google Inc.
 													<button type="submit" class="btn btn-danger">Delete</button>
 												</form>
 									</div>
-									
-									<div class="form-group">
-										<form method="POST" action="/admin/schools" enctype="multipart/form-data">
-											<label for="certificate">Certificate : </label>
-											<div class="input-group">
-												<label class="input-group-btn"> 
-													<span class="btn btn-primary">Browse...<input type="file" name="certificate" style="display: none;"/>
-													</span>
-												</label> 
-												<input type="text" class="form-control">
-												<input
-															type="hidden" name="schoolId" value="${sschool.school.id}" />
-												<label class="input-group-btn"> 
-													<span class="btn btn-danger"> Send<button type="submit" style="display: none;"></button>
-													</span>
-												</label> 
+									<div class="panel panel-default">
+										<div class="panel-heading">
+											<strong>Existing documents :</strong>  
+										</div>
+										<div class="panel-body">
+											<c:forEach items="${sschool.school.documents}" var="doc">
+												<div class="container-fluid bgcolored">
+													<div class="row vertical-align">
+														<div class="col-md-11 col-xs-6">
+															<h5>
+																${fn:escapeXml(doc.key)}
+															</h5>
+														</div>
+														<div class="col-md-1 col-xs-1">
+															<a href="${fn:escapeXml(doc.value.URL)}">  <span style="font-size:1.2em;" class="glyphicon glyphicon-download"></span>
+															</a>
+														</div>														
+														<div class="col-md-1 col-xs-1">
+
+															<a  onclick="document.getElementById('${sschool.school.id}${fn:escapeXml(doc.key)}').submit();">  <span style="font-size:1.2em;" class="glyphicon glyphicon-remove"></span>
+															</a>
+														</div>
+													</div>
+												</div>
+												<form method="POST" action="/documents" id="${sschool.school.id}${fn:escapeXml(doc.key)}">
+													<input type="hidden" name="action" value="DELETE" />
+													<input type="hidden" name="schoolId" value="${sschool.school.id}" />
+													<input type="hidden" name="documentName" value="${fn:escapeXml(doc.key)}" />
+													<input type="hidden" name="documentFileName" value="${fn:escapeXml(doc.value.fileName)}" />
+												</form>
+											</c:forEach>
+										</div>
+									</div>
+									<div class="panel panel-default">
+										<div class="panel-heading">
+											<strong>Add a document :</strong>  
+										</div>
+										<div class="panel-body">
+											<div class="form-group">
+												<form method="POST" action="/documents" enctype="multipart/form-data">
+													<label for="certificate">File display name : </label>
+													<div class="input-group">
+														<input type="text" name="documentName" class="form-control">
+													</div>
+													<label for="certificate">File upload : </label>
+													<div class="input-group">
+														<label class="input-group-btn"> 
+															<span class="btn btn-primary">Browse...<input type="file" name="certificate" style="display: none;"/>
+															</span>
+														</label> 
+														<input type="text" class="form-control">
+														<input
+																	type="hidden" name="schoolId" value="${sschool.school.id}" />
+														<label class="input-group-btn"> 
+															<span class="btn btn-danger"> Send<button type="submit" style="display: none;"></button>
+															</span>
+														</label> 
+													</div>
+												</form>
 											</div>
-										</form>
+										</div>
 									</div>
 								</div>
 							</div>

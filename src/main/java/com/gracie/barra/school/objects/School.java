@@ -1,6 +1,7 @@
 package com.gracie.barra.school.objects;
 
 import java.util.Date;
+import java.util.Map;
 
 public class School {
 	private Long id;
@@ -23,7 +24,7 @@ public class School {
 	private Belt instructorBelt;
 	private String instructorProfessor;
 
-	private String certificateURL;
+	private Map<String, Map<String, String>> documents;
 
 	private Date dateCreated;
 	private Date dateValidated;
@@ -52,7 +53,7 @@ public class School {
 	public static final String INSTRUCTOR_BELT = "instructorBelt";
 	public static final String INSTRUCTOR_PROFESSOR = "instructorProfessor";
 
-	public static final String CERTIFICATE_URL = "certificateURL";
+	public static final String DOCUMENTS = "documents";
 
 	public static final String STATUS = "status";
 	public static final String AGREEMENT_STATUS = "agreementStatus";
@@ -78,7 +79,7 @@ public class School {
 		private String instructorName;
 		private Belt instructorBelt;
 		private String instructorProfessor;
-		private String certificateURL;
+		private Map<String, Map<String, String>> documents;
 		private Date dateCreated;
 		private Date dateValidated;
 		private SchoolStatus status;
@@ -166,8 +167,8 @@ public class School {
 			return this;
 		}
 
-		public Builder certificateURL(String certificateURL) {
-			this.certificateURL = certificateURL;
+		public Builder documents(Map<String, Map<String, String>> documents) {
+			this.documents = documents;
 			return this;
 		}
 
@@ -223,7 +224,7 @@ public class School {
 		this.instructorName = builder.instructorName;
 		this.instructorBelt = builder.instructorBelt;
 		this.instructorProfessor = builder.instructorProfessor;
-		this.certificateURL = builder.certificateURL;
+		this.documents = builder.documents;
 		this.dateCreated = builder.dateCreated;
 		this.dateValidated = builder.dateValidated;
 		this.status = builder.status;
@@ -336,12 +337,12 @@ public class School {
 		this.instructorProfessor = instructorProfessor;
 	}
 
-	public String getCertificateURL() {
-		return certificateURL;
+	public Map<String, Map<String, String>> getDocuments() {
+		return documents;
 	}
 
-	public void setCertificateURL(String certificateURL) {
-		this.certificateURL = certificateURL;
+	public void setDocuments(Map<String, Map<String, String>> documents) {
+		this.documents = documents;
 	}
 
 	public Date getDateCreated() {

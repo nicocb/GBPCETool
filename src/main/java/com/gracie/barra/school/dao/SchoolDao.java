@@ -30,5 +30,7 @@ public interface SchoolDao {
 
 	public void updateSchoolAgreementStatus(Long id, SchoolStatus validated) throws EntityNotFoundException;
 
-	public void updateSchoolCertificateURL(Long id, String url) throws EntityNotFoundException;
+	void addDocumentUrl(Long id, String documentName, String fileName, String url) throws EntityNotFoundException;
+
+	public void removeDocument(Long id, String documentName) throws EntityNotFoundException;
 }

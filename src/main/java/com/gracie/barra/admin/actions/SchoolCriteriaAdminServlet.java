@@ -26,6 +26,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
+import com.gracie.barra.school.objects.School;
 
 @SuppressWarnings("serial")
 public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
@@ -37,9 +38,11 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			String[] tokens = req.getPathInfo().split("/");
 			Long schoolId = Long.valueOf(tokens[tokens.length - 1]);
 			SchoolCertificationDashboard schoolCertificationDashboard = null;
+			School school = null;
 			try {
 
 				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(schoolId);
+				school = getSchoolDao().getSchool(schoolId);
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}
@@ -49,6 +52,7 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
 			req.setAttribute("page", "schoolCriteria");
 			req.setAttribute("schoolId", schoolId);
+			req.setAttribute("school", school);
 			req.setAttribute("mode", "admin");
 			req.getRequestDispatcher("/baseAdmin.jsp").forward(req, resp);
 		}

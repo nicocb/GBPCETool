@@ -18,7 +18,7 @@ Copyright 2016 Google Inc.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html lang="en">
 <head>
-<title>PCE - DASHBOARD</title>
+<title>SCP - DASHBOARD</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Latest compiled and minified CSS -->
@@ -52,6 +52,7 @@ Copyright 2016 Google Inc.
 					<li><a href="/school">School</a></li>
 					<li ${schoolStatus == 'Validated'?'':'class="disabled"'}><a ${schoolStatus == 'Validated'?'href="/admission"':''}>Admission</a></li>
 					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li>
+					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/documents"':''}>My downloads</a></li>
 
 				</ul>
 				<p class="navbar-text navbar-right">
