@@ -127,7 +127,12 @@
     </filter>
     <filter-mapping>
       <filter-name>AuthEnrichFilter</filter-name>
-      <url-pattern>/*</url-pattern>
+      <url-pattern>/welcome</url-pattern>
+      <url-pattern>/schoolCriteria</url-pattern>
+      <url-pattern>/school</url-pattern>
+      <url-pattern>/documents</url-pattern>
+      <url-pattern>/admission</url-pattern>
+
     </filter-mapping>
 
 	<filter>

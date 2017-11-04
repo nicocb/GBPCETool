@@ -91,7 +91,9 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		entity.setProperty(School.INSTRUCTOR_BELT, school.getInstructorBelt().ordinal());
 		entity.setProperty(School.INSTRUCTOR_NAME, school.getInstructorName());
 		entity.setProperty(School.INSTRUCTOR_PROFESSOR, school.getInstructorProfessor());
-		entity.setProperty(School.DOCUMENTS, school.getDocuments().toString());
+		if (school.getDocuments() != null) {
+			entity.setProperty(School.DOCUMENTS, school.getDocuments().toString());
+		}
 		entity.setProperty(School.SCHOOL_NAME, school.getSchoolName());
 		entity.setProperty(School.SCHOOL_ADDRESS, school.getSchoolAddress());
 		entity.setProperty(School.SCHOOL_COUNTRY, school.getSchoolCountry());

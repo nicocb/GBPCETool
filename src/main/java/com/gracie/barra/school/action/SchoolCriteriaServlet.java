@@ -34,8 +34,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.MetadataException;
 import com.google.api.client.util.Strings;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
@@ -51,9 +49,8 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		UserService userService = UserServiceFactory.getUserService();
-		if (userService.isUserLoggedIn()) {
-			School school = getSchoolDao().getSchoolByUser(userService.getCurrentUser().getUserId());
+		if (isUserLoggedIn(req)) {
+			School school = getSchoolDao().getSchoolByUser(getCurrentUserId(req));
 			if (school == null) {
 				throw new ServletException("Session probably expired");
 			}
@@ -77,9 +74,8 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		UserService userService = UserServiceFactory.getUserService();
 		School school = null;
-		if (userService.isUserLoggedIn()) {
+		if (isUserLoggedIn(req)) {
 			assert ServletFileUpload.isMultipartContent(req);
 			CloudStorageHelper storageHelper = getStorageHelper();
 			boolean hasFile = false;

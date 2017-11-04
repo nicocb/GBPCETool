@@ -19,6 +19,18 @@ function validateEmail(id)
 	  }
 }
 
+function connectedToFB(response)
+{
+	alert(JSON.stringify(response))
+}
+
+function fbConnect()
+{
+	FB.login(function(response) {
+		window.location.reload(false);
+	}, {scope: 'public_profile,email'});
+
+}
 
 function resizeImg (img)
 {

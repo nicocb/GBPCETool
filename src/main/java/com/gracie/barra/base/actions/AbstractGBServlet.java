@@ -25,6 +25,8 @@ import com.gracie.barra.admin.dao.CertificationDao;
 import com.gracie.barra.admin.dao.CertificationDaoDatastoreImpl;
 import com.gracie.barra.admin.dao.SchoolEventDao;
 import com.gracie.barra.admin.dao.SchoolEventDaoDatastoreImpl;
+import com.gracie.barra.auth.dao.SessionDao;
+import com.gracie.barra.auth.dao.SessionDaoDatastoreImpl;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.dao.SchoolDaoDatastoreImpl;
 import com.gracie.barra.school.objects.School;
@@ -54,6 +56,9 @@ public abstract class AbstractGBServlet extends HttpServlet {
 			CloudStorageHelper storageHelper = new CloudStorageHelper();
 
 			this.getServletContext().setAttribute("storageHelper", storageHelper);
+
+			SessionDao sessionDao = new SessionDaoDatastoreImpl();
+			this.getServletContext().setAttribute("sessionDao", sessionDao);
 		}
 
 	}
@@ -84,4 +89,17 @@ public abstract class AbstractGBServlet extends HttpServlet {
 	protected boolean nullOrEmpty(String id) {
 		return id == null || id.length() == 0 || id.equals("null");
 	}
+
+	protected String getCurrentUserId(HttpServletRequest req) {
+		return (String) req.getSession().getAttribute("userId");
+	}
+
+	protected String getCurrentUserMail(HttpServletRequest req) {
+		return (String) req.getSession().getAttribute("userEmail");
+	}
+
+	protected boolean isUserLoggedIn(HttpServletRequest req) {
+		return req.getSession().getAttribute("userId") != null;
+	}
+
 }

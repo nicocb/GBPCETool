@@ -37,10 +37,9 @@ public class SchoolServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		UserService userService = UserServiceFactory.getUserService();
 		School school = null;
-		if (userService.isUserLoggedIn()) {
-			school = getSchoolDao().getSchoolByUser(userService.getCurrentUser().getUserId());
+		if (isUserLoggedIn(req)) {
+			school = getSchoolDao().getSchoolByUser(getCurrentUserId(req));
 			if (school == null) {
 				req.setAttribute("action", "Create");
 				req.setAttribute("destination", "school");
@@ -51,6 +50,8 @@ public class SchoolServlet extends AbstractGBServlet {
 			req.getSession().getServletContext().setAttribute("school", school);
 			req.setAttribute("page", "school");
 		} else {
+			UserService userService = UserServiceFactory.getUserService();
+			req.setAttribute("loginURL", userService.createLoginURL("/school"));
 			req.setAttribute("page", "pleaselogin");
 		}
 		injectSchoolStatus(req, school);
@@ -61,14 +62,12 @@ public class SchoolServlet extends AbstractGBServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		UserService userService = UserServiceFactory.getUserService();
-
-		if (userService.isUserLoggedIn()) {
+		if (isUserLoggedIn(req)) {
 			String id = req.getParameter("id");
 
-			School school = new School.Builder().id(nullOrEmpty(id) ? null : Long.valueOf(id))
-					.userId(userService.getCurrentUser().getUserId()).contactMail(req.getParameter(School.CONTACT_MAIL))
-					.contactName(req.getParameter(School.CONTACT_NAME)).contactPhone(req.getParameter(School.CONTACT_PHONE))
+			School school = new School.Builder().id(nullOrEmpty(id) ? null : Long.valueOf(id)).userId(getCurrentUserId(req))
+					.contactMail(req.getParameter(School.CONTACT_MAIL)).contactName(req.getParameter(School.CONTACT_NAME))
+					.contactPhone(req.getParameter(School.CONTACT_PHONE))
 					.instructorBelt(Belt.valueOf(req.getParameter(School.INSTRUCTOR_BELT)))
 					.instructorName(req.getParameter(School.INSTRUCTOR_NAME))
 					.instructorProfessor(req.getParameter(School.INSTRUCTOR_PROFESSOR))
@@ -85,8 +84,7 @@ public class SchoolServlet extends AbstractGBServlet {
 				if (school.getId() == null) {
 					Long schId = schoolDao.createSchool(school);
 					SchoolEvent se = new SchoolEvent.Builder()
-							.description("School '" + school.getSchoolName() + "' created by "
-									+ userService.getCurrentUser().getEmail())
+							.description("School '" + school.getSchoolName() + "' created by " + getCurrentUserMail(req))
 							.object(SchoolEventObject.SCHOOL).objectId(schId).schoolId(schId).status(SchoolEventStatus.PENDING)
 							.build();
 					schoolEventDao.createSchoolEvent(se);

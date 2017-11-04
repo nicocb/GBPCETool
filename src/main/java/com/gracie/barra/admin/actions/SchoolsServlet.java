@@ -22,8 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School.SchoolStatus;
 import com.gracie.barra.school.objects.SchoolsByRank;
@@ -53,9 +51,7 @@ public class SchoolsServlet extends AbstractGBServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		UserService userService = UserServiceFactory.getUserService();
-
-		if (userService.isUserLoggedIn()) {
+		if (isUserLoggedIn(req)) {
 
 			String id = req.getParameter("id");
 			String status;

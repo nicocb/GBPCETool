@@ -21,8 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
@@ -33,8 +31,7 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		UserService userService = UserServiceFactory.getUserService();
-		if (userService.isUserLoggedIn()) {
+		if (isUserLoggedIn(req)) {
 			String[] tokens = req.getPathInfo().split("/");
 			Long schoolId = Long.valueOf(tokens[tokens.length - 1]);
 			SchoolCertificationDashboard schoolCertificationDashboard = null;
@@ -63,9 +60,7 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 
 		Boolean revoke = req.getRequestURI().contains("Refuse");
 
-		UserService userService = UserServiceFactory.getUserService();
-
-		if (userService.isUserLoggedIn()) {
+		if (isUserLoggedIn(req)) {
 			String id = req.getParameter("id");
 			String comment = req.getParameter("comment");
 			String schoolId = req.getParameter("schoolId");

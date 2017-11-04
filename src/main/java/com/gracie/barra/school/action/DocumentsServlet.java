@@ -33,8 +33,6 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.api.client.util.Strings;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 
@@ -45,10 +43,9 @@ public class DocumentsServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		UserService userService = UserServiceFactory.getUserService();
 		School school = null;
-		if (userService.isUserLoggedIn()) {
-			school = getSchoolDao().getSchoolByUser(userService.getCurrentUser().getUserId());
+		if (isUserLoggedIn(req)) {
+			school = getSchoolDao().getSchoolByUser(getCurrentUserId(req));
 			req.getSession().getServletContext().setAttribute("school", school);
 			req.setAttribute("page", "documents");
 		} else {

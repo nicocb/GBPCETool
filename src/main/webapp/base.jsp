@@ -1,19 +1,3 @@
-<!--
-Copyright 2016 Google Inc.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-<!-- [START base] -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html lang="en">
@@ -28,6 +12,30 @@ Copyright 2016 Google Inc.
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="/scripts/gbScripts.js"></script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '123435078353209',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.10'
+    });
+      
+//     FB.AppEvents.logPageView();   
+//     FB.getLoginStatus(function(response) {
+//         connectedToFB(response);
+//     });
+      
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 </head>
 <body>
 	<nav class="navbar navbar-default">
@@ -58,14 +66,14 @@ Copyright 2016 Google Inc.
 				<p class="navbar-text navbar-right">
 					<c:choose>
 						<c:when test="${not empty userEmail}">
-							<a href="/logout"> <c:if test="${not empty userImageUrl}">
+							<a href="/logout" ${loginFrom=='Facebook'?'onclick="FB.logout();"':''} }> <c:if test="${not empty userImageUrl}">
 									<img class="img-circle" src="${fn:escapeXml(userImageUrl)}"
 										width="24">
 								</c:if> ${fn:escapeXml(userEmail)} <span style="font-size:1.2em;" class="glyphicon glyphicon-log-out"></span>
 							</a>
 						</c:when>
 						<c:otherwise>
-							<a href="/login">Login</a>
+							Login <a href="/login"><img alt="login with Google" width="24" src="pics/icons8-google-squared.png"></a><a href="#" onclick='fbConnect();'><img width="24" alt="login with FB" src="pics/icons8-facebook.png"></a>
 						</c:otherwise>
 					</c:choose>
 				</div>

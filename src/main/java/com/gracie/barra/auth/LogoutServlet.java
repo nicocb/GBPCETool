@@ -22,5 +22,14 @@ public class LogoutServlet extends HttpServlet {
 		}
 		// rebuild session
 		req.getSession();
+
+		for (int c = 0; c < req.getCookies().length; c++) {
+			if (req.getCookies()[c].getName().equals("fbsr_123435078353209")) {
+				req.getCookies()[c].setMaxAge(-1);
+				resp.addCookie(req.getCookies()[c]);
+				break;
+			}
+		}
+
 	}
 }
