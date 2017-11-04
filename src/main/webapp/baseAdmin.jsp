@@ -41,7 +41,7 @@ Copyright 2016 Google Inc.
 						class="icon-bar"></span>
 				</button>
 				<div class="pull-left">
-					<img src="/pics/gb-logo.png" height="50" width="50" />
+					<a href="/"><img src="/pics/gb-logo.png" height="50" width="50" /></a>
 				</div>
 			</div>
 			<div class="navbar-collapse collapse"

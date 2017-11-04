@@ -9,13 +9,16 @@
 			<c:forEach items="${school.documents}" var="doc">
 				<div class="container-fluid bgcolored">
 					<div class="row vertical-align">
-						<div class="col-md-11 col-xs-6">
+						<div class="col-md-10 col-xs-5">
 							<h4>
 								<strong>${fn:escapeXml(doc.key)}</strong>
 							</h4>
 						</div>
+						<div class="col-md-2 col-xs-2">
+							<a href="${fn:escapeXml(doc.value.URL)}">Download : </a>
+						</div>
 						<div class="col-md-1 col-xs-1">
-							<a href="${fn:escapeXml(doc.value.URL)}">Download <span style="font-size:1.2em;" class="glyphicon glyphicon-download"></span>
+							<a href="${fn:escapeXml(doc.value.URL)}"><span style="font-size:1.2em;" class="glyphicon glyphicon-download"></span>
 							</a>
 						</div>
 					</div>

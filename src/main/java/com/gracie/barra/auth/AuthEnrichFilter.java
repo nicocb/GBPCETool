@@ -70,7 +70,7 @@ public class AuthEnrichFilter implements Filter {
 			}
 			if (accessToken == null) {
 				String accessCode = null;
-				for (int c = 0; c < req.getCookies().length && accessCode == null; c++) {
+				for (int c = 0; req.getCookies() != null && c < req.getCookies().length && accessCode == null; c++) {
 					if (req.getCookies()[c].getName().equals("fbsr_123435078353209")) {
 						accessCode = new JSONObject(
 								new String(Base64.getDecoder().decode(req.getCookies()[c].getValue().split("\\.")[1])))

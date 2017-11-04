@@ -76,7 +76,7 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>  <!-- https://github.com/google/guava/wiki -->
         <!-- Guava v21.0 doesn't support Java7 -->
-        <version>20.0</version>
+        <version>21.0</version>
 <!--         <scope>compile</scope> -->
     </dependency>
 
