@@ -238,8 +238,9 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		SchoolCertificationDashboard result = null;
 		List<SchoolCertificationCriteriaByRank> criteria = listSchoolCertificationCriteriaByRank(schoolId);
 
+		result = new SchoolCertificationDashboard();
+
 		if (criteria != null && criteria.size() > 0) {
-			result = new SchoolCertificationDashboard();
 			result.setCriteria(criteria);
 			for (SchoolCertificationCriteriaByRank schoolCriteriaByRank : result.getCriteria()) {
 				result.setOverallScore(result.getOverallScore() + schoolCriteriaByRank.getScore());

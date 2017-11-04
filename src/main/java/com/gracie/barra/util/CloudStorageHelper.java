@@ -1,19 +1,3 @@
-/*
- * Copyright 2016 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.gracie.barra.util;
 
 import java.awt.geom.AffineTransform;
@@ -51,7 +35,6 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-// [START example]
 public class CloudStorageHelper {
 
 	private static Storage storage = null;
@@ -64,38 +47,23 @@ public class CloudStorageHelper {
 	public String uploadFile(byte[] bytes, final String bucketName, String id, String extension)
 			throws IOException, ServletException, MetadataException, ImageProcessingException {
 
-		final String fileName = id + ".jpg";
+		final String fileName = id + "." + "jpg";
 
-		// the inputstream is closed by default, so we don't need to close it
-		// here
-		BlobInfo blobInfo;
-		BlobId bid = BlobId.of(bucketName, fileName);
-		// log.info("Checking existence of " + fileName);
-		// if (storage.get(bid) != null) {
-		// log.info("Deleting " + fileName);
-		// storage.delete(BlobId.of(bucketName, fileName));
-		// }
-		log.info("Storing " + fileName);
-		blobInfo = storage.create(
+		// replaces by default
+		BlobInfo blobInfo = storage.create(
 				BlobInfo.newBuilder(bucketName, fileName)
-						// Modify access list to allow all users with link
-						// to
+						// Modify access list to allow all users with link to
 						// read file
 						.setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER)))).build(),
-				new ByteArrayInputStream(imageIOResized(bytes, extension)));
+				imageIOResized(bytes, extension));
 		log.info("Stored " + fileName);
 		return blobInfo.getMediaLink();
 	}
 
 	public String uploadPdf(byte[] bytes, final String bucketName, String fileName) {
 
-		Blob blobInfo = storage.create(
-				BlobInfo.newBuilder(bucketName, fileName)
-						// Modify access list to allow all users with link
-						// to
-						// read file
-						.setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER)))).build(),
-				new ByteArrayInputStream(bytes));
+		Blob blobInfo = storage.create(BlobInfo.newBuilder(bucketName, fileName)
+				.setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER)))).build(), bytes);
 		return blobInfo.getMediaLink();
 	}
 
@@ -126,6 +94,16 @@ public class CloudStorageHelper {
 
 		BufferedImage image = ImageIO.read(imgStream);
 
+		// Fix png transparency
+		if (extension.equals("png")) {
+			// Attempt at PNG read fix
+			BufferedImage imageRGB = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+			// write data into an RGB buffered image, no transparency
+			imageRGB.createGraphics().drawImage(image, null, null);
+			image = imageRGB;
+		}
+
 		ImageInformation info = readImageInformation(new ByteArrayInputStream(imgBytes), extension);
 		if (info.orientation != 1 || info.ratio != 1.0) {
 			image = transformImage(image, getExifTransformation(info));
@@ -141,7 +119,6 @@ public class CloudStorageHelper {
 		ImageWriteParam iwParam = writer.getDefaultWriteParam();
 		iwParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 		iwParam.setCompressionQuality(.5f);
-
 		// writes the file with given compression level
 		// from your JPEGImageWriteParam instance
 		writer.write(null, new IIOImage(image, null, null), iwParam);

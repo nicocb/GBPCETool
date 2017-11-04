@@ -44,6 +44,9 @@ public class AuthFilter implements Filter {
 
 		UserService userService = UserServiceFactory.getUserService();
 		if (userService.isUserLoggedIn() && userService.isUserAdmin()) {
+			req.getSession().setAttribute("userEmail", userService.getCurrentUser().getEmail());
+			req.getSession().setAttribute("userId", userService.getCurrentUser().getUserId());
+			req.getSession().setAttribute("loginFrom", "Google");
 			chain.doFilter(servletReq, servletResp);
 		} else {
 			req.setAttribute("page", "pleaseadmin");
