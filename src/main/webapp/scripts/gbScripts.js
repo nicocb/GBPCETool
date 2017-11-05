@@ -34,16 +34,17 @@ function fbConnect()
 
 function resizeImg (img)
 {
-    var resize = 1000; // resize amount in percentage
     var origH  = img.clientHeight;  // original image height
     var origW  = img.clientWidth; // original image width
     
     if(origW > 60) {
-    	resize = 10;
+    	resize = 60 / origW;
+    } else {
+       	resize = img.parentElement.parentElement.clientWidth/120
     }
 
-    var newH   = origH * (resize / 100);
-    var newW   = origW * (resize / 100);
+    var newH   = origH * resize;
+    var newW   = origW * resize;
 
     // Set the new width and height
     img.style.height = newH;

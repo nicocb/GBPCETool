@@ -102,12 +102,21 @@ Copyright 2016 Google Inc.
 										</div></c:if>
 										<div class="panel-body">
 										<div class="media" >
-											<c:if test="${not empty certificationCriterion.picture}">
-												<div class="media-left">
-													<img alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
-														src="${fn:escapeXml(certificationCriterion.picture)}" >
-												</div>
-											</c:if>
+											<c:choose>
+  												<c:when test="${not empty certificationCriterion.picture}">
+													<div class="media-left">
+														<img alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
+															src="${fn:escapeXml(certificationCriterion.picture)}" >
+													</div>
+												</c:when>
+												<c:when test="${not empty certificationCriterion.criterion.picture}">
+													<div class="media-left">
+														<label for="example">Example</label>
+														<img id="example" alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
+															src="${fn:escapeXml(certificationCriterion.criterion.picture)}" >
+													</div>
+												</c:when>
+											 </c:choose>
 											<div class="media-body">
 												<c:choose>
 												<c:when test="${criteriaByRank.available == 'true' || mode == 'admin'}">	

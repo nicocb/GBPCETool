@@ -67,8 +67,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 				.action((String) entity.getProperty(CertificationCriterion.ACTION))
 				.rank(CertificationCriterionRank.fromId((Long) entity.getProperty(CertificationCriterion.RANK)))
 				.score((Long) entity.getProperty(CertificationCriterion.SCORE))
-
-				.build();
+				.picture((String) entity.getProperty(CertificationCriterion.PICTURE)).build();
 	}
 
 	private SchoolCertificationCriterion entityToSchoolCertificationCriterion(Entity entity, CertificationCriterion cc) {
@@ -95,6 +94,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		ccEntity.setProperty(CertificationCriterion.ACTION, cc.getAction());
 		ccEntity.setProperty(CertificationCriterion.RANK, cc.getRank().getId());
 		ccEntity.setProperty(CertificationCriterion.SCORE, cc.getScore());
+		ccEntity.setProperty(CertificationCriterion.PICTURE, cc.getPicture());
 
 		Key ccKey = datastore.put(ccEntity); // Save the Entity
 		return ccKey.getId(); // The ID of the Key
@@ -132,6 +132,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		entity.setProperty(CertificationCriterion.ACTION, certificationCriterion.getAction());
 		entity.setProperty(CertificationCriterion.RANK, certificationCriterion.getRank().getId());
 		entity.setProperty(CertificationCriterion.SCORE, certificationCriterion.getScore());
+		entity.setProperty(CertificationCriterion.PICTURE, certificationCriterion.getPicture());
 
 		datastore.put(entity); // Update the Entity
 	}

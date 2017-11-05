@@ -34,7 +34,12 @@ Copyright 2016 Google Inc.
 					<div class="panel-body">
 						<c:forEach items="${certificationCriteria.criteria}" var="criterion">
 							<div class="media">
-
+								<c:if test="${not empty criterion.picture}">
+									<div class="media-left">
+										<img alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
+											src="${fn:escapeXml(criterion.picture)}" >
+									</div>
+								</c:if>
 								<div class="media-body">
 									<a href="/admin/criterion?id=${criterion.id}"><h4>${fn:escapeXml(criterion.description)}</h4></a>
 									<p>${fn:escapeXml(criterion.comment)}</p>
