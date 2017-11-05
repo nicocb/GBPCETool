@@ -31,6 +31,7 @@ import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.objects.School;
 import com.gracie.barra.school.objects.School.Belt;
+import com.gracie.barra.util.MailingHelper;
 
 @SuppressWarnings("serial")
 public class SchoolServlet extends AbstractGBServlet {
@@ -88,6 +89,7 @@ public class SchoolServlet extends AbstractGBServlet {
 							.object(SchoolEventObject.SCHOOL).objectId(schId).schoolId(schId).status(SchoolEventStatus.PENDING)
 							.build();
 					schoolEventDao.createSchoolEvent(se);
+					MailingHelper.accountCreationAlert(school.getSchoolName(), getCurrentUserMail(req), schId.toString());
 				} else {
 					schoolDao.updateSchool(school);
 					SchoolEvent se = new SchoolEvent.Builder().description("School '" + school.getSchoolName() + "' updated")
