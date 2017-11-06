@@ -104,7 +104,9 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			String comment = params.get("comment");
 
 			try {
-				picture = storageHelper.uploadFile(pic, "pce-tool", schoolId + "-" + id, extension);
+				if (hasFile) {
+					picture = storageHelper.uploadFile(pic, "pce-tool", schoolId + "-" + id, extension);
+				}
 			} catch (MetadataException | ImageProcessingException e1) {
 				throw new ServletException("Couldn't read image file");
 			}

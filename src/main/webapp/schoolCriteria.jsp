@@ -93,7 +93,7 @@ Copyright 2016 Google Inc.
 											<label class="label label-${empty certificationCriterion.status.style?'Default':certificationCriterion.status.style}">${empty certificationCriterion.status.description?'Not provided':certificationCriterion.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
 										</div>
 										<div class="col-md-1 col-xs-1">
-											<button id='${fn:escapeXml(certificationCriterion.criterion.id)}-btn' onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-default btn-sm btn-primary-spacing pull-right"><span class="glyphicon glyphicon-triangle-bottom" ></span></button>
+											<button id='${fn:escapeXml(certificationCriterion.criterion.id)}-btn' onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-default btn-sm btn-primary-spacing"><span class="glyphicon glyphicon-triangle-bottom" ></span></button>
 										</div>
 									</div>
 										<div class="panel panel-primary panel-criteria" id="${fn:escapeXml(certificationCriterion.criterion.id)}" style="display:none">
