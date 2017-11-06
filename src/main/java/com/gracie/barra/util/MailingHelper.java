@@ -24,7 +24,7 @@ public class MailingHelper {
 			Address[] addresses = new Address[1];
 			addresses[0] = new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico");
 			msg.setReplyTo(addresses);
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("sebastien.garnier@graciebarra.com>", "Seb"));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("sebastien.garnier@graciebarra.com", "Seb"));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico"));
 			msg.setSubject("New school creation in SCP");
 			msg.setText("School " + school + " has been created by " + user
