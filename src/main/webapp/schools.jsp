@@ -111,7 +111,7 @@
 												<form class="btn-group" method="POST" action="/admin/schools">
 													<input type="hidden" name="action" value="DELETE" /><input
 														type="hidden" name="id" value="${sschool.school.id}" />
-													<button type="submit" class="btn btn-danger">Delete</button>
+													<button type="submit" onclick="return confirm('Sure you want to delete ${sschool.school.schoolName} school?');" class="btn btn-danger">Delete</button>
 												</form>
 									</div>
 									<div class="panel panel-default">

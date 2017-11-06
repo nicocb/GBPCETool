@@ -65,7 +65,11 @@ public class AuthEnrichFilter implements Filter {
 			// log.info("Session : " + req.getSession().getId());
 			accessToken = sessionDao.getToken(req.getSession().getId());
 			FacebookClient facebookClient = new DefaultFacebookClient(accessToken, Version.VERSION_2_9);
-			if (accessToken != null && !facebookClient.debugToken(accessToken).isValid()) {
+			try {
+				if (accessToken != null && !facebookClient.debugToken(accessToken).isValid()) {
+					accessToken = null;
+				}
+			} catch (Throwable t) {
 				accessToken = null;
 			}
 			if (accessToken == null) {

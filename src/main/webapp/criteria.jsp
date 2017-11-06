@@ -55,7 +55,7 @@ Copyright 2016 Google Inc.
 								<form class="btn-group" method="POST" action="/admin/criteria">
 									<input type="hidden" name="action" value="DELETE" /><input
 										type="hidden" name="id" value="${criterion.id}" />
-									<button type="submit" class="btn btn-danger">Delete</button>
+									<button type="submit" onclick="return confirm('Sure you want to delete this criterion?');" class="btn btn-danger">Delete</button>
 								</form>
 								</div>
 

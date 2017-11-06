@@ -30,7 +30,7 @@
 											<button type="submit" class="btn btn-success" form="form${fn:escapeXml(schoolEvent.id)}">
 												<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
 											</button>
-											<button type="submit" class="btn btn-danger" form="form${fn:escapeXml(schoolEvent.id)}"
+											<button type="submit" onclick="return confirm('Sure you want to delete this event?');" class="btn btn-danger" form="form${fn:escapeXml(schoolEvent.id)}"
 												formaction="/admin/eventsDelete">
 												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</button>
