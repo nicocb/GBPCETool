@@ -27,6 +27,14 @@
       <url-pattern>/welcome</url-pattern>
     </servlet-mapping>       
     <servlet>
+      <servlet-name>schoolCriteriaRest</servlet-name>
+      <servlet-class>com.gracie.barra.school.action.SchoolCriteriaRestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>schoolCriteriaRest</servlet-name>
+      <url-pattern>/api/schoolCriteria</url-pattern>
+    </servlet-mapping>   
+    <servlet>
       <servlet-name>schoolCriteria</servlet-name>
       <servlet-class>com.gracie.barra.school.action.SchoolCriteriaServlet</servlet-class>
     </servlet>
@@ -122,6 +130,7 @@
       <filter-name>AuthEnrichFilter</filter-name>
       <url-pattern>/welcome</url-pattern>
       <url-pattern>/schoolCriteria</url-pattern>
+      <url-pattern>/api/schoolCriteria</url-pattern>
       <url-pattern>/school</url-pattern>
       <url-pattern>/documents</url-pattern>
       <url-pattern>/admission</url-pattern>

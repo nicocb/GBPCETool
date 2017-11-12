@@ -38,21 +38,16 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>1.9.58</version>
+      <version>1.9.59</version>
     </dependency>
 
-    <dependency>                        <!-- REQUIRED -->
-      <groupId>javax.servlet</groupId>  <!-- Java Servlet API -->
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>           <!-- Provided by the Jetty Servlet engine -->
-    </dependency>
-
-    <dependency>                        <!-- Java Server Pages -->
-      <groupId>javax.servlet</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>2.0</version>
-    </dependency>
+	<dependency>
+	  <groupId>javax.servlet</groupId>
+	  <artifactId>javax.servlet-api</artifactId>
+	  <version>3.1.0</version>
+	  <type>jar</type>
+	  <scope>provided</scope>
+	</dependency>
 
     <dependency>                        <!-- JSP standard tag library -->
       <groupId>jstl</groupId>

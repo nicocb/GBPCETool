@@ -1,13 +1,49 @@
+function beforeCriteria(formData, $form, options) { 
+	critId = $form.attr('id').substr(4);
+	switchBlock('ammoprogress'+critId);
+	switchBlock('ammovalidate'+critId);
+	$('#ammoprogress'+critId).addClass('currentProgress');
+} 
+ 
+function uploadingCriteria(event, position, total, percentComplete)  { 
+	$('.currentProgress').find('.progress-bar').attr('style','min-width: 2em;width: '+percentComplete+'%');
+	$('.currentProgress').find('.progress-bar').attr('aria-valuenow',percentComplete);
+	if(percentComplete < 100) {
+		$('.currentProgress').find('.progress-bar').text(percentComplete+'%');
+	} else {
+		$('.currentProgress').find('.progress-bar').addClass('progress-bar-success');
+		$('.currentProgress').find('.progress-bar').addClass('progress-bar-striped');
+		$('.currentProgress').find('.progress-bar').text('Treating picture');
+	}
+} 
+
+function afterCriteria(responseText, statusText, xhr, $form)  { 
+	critId = $form.attr('id').substr(4);
+	switchBlock('ammoprogress'+critId);
+	switchBlock('ammovalidate'+critId);
+	$('#ammoprogress'+critId).removeClass('currentProgress');
+	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-success');
+	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-striped');
+	$('#pic'+critId).attr('src',responseText.picture);
+	$('#pic'+critId).attr('style','width: 60px;');
+	$form.find('textarea[name=comment]').val(responseText.comment);
+} 
+
 function switchForm(id)
+{
+	switchBlock(id);
+    
+    $('#'+id+'-btn').find('span').toggleClass('glyphicon-triangle-bottom').toggleClass('glyphicon-triangle-top');
+
+}
+
+function switchBlock(id)
 {
     if(document.getElementById(id).style.display == "block") {
     	document.getElementById(id).style.display="none";
     } else {
     	document.getElementById(id).style.display="block";
     }
-    
-    $('#'+id+'-btn').find('span').toggleClass('glyphicon-triangle-bottom').toggleClass('glyphicon-triangle-top');
-
 }
 
 function validateEmail(id)

@@ -1,21 +1,20 @@
-<!--
-Copyright 2016 Google Inc.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-<!-- [START list] -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<c:if test="${mode != 'admin'}">
+   	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
+ 	<script>
+	 	$(document).ready(function() { 
+	 	    var options = { 
+	 	        beforeSubmit:  beforeCriteria, 
+	 	        success:       afterCriteria,
+	 	        uploadProgress: uploadingCriteria,
+	 	        url:       '/api/schoolCriteria',         
+	 	        dataType:  'json'       
+	 	    }; 
+	 	    $('.ammo').ajaxForm(options); 
+	 	}); 
+	</script>
+</c:if>
 <div class="container">
 	<div class="container-fluid" >
 		<div class="row vertical-align">
@@ -105,23 +104,30 @@ Copyright 2016 Google Inc.
 											<c:choose>
   												<c:when test="${not empty certificationCriterion.picture}">
 													<div class="media-left">
-														<img alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
+														<img id="pic${certificationCriterion.criterion.id}" alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
 															src="${fn:escapeXml(certificationCriterion.picture)}" >
 													</div>
 												</c:when>
 												<c:when test="${not empty certificationCriterion.criterion.picture}">
 													<div class="media-left">
 														<label for="example">Example</label>
-														<img id="example" alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
+														<img id="pic${certificationCriterion.criterion.id}" alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
 															src="${fn:escapeXml(certificationCriterion.criterion.picture)}" >
 													</div>
 												</c:when>
+												<c:otherwise>
+													<div class="media-left">
+															<label for="example">Example</label>
+															<img id="pic${certificationCriterion.criterion.id}" alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
+																src="pics/default.jpg" >
+													</div>
+												</c:otherwise>
 											 </c:choose>
 											<div class="media-body">
 												<c:choose>
 												<c:when test="${criteriaByRank.available == 'true' || mode == 'admin'}">	
 												
-													<form method="POST" action="/schoolCriteria"
+													<form method="POST" id="ammo${certificationCriterion.criterion.id}" class="ammo" 
 														${mode == 'admin'?'':'enctype="multipart/form-data"'}>
 														<div class="form-group">
 														  <label for="comment">Send a comment :</label>
@@ -134,7 +140,7 @@ Copyright 2016 Google Inc.
 													
 
 														<c:if test="${mode != 'admin'}">
-														<div class="form-group">
+														<div id="ammovalidate${certificationCriterion.criterion.id}" class="form-group" style="display:block">
 															<label for="image">School picture : </label>
 															<div class="input-group">
 																<label class="input-group-btn"> 
@@ -147,7 +153,14 @@ Copyright 2016 Google Inc.
 																	</span>
 																</label> 
 															</div>
-														</div></c:if>
+														</div>
+														<div id ="ammoprogress${certificationCriterion.criterion.id}" class="progress" style="display:none">
+															<div class="progress-bar" role="progressbar"
+																aria-valuenow="2" aria-valuemin="0"
+																aria-valuemax="100" style="min-width: 2em;width: 2%">
+															</div>
+														</div>
+														</c:if>
 														<c:if test="${mode == 'admin'}">
 															<button type="submit" class="btn btn-success" formAction="/admin/schoolCriteriaAdmin">Validate</button>
 															<button type="submit" class="btn btn-danger"

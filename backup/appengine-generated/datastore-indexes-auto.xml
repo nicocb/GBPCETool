@@ -1,0 +1,25 @@
+<!-- Indices written at Sat, 11 Nov 2017 20:35:31 CET -->
+
+<datastore-indexes>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="SchoolEvent" ancestor="false" source="auto">
+        <property name="object" direction="desc"/>
+        <property name="date" direction="desc"/>
+        <property name="status" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="School" ancestor="false" source="auto">
+        <property name="status" direction="asc"/>
+        <property name="schoolName" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="CertificationCriterion" ancestor="false" source="auto">
+        <property name="rank" direction="asc"/>
+        <property name="score" direction="desc"/>
+        <property name="descrition" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>
