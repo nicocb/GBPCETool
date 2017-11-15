@@ -5,6 +5,14 @@ function beforeCriteria(formData, $form, options) {
 	$('#ammoprogress'+critId).addClass('currentProgress');
 } 
  
+function checkEmpty(field, message) { 
+	if($('#'+field).val()=='') {
+		alert(message);
+		return false;
+	}
+	return true;
+} 
+ 
 function uploadingCriteria(event, position, total, percentComplete)  { 
 	$('.currentProgress').find('.progress-bar').attr('style','min-width: 2em;width: '+percentComplete+'%');
 	$('.currentProgress').find('.progress-bar').attr('aria-valuenow',percentComplete);

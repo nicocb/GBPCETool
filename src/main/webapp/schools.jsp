@@ -133,12 +133,12 @@
 														</div>														
 														<div class="col-md-1 col-xs-1">
 
-															<a  onclick="document.getElementById('${sschool.school.id}${fn:escapeXml(doc.key)}').submit();">  <span style="font-size:1.2em;" class="glyphicon glyphicon-remove"></span>
+															<a href="#" onclick="document.getElementById('doc${sschool.school.id}${fn:escapeXml(doc.key)}').submit();">  <span style="font-size:1.2em;" class="glyphicon glyphicon-remove"></span>
 															</a>
 														</div>
 													</div>
 												</div>
-												<form method="POST" action="/documents" id="${sschool.school.id}${fn:escapeXml(doc.key)}">
+												<form method="POST" action="/documents" id="doc${sschool.school.id}${fn:escapeXml(doc.key)}">
 													<input type="hidden" name="action" value="DELETE" />
 													<input type="hidden" name="schoolId" value="${sschool.school.id}" />
 													<input type="hidden" name="documentName" value="${fn:escapeXml(doc.key)}" />
@@ -156,7 +156,7 @@
 												<form method="POST" action="/documents" enctype="multipart/form-data">
 													<label for="certificate">File display name : </label>
 													<div class="input-group">
-														<input type="text" name="documentName" class="form-control">
+														<input type="text" name="documentName" id="documentName" class="form-control">
 													</div>
 													<label for="certificate">File upload : </label>
 													<div class="input-group">
@@ -168,7 +168,7 @@
 														<input
 																	type="hidden" name="schoolId" value="${sschool.school.id}" />
 														<label class="input-group-btn"> 
-															<span class="btn btn-danger"> Send<button type="submit" style="display: none;"></button>
+															<span class="btn btn-danger"> Send<button onclick="checkEmpty('documentName','Make sure you provided a document name');" type="submit" style="display: none;"></button>
 															</span>
 														</label> 
 													</div>

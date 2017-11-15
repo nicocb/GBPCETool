@@ -119,7 +119,7 @@
 													<div class="media-left">
 															<label for="example">Example</label>
 															<img id="pic${certificationCriterion.criterion.id}" alt="Yep" class="media-object" style="width:60px"  onclick="resizeImg(this)" 
-																src="pics/default.jpg" >
+																src="/pics/default.jpg" >
 													</div>
 												</c:otherwise>
 											 </c:choose>

@@ -47,7 +47,7 @@ import com.gracie.barra.school.objects.School;
 import com.gracie.barra.util.CloudStorageHelper;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "SchoolCriteriaRestServlet", value = "/api/schoolCriteria")
+@WebServlet(name = "schoolCriteriaRest", value = "/api/schoolCriteria")
 
 public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 
