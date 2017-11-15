@@ -30,6 +30,8 @@
     <include path="/pics/**" />
     <include path="/scripts/**" />
     <include path="/css/**" />
+    <include path="/*.png" />
+    <include path="/*.ico" />
   </static-files>
 
   <resource-files>

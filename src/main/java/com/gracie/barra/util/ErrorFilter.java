@@ -24,6 +24,7 @@ public class ErrorFilter implements Filter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Throwable e) {
+			log.warning("Intercepted error " + e.getMessage());
 			request.setAttribute("errorMessage", e.getMessage());
 			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
