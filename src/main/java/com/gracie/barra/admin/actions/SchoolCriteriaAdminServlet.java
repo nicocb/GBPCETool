@@ -59,6 +59,7 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		Boolean revoke = req.getRequestURI().contains("Refuse");
+		Boolean validate = req.getRequestURI().contains("Validate");
 
 		if (isUserLoggedIn(req)) {
 			String id = req.getParameter("id");
@@ -66,7 +67,10 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			String schoolId = req.getParameter("schoolId");
 
 			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId), null, comment,
-					revoke ? SchoolCertificationCriterionStatus.NOT_VALIDATED : SchoolCertificationCriterionStatus.VALIDATED);
+					revoke ? SchoolCertificationCriterionStatus.NOT_VALIDATED
+							: validate ? SchoolCertificationCriterionStatus.VALIDATED
+									: SchoolCertificationCriterionStatus.PENDING,
+					"GB");
 
 		} else {
 			throw new ServletException("Should be logged to save school");

@@ -34,7 +34,8 @@ function afterCriteria(responseText, statusText, xhr, $form)  {
 	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-striped');
 	$('#pic'+critId).attr('src',responseText.picture);
 	$('#pic'+critId).attr('style','width: 60px;');
-	$form.find('textarea[name=comment]').val(responseText.comment);
+	$('#ammocomment'+critId).append('<div class="alert alert-info" role="alert">'+responseText.comment[responseText.comment.length-1].comment+'</div>');
+	$form.find('textarea[name=comment]').val('');
 } 
 
 function switchForm(id)

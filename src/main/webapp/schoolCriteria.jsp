@@ -131,7 +131,12 @@
 														${mode == 'admin'?'':'enctype="multipart/form-data"'}>
 														<div class="form-group">
 														  <label for="comment">Send a comment :</label>
-														  <textarea class="form-control" rows="5" name="comment"  id="comment" >${fn:escapeXml(certificationCriterion.comment)}</textarea>
+														  <div id="ammocomment${certificationCriterion.criterion.id}">
+															  <c:forEach items="${certificationCriterion.comment}" var="currentComment">
+															  	<div class="alert alert-${currentComment.author == 'GB'?'danger':'info'}" role="alert">${fn:escapeXml(currentComment.comment)}</div>
+															  </c:forEach>
+														  </div>
+														  <textarea class="form-control" rows="5" name="comment"  id="comment" ></textarea>
 														</div>
 														
 														<input type="hidden" name="id"
@@ -162,9 +167,9 @@
 														</div>
 														</c:if>
 														<c:if test="${mode == 'admin'}">
-															<button type="submit" class="btn btn-success" formAction="/admin/schoolCriteriaAdmin">Validate</button>
-															<button type="submit" class="btn btn-danger"
-																formaction="/admin/schoolCriteriaAdminRefuse">Refuse</button>
+															<button type="submit" class="btn btn-warning" formAction="/admin/schoolCriteriaAdmin">Comment</button>
+															<button type="submit" class="btn btn-success" formAction="/admin/schoolCriteriaAdminValidate">Validate</button>
+															<button type="submit" class="btn btn-danger" formaction="/admin/schoolCriteriaAdminRefuse">Refuse</button>
 														</c:if>
 													</form>
 												

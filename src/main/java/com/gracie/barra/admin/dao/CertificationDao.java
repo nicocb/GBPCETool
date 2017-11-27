@@ -1,7 +1,9 @@
 package com.gracie.barra.admin.dao;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
@@ -32,7 +34,7 @@ public interface CertificationDao {
 	SchoolCertificationDashboard getSchoolCertificationDashboard(Long schoolId);
 
 	SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
-			String comment, SchoolCertificationCriterionStatus status);
+			String comment, SchoolCertificationCriterionStatus status, String author) throws JsonProcessingException, IOException;
 
 	SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc, Long schoolID);
 

@@ -1,5 +1,7 @@
 package com.gracie.barra.admin.objects;
 
+import java.util.List;
+
 public class SchoolCertificationCriterion {
 
 	Long id;
@@ -7,7 +9,7 @@ public class SchoolCertificationCriterion {
 	CertificationCriterion criterion;
 	SchoolCertificationCriterionStatus status;
 	String picture;
-	String comment;
+	List<CriterionComment> comment;
 
 	public static final String ID = "id";
 	public static final String SCHOOL_ID = "school_id";
@@ -22,7 +24,7 @@ public class SchoolCertificationCriterion {
 		private CertificationCriterion criterion;
 		private String picture;
 		private SchoolCertificationCriterionStatus status;
-		private String comment;
+		private List<CriterionComment> comment;
 
 		public Builder schoolId(Long schoolId) {
 			this.schoolId = schoolId;
@@ -49,7 +51,7 @@ public class SchoolCertificationCriterion {
 			return this;
 		}
 
-		public Builder comment(String comment) {
+		public Builder comment(List<CriterionComment> comment) {
 			this.comment = comment;
 			return this;
 		}
@@ -92,11 +94,11 @@ public class SchoolCertificationCriterion {
 		this.status = status;
 	}
 
-	public String getComment() {
+	public List<CriterionComment> getComment() {
 		return comment;
 	}
 
-	public void setComment(String comment) {
+	public void setComment(List<CriterionComment> comment) {
 		this.comment = comment;
 	}
 

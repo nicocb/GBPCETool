@@ -111,9 +111,10 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 				throw new ServletException("Couldn't read image file");
 			}
 
-			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id),
-					Long.valueOf(schoolId), picture, comment, picture != null ? SchoolCertificationCriterionStatus.PENDING
-							: SchoolCertificationCriterionStatus.NOT_PROVIDED);
+			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(
+					Long.valueOf(id), Long.valueOf(schoolId), picture, comment, picture != null
+							? SchoolCertificationCriterionStatus.PENDING : SchoolCertificationCriterionStatus.NOT_PROVIDED,
+					"School");
 
 			try {
 				school = getSchoolDao().getSchool(Long.valueOf(schoolId));
