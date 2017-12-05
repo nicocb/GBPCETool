@@ -310,7 +310,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		if (picture != null) {
 			entity.setProperty(SchoolCertificationCriterion.PICTURE, picture);
 		}
-		if (comment != null) {
+		if (comment != null && comment.length() > 0) {
 			List<CriterionComment> storedComment = new ArrayList<>();
 			if (entity.getProperty(SchoolCertificationCriterion.COMMENT) != null) {
 				try {

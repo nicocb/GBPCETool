@@ -84,6 +84,7 @@
       <url-pattern>/admin/schoolCriteriaAdmin</url-pattern>
       <url-pattern>/admin/schoolCriteriaAdmin/*</url-pattern>
       <url-pattern>/admin/schoolCriteriaAdminRefuse</url-pattern>
+      <url-pattern>/admin/schoolCriteriaAdminValidate</url-pattern>
     </servlet-mapping>
     <servlet>
       <servlet-name>criterion</servlet-name>
