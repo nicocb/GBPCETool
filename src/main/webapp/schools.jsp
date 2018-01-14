@@ -133,7 +133,7 @@
 														</div>														
 														<div class="col-md-1 col-xs-1">
 
-															<a href="#" onclick="document.getElementById('doc${sschool.school.id}${fn:escapeXml(doc.key)}').submit();">  <span style="font-size:1.2em;" class="glyphicon glyphicon-remove"></span>
+															<a href="#" onclick="if(confirm('Sure you want to delete this item?')) {document.getElementById('doc${sschool.school.id}${fn:escapeXml(doc.key)}').submit();}">  <span style="font-size:1.2em;" class="glyphicon glyphicon-remove"></span>
 															</a>
 														</div>
 													</div>
@@ -161,14 +161,14 @@
 													<label for="certificate">File upload : </label>
 													<div class="input-group">
 														<label class="input-group-btn"> 
-															<span class="btn btn-primary">Browse...<input type="file" name="certificate" style="display: none;"/>
+															<span class="btn btn-primary">Browse...<input type="file" name="certificate" id="certificate" style="display: none;"/>
 															</span>
 														</label> 
 														<input type="text" class="form-control">
 														<input
 																	type="hidden" name="schoolId" value="${sschool.school.id}" />
 														<label class="input-group-btn"> 
-															<span class="btn btn-danger"> Send<button onclick="checkEmpty('documentName','Make sure you provided a document name');" type="submit" style="display: none;"></button>
+															<span class="btn btn-danger"> Send<button onclick="return checkEmpty('certificate','Make sure you provided a file') && checkEmpty('documentName','Make sure you provided a document name');" type="submit" style="display: none;"></button>
 															</span>
 														</label> 
 													</div>
