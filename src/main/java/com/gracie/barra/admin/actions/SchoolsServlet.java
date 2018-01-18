@@ -38,9 +38,7 @@ public class SchoolsServlet extends AbstractGBServlet {
 			throw new ServletException("Error listing schools", e);
 		}
 		String highlight = req.getParameter("highlight");
-		if (highlight != null) {
-			req.getSession().getServletContext().setAttribute("highlight", highlight);
-		}
+		req.getSession().getServletContext().setAttribute("highlight", highlight);
 		req.getSession().getServletContext().setAttribute("schools", schools);
 
 		req.setAttribute("page", "schools");

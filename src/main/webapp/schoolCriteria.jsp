@@ -19,7 +19,7 @@
 	<div class="container-fluid" >
 		<div class="row vertical-align">
 			<div class="col-md-4 col-xs-8">
-				<h3>My Status :  </h3><span class="badge">${schoolCertificationDashboard.nbPending}
+				<h3>${mode == 'admin'?school.schoolName:'My'} Status :  </h3><span class="badge">${schoolCertificationDashboard.nbPending}
 						pending</span><span class="badge">${schoolCertificationDashboard.nbMissing}
 						not provided</span>
 			</div>
@@ -89,13 +89,13 @@
 											<c:if test="${not empty certificationCriterion.criterion.comment}"><small>(${fn:escapeXml(certificationCriterion.criterion.comment)}) </small></c:if>
 										</div>
 										<div class="col-md-4 col-xs-4">
-											<label class="label label-${empty certificationCriterion.status.style?'Default':certificationCriterion.status.style}">${empty certificationCriterion.status.description?'Not provided':certificationCriterion.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
+											<label class="label label-${empty certificationCriterion.status.style?'Default':certificationCriterion.status.style}">${empty certificationCriterion.status.description?'Not provided':certificationCriterion.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge error">new</span></c:if>
 										</div>
 										<div class="col-md-1 col-xs-1">
 											<button id='${fn:escapeXml(certificationCriterion.criterion.id)}-btn' onclick="switchForm('${fn:escapeXml(certificationCriterion.criterion.id)}')" type="button" class="btn btn-default btn-sm btn-primary-spacing"><span class="glyphicon glyphicon-triangle-bottom" ></span></button>
 										</div>
 									</div>
-										<div class="panel panel-primary panel-criteria" id="${fn:escapeXml(certificationCriterion.criterion.id)}" style="display:none">
+										<div class="panel panel-primary panel-criteria" id="${fn:escapeXml(certificationCriterion.criterion.id)}" ${not empty highlight && highlight == certificationCriterion.id?'':'style="display:none"'}>
 										<c:if test="${not empty certificationCriterion.criterion.action}"><div class="panel-heading panel-heading-criteria">
 												<h5>${fn:escapeXml(certificationCriterion.criterion.action)} :</h5>
 										</div></c:if>
@@ -159,7 +159,7 @@
 																</label> 
 															</div>
 														</div>
-														<div id ="ammoprogress${certificationCriterion.criterion.id}" class="progress" style="display:none">
+														<div id ="ammoprogress${certificationCriterion.criterion.id}" class="progress" ${not empty highlight && highlight == certificationCriterion.id?'':'style="display:none"'}>
 															<div class="progress-bar" role="progressbar"
 																aria-valuenow="2" aria-valuemin="0"
 																aria-valuemax="100" style="min-width: 2em;width: 2%">

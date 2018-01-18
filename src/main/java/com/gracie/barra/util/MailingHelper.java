@@ -20,12 +20,12 @@ public class MailingHelper {
 			Properties props = new Properties();
 			Session session = Session.getDefaultInstance(props, null);
 			Message msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress("nicolas.de.dreuille@gmail.com", "SCP Admin"));
+			msg.setFrom(new InternetAddress("noreply@pce-tool.appspotmail.com", "SCP Admin"));
 			Address[] addresses = new Address[1];
-			addresses[0] = new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico");
+			addresses[0] = new InternetAddress("support.europe@graciebarra.com", "SCP Admin");
 			msg.setReplyTo(addresses);
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("sebastien.garnier@graciebarra.com", "Seb"));
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico"));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("support.europe@graciebarra.com", "Support Europe"));
+			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico"));
 			msg.setSubject("New school creation in SCP");
 			msg.setText("School " + school + " has been created by " + user
 					+ "\nhttps://pce-tool.appspot.com/admin/schools?highlight=" + id);

@@ -8,6 +8,10 @@
 	margin-bottom: 5px;
 }
 
+.error {
+    background-color: #b94a48;
+}
+
 .bgcoloredHighlight {
 	background-color: AliceBlue;
 	margin-bottom: 5px;

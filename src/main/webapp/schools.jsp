@@ -19,12 +19,12 @@
 								<div class="row vertical-align">
 									<div class="col-md-8 col-xs-6">
 										<h4><strong><a href="/admin/schoolCriteriaAdmin/${fn:escapeXml(sschool.school.id)}">${fn:escapeXml(sschool.school.schoolName)}</a></strong>
-										<c:if test="${highlight == sschool.school.id}">
-											<span class="badge">new</span>
+										<c:if test="${not empty highlight && highlight == sschool.school.id}">
+											<span class="badge error">new</span>
 										</c:if>	</h4>
 									</div>
 									<div class="col-md-3 col-xs-4">
-										<label class="label label-${empty sschool.school.status?'Default':sschool.school.status.style}">${empty sschool.school.status?'Not provided':sschool.school.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge">new</span></c:if>
+										<label class="label label-${empty sschool.school.status?'Default':sschool.school.status.style}">${empty sschool.school.status?'Not provided':sschool.school.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge error">new</span></c:if>
 									</div>
 									<div class="col-md-1 col-xs-1">
 										
@@ -32,7 +32,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="panel panel-primary panel-criteria" id="${sschool.school.id}" style="display:none">
+							<div class="panel panel-primary panel-criteria" id="${sschool.school.id}" ${not empty highlight && highlight == sschool.school.id?'':'style="display:none"'}>
 								<div class="panel-heading panel-heading-criteria">
 									<p>Rank : ${fn:escapeXml(sschool.rank.description)}</p>
 									<p>Score : ${fn:escapeXml(sschool.score)}</p>
