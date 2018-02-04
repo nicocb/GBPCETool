@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -41,16 +42,22 @@ import com.gracie.barra.admin.objects.SchoolEvent;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.admin.objects.SchoolEventsByObject;
+import com.gracie.barra.admin.objects.SchoolEventsDashboard;
+import com.gracie.barra.school.dao.SchoolDao;
+import com.gracie.barra.school.objects.School;
 
 public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
+
+	private static final Logger logger = Logger.getLogger(SchoolEventDaoDatastoreImpl.class.getName());
+
+	SchoolDao schoolDao;
 
 	private DatastoreService datastore;
 	private static final String SE_KIND = "SchoolEvent";
 
-	public SchoolEventDaoDatastoreImpl() {
-		datastore = DatastoreServiceFactory.getDatastoreService(); // Authorized
-																	// Datastore
-																	// service
+	public SchoolEventDaoDatastoreImpl(SchoolDao schoolDao) {
+		datastore = DatastoreServiceFactory.getDatastoreService();
+		this.schoolDao = schoolDao;
 	}
 
 	public SchoolEvent entityToSchoolEvent(Entity entity) {
@@ -125,7 +132,7 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 	}
 
 	@Override
-	public List<SchoolEventsByObject> listSchoolEvents() {
+	public List<SchoolEventsByObject> listSchoolEventsByObject() {
 		List<SchoolEventsByObject> result = new ArrayList<>();
 
 		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
@@ -148,6 +155,37 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 				result.add(currentList);
 			}
 			currentList.getEvents().add(schoolEvent);
+		}
+		return result;
+	}
+
+	@Override
+	public SchoolEventsDashboard listSchoolEvents() {
+
+		SchoolEventsDashboard result = new SchoolEventsDashboard();
+
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
+
+		Query query = new Query(SE_KIND).addSort(SchoolEvent.DATE, SortDirection.DESCENDING)
+				.addSort(SchoolEvent.OBJECT, SortDirection.DESCENDING).addSort(SchoolEvent.STATUS);
+		PreparedQuery preparedQuery = datastore.prepare(query);
+		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
+
+		List<SchoolEvent> schoolEvents = entitiesToSchoolEvents(results);
+
+		for (SchoolEvent schoolEvent : schoolEvents) {
+			if (!result.getSchools().containsKey(schoolEvent.getSchoolId())) {
+				try {
+					School school = schoolDao.getSchool(schoolEvent.getSchoolId());
+					result.getSchools().put(schoolEvent.getSchoolId(), school.getSchoolName());
+					result.getEvents().add(schoolEvent);
+				} catch (EntityNotFoundException e) {
+					logger.info("Could not find school " + schoolEvent.getSchoolId());
+				}
+
+			} else {
+				result.getEvents().add(schoolEvent);
+			}
 		}
 		return result;
 	}

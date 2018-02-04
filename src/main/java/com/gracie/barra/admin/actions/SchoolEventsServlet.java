@@ -16,7 +16,6 @@
 package com.gracie.barra.admin.actions;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gracie.barra.admin.objects.SchoolEvent;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
-import com.gracie.barra.admin.objects.SchoolEventsByObject;
+import com.gracie.barra.admin.objects.SchoolEventsDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 
 @SuppressWarnings("serial")
@@ -32,7 +31,7 @@ public class SchoolEventsServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		List<SchoolEventsByObject> schoolEvents = null;
+		SchoolEventsDashboard schoolEvents = null;
 		try {
 			schoolEvents = getSchoolEventDao().listSchoolEvents();
 		} catch (Exception e) {

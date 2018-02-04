@@ -49,7 +49,7 @@ public abstract class AbstractGBServlet extends HttpServlet {
 
 			this.getServletContext().setAttribute("schoolDao", schoolDao);
 
-			SchoolEventDao schoolEventDao = new SchoolEventDaoDatastoreImpl();
+			SchoolEventDao schoolEventDao = new SchoolEventDaoDatastoreImpl(schoolDao);
 
 			this.getServletContext().setAttribute("schoolEventDao", schoolEventDao);
 

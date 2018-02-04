@@ -156,19 +156,19 @@
 												<form method="POST" action="/documents" enctype="multipart/form-data">
 													<label for="certificate">File display name : </label>
 													<div class="input-group">
-														<input type="text" name="documentName" id="documentName" class="form-control">
+														<input type="text" name="documentName${sschool.school.id}" id="documentName${sschool.school.id}" class="form-control">
 													</div>
-													<label for="certificate">File upload : </label>
+													<label for="certificate${sschool.school.id}">File upload : </label>
 													<div class="input-group">
 														<label class="input-group-btn"> 
-															<span class="btn btn-primary">Browse...<input type="file" name="certificate" id="certificate" style="display: none;"/>
+															<span class="btn btn-primary">Browse...<input type="file" name="certificate${sschool.school.id}" id="certificate${sschool.school.id}" style="display: none;"/>
 															</span>
 														</label> 
 														<input type="text" class="form-control">
 														<input
 																	type="hidden" name="schoolId" value="${sschool.school.id}" />
 														<label class="input-group-btn"> 
-															<span class="btn btn-danger"> Send<button onclick="return checkEmpty('certificate','Make sure you provided a file') && checkEmpty('documentName','Make sure you provided a document name');" type="submit" style="display: none;"></button>
+															<span class="btn btn-danger"> Send<button onclick="return checkEmpty('certificate${sschool.school.id}','Make sure you provided a file') && checkEmpty('documentName${sschool.school.id}','Make sure you provided a document name');" type="submit" style="display: none;"></button>
 															</span>
 														</label> 
 													</div>

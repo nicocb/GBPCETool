@@ -91,9 +91,6 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		entity.setProperty(School.INSTRUCTOR_BELT, school.getInstructorBelt().ordinal());
 		entity.setProperty(School.INSTRUCTOR_NAME, school.getInstructorName());
 		entity.setProperty(School.INSTRUCTOR_PROFESSOR, school.getInstructorProfessor());
-		if (school.getDocuments() != null) {
-			entity.setProperty(School.DOCUMENTS, school.getDocuments().toString());
-		}
 		entity.setProperty(School.SCHOOL_NAME, school.getSchoolName());
 		entity.setProperty(School.SCHOOL_ADDRESS, school.getSchoolAddress());
 		entity.setProperty(School.SCHOOL_COUNTRY, school.getSchoolCountry());
@@ -102,9 +99,6 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 		entity.setProperty(School.SCHOOL_MAIL, school.getSchoolMail());
 		entity.setProperty(School.SCHOOL_PHONE, school.getSchoolPhone());
 		entity.setProperty(School.SCHOOL_WEB, school.getSchoolWeb());
-		entity.setProperty(School.AGREEMENT_STATUS, school.getAgreementStatus().ordinal());
-		entity.setProperty(School.INITIAL_FEE_STATUS, school.getInitialFeeStatus().ordinal());
-		entity.setProperty(School.MONTHLY_FEE_STATUS, school.getMonthlyFeeStatus().ordinal());
 
 	}
 

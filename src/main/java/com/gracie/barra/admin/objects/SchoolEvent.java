@@ -82,6 +82,25 @@ public class SchoolEvent {
 		return date;
 	}
 
+	public String getReadableDate() {
+		String result = "now";
+		float diff = new Date().getTime() - date.getTime();
+		if (diff / 1000.0 < 60) {
+			result = (int) Math.floor(diff / 1000) + " s";
+		} else if (diff / 1000.0 / 60.0 < 60) {
+			result = (int) Math.floor(diff / 1000.0 / 60.0) + " min";
+		} else if (diff / 1000.0 / 60.0 / 60.0 < 24) {
+			result = (int) Math.floor(diff / 1000.0 / 60.0 / 60.0) + " h";
+		} else if (diff / 1000.0 / 60.0 / 60.0 / 24.0 < 30) {
+			result = (int) Math.floor(diff / 1000.0 / 60.0 / 60.0 / 24.0) + " d";
+		} else if (diff / 1000.0 / 60.0 / 60.0 / 24.0 / 365.0 < 1.0) {
+			result = (int) Math.floor(diff / 1000.0 / 60.0 / 60.0 / 24.0 / 30.0) + " m";
+		} else {
+			result = (int) Math.floor(diff / 1000.0 / 60.0 / 60.0 / 24.0 / 365.0) + " y";
+		}
+		return result;
+	}
+
 	public Long getId() {
 		return id;
 	}

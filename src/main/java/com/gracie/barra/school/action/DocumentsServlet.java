@@ -107,7 +107,7 @@ public class DocumentsServlet extends AbstractGBServlet {
 		}
 
 		String schoolId = params.get("schoolId");
-		String docName = params.get("documentName");
+		String docName = params.get("documentName" + schoolId);
 		String[] nameElements = name.split("\\.");
 
 		try {
