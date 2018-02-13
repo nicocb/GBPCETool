@@ -26,6 +26,7 @@ public class MailingHelper {
 			msg.setReplyTo(addresses);
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress("support.europe@graciebarra.com", "Support Europe"));
 			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico"));
+			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("sebastien.garnier@graciebarra.com", "Seb"));
 			msg.setSubject("New school creation in SCP");
 			msg.setText("School " + school + " has been created by " + user
 					+ "\nhttps://pce-tool.appspot.com/admin/schools?highlight=" + id);

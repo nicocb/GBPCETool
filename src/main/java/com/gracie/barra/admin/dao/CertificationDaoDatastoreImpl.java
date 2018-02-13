@@ -90,7 +90,8 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		}
 		List<CriterionComment> comment = null;
 		try {
-			if (entity != null && entity.getProperty(SchoolCertificationCriterion.COMMENT) != null) {
+			if (entity != null && entity.getProperty(SchoolCertificationCriterion.COMMENT) != null
+					&& entity.getProperty(SchoolCertificationCriterion.COMMENT).toString().length() > 0) {
 				comment = objectMapper.readValue((String) entity.getProperty(SchoolCertificationCriterion.COMMENT),
 						new TypeReference<List<CriterionComment>>() {
 						});
@@ -98,8 +99,8 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 				comment = new ArrayList<>();
 			}
 		} catch (IOException e) {
-			log.severe(
-					"Couldn't parse " + (String) entity.getProperty(SchoolCertificationCriterion.COMMENT) + " " + e.getMessage());
+			log.warning("Couldn't parse " + (String) entity.getProperty(SchoolCertificationCriterion.ID) + " comm : "
+					+ (String) entity.getProperty(SchoolCertificationCriterion.COMMENT) + " " + e.getMessage());
 		}
 		return entity == null ? new SchoolCertificationCriterion.Builder().criterion(cc).build()
 				: new SchoolCertificationCriterion.Builder().id(entity.getKey().getId()).criterion(cc).comment(comment)
