@@ -7,6 +7,7 @@
 	 	    var options = { 
 	 	        beforeSubmit:  beforeCriteria, 
 	 	        success:       afterCriteria,
+	 	        error:       errorCriteria,
 	 	        uploadProgress: uploadingCriteria,
 	 	        url:       '/api/schoolCriteria',         
 	 	        dataType:  'json'       
@@ -152,7 +153,7 @@
 																	<span class="btn btn-primary">Browse...<input type="file" name="picture" style="display: none;"/>
 																	</span>
 																</label> 
-																<input type="text" class="form-control">
+																<input type="text" id="ammofile${certificationCriterion.criterion.id}" class="form-control">
 																<label class="input-group-btn"> 
 																	<span class="btn btn-danger"> Send<button type="submit" style="display: none;"></button>
 																	</span>

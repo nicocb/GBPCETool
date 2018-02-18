@@ -18,6 +18,7 @@ package com.gracie.barra.school.action;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -50,6 +51,7 @@ import com.gracie.barra.util.CloudStorageHelper;
 @WebServlet(name = "schoolCriteriaRest", value = "/api/schoolCriteria")
 
 public class SchoolCriteriaRestServlet extends AbstractGBServlet {
+	private static final Logger log = Logger.getLogger(SchoolCriteriaRestServlet.class.getName());
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -74,68 +76,79 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String result = null;
-
-		School school = null;
-		if (isUserLoggedIn(req)) {
-			assert ServletFileUpload.isMultipartContent(req);
-			CloudStorageHelper storageHelper = getStorageHelper();
-			boolean hasFile = false;
-			String picture = null;
-			String extension = "jpg";
-			byte[] pic = null;
-			Map<String, String> params = new HashMap<String, String>();
-			try {
-				FileItemIterator iter = new ServletFileUpload().getItemIterator(req);
-				while (iter.hasNext()) {
-					FileItemStream item = iter.next();
-					if (item.isFormField()) {
-						params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
-					} else if (!Strings.isNullOrEmpty(item.getName())) {
-						extension = CloudStorageHelper.checkFileExtension(item.getName());
-						pic = IOUtils.toByteArray(item.openStream());
-						hasFile = true;
+		try {
+			School school = null;
+			if (isUserLoggedIn(req)) {
+				assert ServletFileUpload.isMultipartContent(req);
+				CloudStorageHelper storageHelper = getStorageHelper();
+				boolean hasFile = false;
+				String picture = null;
+				String extension = "jpg";
+				byte[] pic = null;
+				Map<String, String> params = new HashMap<String, String>();
+				try {
+					FileItemIterator iter = new ServletFileUpload().getItemIterator(req);
+					while (iter.hasNext()) {
+						FileItemStream item = iter.next();
+						if (item.isFormField()) {
+							params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
+						} else if (!Strings.isNullOrEmpty(item.getName())) {
+							extension = CloudStorageHelper.checkFileExtension(item.getName());
+							pic = IOUtils.toByteArray(item.openStream());
+							hasFile = true;
+						}
 					}
+				} catch (FileUploadException e) {
+					throw new ServletException("Couldn't read file");
 				}
-			} catch (FileUploadException e) {
-				throw new ServletException("Couldn't read file");
-			}
 
-			String id = params.get("id");
-			String schoolId = params.get("schoolId");
-			String comment = params.get("comment");
+				String id = params.get("id");
+				String schoolId = params.get("schoolId");
+				String comment = params.get("comment");
 
-			try {
-				if (hasFile) {
-					picture = storageHelper.uploadFile(pic, "pce-tool", schoolId + "-" + id, extension);
+				try {
+					if (hasFile) {
+						picture = storageHelper.uploadFile(pic, "pce-tool", schoolId + "-" + id, extension);
+					}
+				} catch (MetadataException | ImageProcessingException e1) {
+					throw new ServletException("Couldn't read image file");
 				}
-			} catch (MetadataException | ImageProcessingException e1) {
-				throw new ServletException("Couldn't read image file");
+
+				SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(
+						Long.valueOf(id), Long.valueOf(schoolId), picture, comment, picture != null
+								? SchoolCertificationCriterionStatus.PENDING : SchoolCertificationCriterionStatus.NOT_PROVIDED,
+						"School");
+
+				result = new JSONObject(criterion).toString(2);
+
+				try {
+					school = getSchoolDao().getSchool(Long.valueOf(schoolId));
+					SchoolEvent se = new SchoolEvent.Builder()
+							.description("Criterion '" + criterion.getCriterion().getDescription() + "' for school '"
+									+ school.getSchoolName() + "' updated")
+							.object(hasFile ? SchoolEventObject.PICTURE : SchoolEventObject.COMMENT).objectId(criterion.getId())
+							.schoolId(school.getId()).status(SchoolEventStatus.PENDING).build();
+					getSchoolEventDao().createSchoolEvent(se);
+				} catch (NumberFormatException | EntityNotFoundException e) {
+					throw new ServletException("Couldn't find related school");
+				}
+
+			} else {
+				throw new ServletException("Should be logged to save school");
 			}
-
-			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(
-					Long.valueOf(id), Long.valueOf(schoolId), picture, comment, picture != null
-							? SchoolCertificationCriterionStatus.PENDING : SchoolCertificationCriterionStatus.NOT_PROVIDED,
-					"School");
-
-			result = new JSONObject(criterion).toString(2);
-
-			try {
-				school = getSchoolDao().getSchool(Long.valueOf(schoolId));
-				SchoolEvent se = new SchoolEvent.Builder()
-						.description("Criterion '" + criterion.getCriterion().getDescription() + "' for school '"
-								+ school.getSchoolName() + "' updated")
-						.object(hasFile ? SchoolEventObject.PICTURE : SchoolEventObject.COMMENT).objectId(criterion.getId())
-						.schoolId(school.getId()).status(SchoolEventStatus.PENDING).build();
-				getSchoolEventDao().createSchoolEvent(se);
-			} catch (NumberFormatException | EntityNotFoundException e) {
-				throw new ServletException("Couldn't find related school");
-			}
-
-		} else {
-			throw new ServletException("Should be logged to save school");
+			resp.setContentType("application/json");
+			resp.setCharacterEncoding("UTF-8");
+			resp.getWriter().print(result);
+		} catch (Throwable t) {
+			JSONObject err = new JSONObject();
+			resp.setContentType("application/json");
+			resp.setCharacterEncoding("UTF-8");
+			err.put("error", t.getMessage());
+			log.warning("Intercepted error " + t.getMessage());
+			t.printStackTrace();
+			resp.getWriter().print(err);
+			resp.setStatus(500);
 		}
-		resp.setContentType("application/json");
-		resp.setCharacterEncoding("UTF-8");
-		resp.getWriter().print(result);
+
 	}
 }

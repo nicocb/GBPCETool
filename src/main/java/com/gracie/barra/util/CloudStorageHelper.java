@@ -84,7 +84,7 @@ public class CloudStorageHelper {
 				}
 			}
 		}
-		throw new ServletException("file must be an image : jpg or png");
+		throw new ServletException("file must be an image " + fileName + " is not a jpg or png ");
 	}
 
 	private byte[] imageIOResized(byte[] imgBytes, String extension)

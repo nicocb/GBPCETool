@@ -34,8 +34,21 @@ function afterCriteria(responseText, statusText, xhr, $form)  {
 	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-striped');
 	$('#pic'+critId).attr('src',responseText.picture);
 	$('#pic'+critId).attr('style','width: 60px;');
-	$('#ammocomment'+critId).append('<div class="alert alert-info" role="alert">'+responseText.comment[responseText.comment.length-1].comment+'</div>');
+	if($form.find('textarea[name=comment]').val().length > 0) {
+		$('#ammocomment'+critId).append('<div class="alert alert-info" role="alert">'+responseText.comment[responseText.comment.length-1].comment+'</div>');
+		$form.find('textarea[name=comment]').val('');
+	}
+} 
+
+function errorCriteria(responseText, statusText, xhr, $form)  { 
+	critId = $form.attr('id').substr(4);
+	switchBlock('ammoprogress'+critId);
+	switchBlock('ammovalidate'+critId);
+	$('#ammoprogress'+critId).removeClass('currentProgress');
+	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-success');
+	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-striped');
 	$form.find('textarea[name=comment]').val('');
+	alert(responseText.responseJSON.error);
 } 
 
 function switchForm(id)
