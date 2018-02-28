@@ -1,6 +1,6 @@
 function beforeCriteria(formData, $form, options) { 
 	critId = $form.attr('id').substr(4);
-	switchBlock('ammoprogress'+critId);
+	showBlock('ammoprogress'+critId);
 	switchBlock('ammovalidate'+critId);
 	$('#ammoprogress'+critId).addClass('currentProgress');
 } 
@@ -27,11 +27,12 @@ function uploadingCriteria(event, position, total, percentComplete)  {
 
 function afterCriteria(responseText, statusText, xhr, $form)  { 
 	critId = $form.attr('id').substr(4);
-	switchBlock('ammoprogress'+critId);
+	//switchBlock('ammoprogress'+critId);
 	switchBlock('ammovalidate'+critId);
 	$('#ammoprogress'+critId).removeClass('currentProgress');
-	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-success');
+	//$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-success');
 	$('#ammoprogress'+critId).find('.progress-bar').removeClass('progress-bar-striped');
+	$('#ammoprogress'+critId).find('.progress-bar').text('Upload successful');
 	$('#pic'+critId).attr('src',responseText.picture);
 	$('#pic'+critId).attr('style','width: 60px;');
 	if($form.find('textarea[name=comment]').val().length > 0) {
@@ -64,6 +65,13 @@ function switchBlock(id)
     if(document.getElementById(id).style.display == "block") {
     	document.getElementById(id).style.display="none";
     } else {
+    	document.getElementById(id).style.display="block";
+    }
+}
+
+function showBlock(id)
+{
+    if(document.getElementById(id).style.display != "block") {
     	document.getElementById(id).style.display="block";
     }
 }

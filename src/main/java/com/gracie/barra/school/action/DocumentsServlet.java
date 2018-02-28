@@ -33,6 +33,10 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.api.client.util.Strings;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventOrigin;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 
@@ -114,6 +118,10 @@ public class DocumentsServlet extends AbstractGBServlet {
 			String fileName = docName + "-" + schoolId + "." + nameElements[nameElements.length - 1];
 			String url = getStorageHelper().uploadPdf(file, "pce-tool", fileName);
 			getSchoolDao().addDocumentUrl(Long.valueOf(schoolId), docName, fileName, url);
+			SchoolEvent se = new SchoolEvent.Builder().description("A new document is available : " + docName)
+					.object(SchoolEventObject.DOCUMENT).objectId(Long.valueOf(schoolId)).schoolId(Long.valueOf(schoolId))
+					.status(SchoolEventStatus.PENDING).origin(SchoolEventOrigin.GB).build();
+			this.getSchoolEventDao().createSchoolEvent(se);
 		} catch (Exception e) {
 			throw new ServletException("Couldn't read  file", e);
 		}

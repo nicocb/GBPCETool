@@ -40,11 +40,12 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.gracie.barra.admin.objects.SchoolEvent;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventOrigin;
 import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
-import com.gracie.barra.admin.objects.SchoolEventsByObject;
 import com.gracie.barra.admin.objects.SchoolEventsDashboard;
 import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.objects.School;
+import com.gracie.barra.util.MailingHelper;
 
 public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 
@@ -61,6 +62,10 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 	}
 
 	public SchoolEvent entityToSchoolEvent(Entity entity) {
+		Long origin = (Long) entity.getProperty(SchoolEvent.ORIGIN);
+		if (origin == null) {
+			origin = (long) SchoolEventOrigin.SCHOOL.ordinal();
+		}
 		return new SchoolEvent.Builder() // Convert to
 											// SchoolEvent
 											// form
@@ -70,24 +75,43 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 						.valueOf(((String) entity.getProperty(SchoolEvent.OBJECT)).replace("CRITERION", "PICTURE")))
 				.objectId((Long) entity.getProperty(SchoolEvent.OBJECT_ID))
 				.schoolId((Long) entity.getProperty(SchoolEvent.SCHOOL_ID))
-				.status(SchoolEventStatus.values()[((Long) entity.getProperty(SchoolEvent.STATUS)).intValue()]).build();
+				.status(SchoolEventStatus.values()[((Long) entity.getProperty(SchoolEvent.STATUS)).intValue()])
+				.origin(SchoolEventOrigin.values()[((Long) entity.getProperty(SchoolEvent.ORIGIN)).intValue()]).build();
 	}
 
 	@Override
-	public Long createSchoolEvent(SchoolEvent cc) {
-		Entity seEntity = findSchoolEvent(cc);
+	public Long createSchoolEvent(SchoolEvent se) {
+		Entity seEntity = findSchoolEvent(se);
 		if (seEntity == null) {
 			seEntity = new Entity(SE_KIND);
 		}
 		seEntity.setProperty(SchoolEvent.DATE, new Date());
-		seEntity.setProperty(SchoolEvent.DESCRIPTION, cc.getDescription());
-		seEntity.setProperty(SchoolEvent.OBJECT, cc.getObject().toString());
-		seEntity.setProperty(SchoolEvent.OBJECT_ID, cc.getObjectId());
-		seEntity.setProperty(SchoolEvent.SCHOOL_ID, cc.getSchoolId());
-		seEntity.setProperty(SchoolEvent.STATUS, cc.getStatus().ordinal());
+		seEntity.setProperty(SchoolEvent.DESCRIPTION, se.getDescription());
+		seEntity.setProperty(SchoolEvent.OBJECT, se.getObject().toString());
+		seEntity.setProperty(SchoolEvent.OBJECT_ID, se.getObjectId());
+		seEntity.setProperty(SchoolEvent.SCHOOL_ID, se.getSchoolId());
+		seEntity.setProperty(SchoolEvent.STATUS, se.getStatus().ordinal());
+		seEntity.setProperty(SchoolEvent.ORIGIN, se.getOrigin().ordinal());
 
-		Key ccKey = datastore.put(seEntity); // Save the Entity
-		return ccKey.getId(); // The ID of the Key
+		Key seKey = datastore.put(seEntity); // Save the Entity
+
+		notify(se);
+
+		return seKey.getId(); // The ID of the Key
+	}
+
+	private void notify(SchoolEvent se) {
+		School school;
+		try {
+			school = schoolDao.getSchool(se.getSchoolId());
+			String contact = school.getSchoolMail();
+			if (contact == null) {
+				school.getContactMail();
+			}
+			MailingHelper.notifyEvent(school.getSchoolName(), contact, se.getDescription(), se.getRedirect());
+		} catch (EntityNotFoundException e) {
+			logger.severe("Could not notify school " + e.getMessage());
+		}
 	}
 
 	@Override
@@ -110,6 +134,7 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 		seEntity.setProperty(SchoolEvent.OBJECT_ID, schoolEvent.getObjectId());
 		seEntity.setProperty(SchoolEvent.SCHOOL_ID, schoolEvent.getSchoolId());
 		seEntity.setProperty(SchoolEvent.STATUS, schoolEvent.getStatus().ordinal());
+		seEntity.setProperty(SchoolEvent.ORIGIN, schoolEvent.getOrigin().ordinal());
 
 		datastore.put(seEntity); // Update the Entity
 	}
@@ -132,42 +157,32 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 	}
 
 	@Override
-	public List<SchoolEventsByObject> listSchoolEventsByObject() {
-		List<SchoolEventsByObject> result = new ArrayList<>();
-
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
-		// We only care about CertificationCriteria
-		// Use default Index "title"
-		Query query = new Query(SE_KIND).addSort(SchoolEvent.OBJECT, SortDirection.DESCENDING)
-				.addSort(SchoolEvent.DATE, SortDirection.DESCENDING).addSort(SchoolEvent.STATUS);
-		PreparedQuery preparedQuery = datastore.prepare(query);
-		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
-
-		List<SchoolEvent> resultCertificationCriteria = entitiesToSchoolEvents(results);
-
-		SchoolEventObject current = null;
-		SchoolEventsByObject currentList = null;
-
-		for (SchoolEvent schoolEvent : resultCertificationCriteria) {
-			if (schoolEvent.getObject() != current) {
-				current = schoolEvent.getObject();
-				currentList = new SchoolEventsByObject(current);
-				result.add(currentList);
-			}
-			currentList.getEvents().add(schoolEvent);
-		}
-		return result;
+	public SchoolEventsDashboard listSchoolEvents(Long schoolId) {
+		return listSchoolEvents(SchoolEventOrigin.GB, schoolId);
 	}
 
 	@Override
-	public SchoolEventsDashboard listSchoolEvents() {
+	public SchoolEventsDashboard listAdminEvents() {
+		return listSchoolEvents(SchoolEventOrigin.SCHOOL, null);
+	}
+
+	public SchoolEventsDashboard listSchoolEvents(SchoolEventOrigin origin, Long schoolId) {
 
 		SchoolEventsDashboard result = new SchoolEventsDashboard();
 
 		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
 
-		Query query = new Query(SE_KIND).addSort(SchoolEvent.DATE, SortDirection.DESCENDING)
-				.addSort(SchoolEvent.OBJECT, SortDirection.DESCENDING).addSort(SchoolEvent.STATUS);
+		Filter filter = new FilterPredicate(SchoolEvent.ORIGIN, FilterOperator.EQUAL, origin.ordinal());
+		if (schoolId != null) {
+			Collection<Filter> filters = new ArrayList<>();
+			filters.add(filter);
+			filters.add(new FilterPredicate(SchoolEvent.SCHOOL_ID, FilterOperator.EQUAL, schoolId));
+			filter = new CompositeFilter(CompositeFilterOperator.AND, filters);
+		}
+
+		Query query = new Query(SE_KIND).setFilter(filter).addSort(SchoolEvent.ORIGIN, SortDirection.DESCENDING)
+				.addSort(SchoolEvent.DATE, SortDirection.DESCENDING).addSort(SchoolEvent.OBJECT, SortDirection.DESCENDING)
+				.addSort(SchoolEvent.STATUS);
 		PreparedQuery preparedQuery = datastore.prepare(query);
 		QueryResultIterator<Entity> results = preparedQuery.asQueryResultIterator(fetchOptions);
 
@@ -194,6 +209,7 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 		Collection<Filter> filters = new ArrayList<>();
 		filters.add(new FilterPredicate(SchoolEvent.OBJECT_ID, FilterOperator.EQUAL, se.getObjectId()));
 		filters.add(new FilterPredicate(SchoolEvent.OBJECT, FilterOperator.EQUAL, se.getObject().toString()));
+		filters.add(new FilterPredicate(SchoolEvent.ORIGIN, FilterOperator.EQUAL, se.getOrigin().ordinal()));
 		Query query = new Query(SE_KIND).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
 
 		PreparedQuery preparedQuery = datastore.prepare(query);

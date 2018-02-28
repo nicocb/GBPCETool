@@ -14,7 +14,7 @@
 <link rel="icon"  href="/apple-touch-icon.png">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="/scripts/gbScripts.js"></script>
+<script src="/scripts/gbScripts.js?version=4"></script>
 <script>
   window.fbAsyncInit = function() {
     FB.init({
@@ -64,6 +64,7 @@
 					<li ${schoolStatus == 'Validated'?'':'class="disabled"'}><a ${schoolStatus == 'Validated'?'href="/admission"':''}>Admission</a></li>
 					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li>
 					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/documents"':''}>My downloads</a></li>
+					<li><a href="/events">Events</a></li>
 
 				</ul>
 				<p class="navbar-text navbar-right">

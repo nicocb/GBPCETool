@@ -22,6 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventOrigin;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 import com.gracie.barra.school.objects.School.Belt;
@@ -57,6 +61,12 @@ public class AdmissionServlet extends AbstractGBServlet {
 			if (school != null) {
 				try {
 					getSchoolDao().updateSchoolAgreementStatus(school.getId(), SchoolStatus.VALIDATED);
+					SchoolEvent se = new SchoolEvent.Builder()
+							.description("School '" + school.getSchoolName() + "' validated its admission form")
+							.object(SchoolEventObject.ADMISSION).objectId(school.getId()).schoolId(school.getId())
+							.status(SchoolEventStatus.PENDING).origin(SchoolEventOrigin.SCHOOL).build();
+					this.getSchoolEventDao().createSchoolEvent(se);
+
 				} catch (EntityNotFoundException e) {
 					throw new ServletException("School not found");
 				}

@@ -66,6 +66,15 @@
       <servlet-name>admission</servlet-name>
       <url-pattern>/admission</url-pattern>
     </servlet-mapping>
+    <servlet>
+      <servlet-name>schoolEvents</servlet-name>
+      <servlet-class>com.gracie.barra.school.action.SchoolEventsServlet</servlet-class>
+    </servlet>
+	<servlet-mapping>
+		<servlet-name>schoolEvents</servlet-name>
+		<url-pattern>/events</url-pattern>
+		<url-pattern>/eventsDelete</url-pattern>
+    </servlet-mapping>
     
     <servlet>
       <servlet-name>criteria</servlet-name>
@@ -103,11 +112,11 @@
       <url-pattern>/admin/schools</url-pattern>
     </servlet-mapping>    
     <servlet>
-      <servlet-name>schoolEvents</servlet-name>
-      <servlet-class>com.gracie.barra.admin.actions.SchoolEventsServlet</servlet-class>
+      <servlet-name>adminEvents</servlet-name>
+      <servlet-class>com.gracie.barra.admin.actions.AdminEventsServlet</servlet-class>
     </servlet>
 	<servlet-mapping>
-		<servlet-name>schoolEvents</servlet-name>
+		<servlet-name>adminEvents</servlet-name>
 		<url-pattern>/admin/events</url-pattern>
 		<url-pattern>/admin/eventsDelete</url-pattern>
 		<url-pattern>/admin</url-pattern>

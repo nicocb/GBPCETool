@@ -21,12 +21,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
+import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
+import com.gracie.barra.admin.objects.SchoolEventsDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 
 @SuppressWarnings("serial")
-public class SchoolCriteriaServlet extends AbstractGBServlet {
+public class SchoolEventsServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -35,21 +37,40 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			if (school == null) {
 				throw new ServletException("Session probably expired");
 			}
-			SchoolCertificationDashboard schoolCertificationDashboard = null;
-
+			SchoolEventsDashboard schoolEvents = null;
 			try {
-				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(school.getId());
+				schoolEvents = getSchoolEventDao().listSchoolEvents(school.getId());
 			} catch (Exception e) {
-				throw new ServletException("Error listing certificationCriteria", e);
+				throw new ServletException("Error listing schoolEvents", e);
 			}
+			req.getSession().getServletContext().setAttribute("schoolEvents", schoolEvents);
+
 			injectSchoolStatus(req, school);
-			req.getSession().getServletContext().setAttribute("highlight", null);
-			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
-			req.setAttribute("schoolId", school.getId());
-			req.setAttribute("school", school);
-			req.setAttribute("page", "schoolCriteria");
+			req.setAttribute("page", "schoolEvents");
+			req.setAttribute("mode", "school");
 			req.getRequestDispatcher("/base.jsp").forward(req, resp);
 		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Boolean delete = req.getRequestURI().contains("Delete");
+
+		String id = req.getParameter("id");
+
+		if (delete) {
+			resp.sendRedirect("/events");
+			getSchoolEventDao().deleteSchoolEvent(Long.valueOf(id));
+		} else {
+			SchoolEvent event = getSchoolEventDao().readSchoolEvent(Long.valueOf(id));
+			if (event.getStatus() == SchoolEventStatus.PENDING) {
+				event.setStatus(SchoolEventStatus.CLICKED);
+				getSchoolEventDao().updateSchoolEvent(event);
+			}
+			resp.sendRedirect(event.getRedirect());
+
+		}
+
 	}
 
 }

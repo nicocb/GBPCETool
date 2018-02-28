@@ -22,6 +22,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventOrigin;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School.SchoolStatus;
 import com.gracie.barra.school.objects.SchoolsByRank;
@@ -59,6 +63,12 @@ public class SchoolsServlet extends AbstractGBServlet {
 				try {
 					getSchoolDao().updateSchoolStatus(Long.valueOf(id),
 							Boolean.valueOf(status) ? SchoolStatus.PENDING : SchoolStatus.VALIDATED);
+					SchoolEvent se = new SchoolEvent.Builder()
+							.description("Your school has been validated, you can now proceed to admission form.")
+							.object(SchoolEventObject.ADMISSION).objectId(Long.valueOf(id)).schoolId(Long.valueOf(id))
+							.status(SchoolEventStatus.PENDING).origin(SchoolEventOrigin.GB).build();
+					this.getSchoolEventDao().createSchoolEvent(se);
+
 				} catch (Exception e) {
 					throw new ServletException("Error updating school ", e);
 				}
@@ -69,16 +79,23 @@ public class SchoolsServlet extends AbstractGBServlet {
 				try {
 					getSchoolDao().updateSchoolInitialFeeStatus(Long.valueOf(id),
 							Boolean.valueOf(status) ? SchoolStatus.PENDING : SchoolStatus.VALIDATED);
+					SchoolEvent se = new SchoolEvent.Builder().description("Your initial fee has been validated.")
+							.object(SchoolEventObject.FEE).objectId(Long.valueOf(id)).schoolId(Long.valueOf(id))
+							.status(SchoolEventStatus.PENDING).origin(SchoolEventOrigin.GB).build();
+					this.getSchoolEventDao().createSchoolEvent(se);
 				} catch (Exception e) {
 					throw new ServletException("Error updating school ", e);
 				}
-
 				break;
 			case "monthly":
 				status = req.getParameter("validated");
 				try {
 					getSchoolDao().updateSchoolMonthlyFeeStatus(Long.valueOf(id),
 							Boolean.valueOf(status) ? SchoolStatus.PENDING : SchoolStatus.VALIDATED);
+					SchoolEvent se = new SchoolEvent.Builder().description("Your monthly fee has been validated")
+							.object(SchoolEventObject.FEE).objectId(Long.valueOf(id)).schoolId(Long.valueOf(id))
+							.status(SchoolEventStatus.PENDING).origin(SchoolEventOrigin.GB).build();
+					this.getSchoolEventDao().createSchoolEvent(se);
 				} catch (Exception e) {
 					throw new ServletException("Error updating school ", e);
 				}

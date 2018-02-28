@@ -27,19 +27,20 @@ import com.gracie.barra.admin.objects.SchoolEventsDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 
 @SuppressWarnings("serial")
-public class SchoolEventsServlet extends AbstractGBServlet {
+public class AdminEventsServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		SchoolEventsDashboard schoolEvents = null;
 		try {
-			schoolEvents = getSchoolEventDao().listSchoolEvents();
+			schoolEvents = getSchoolEventDao().listAdminEvents();
 		} catch (Exception e) {
 			throw new ServletException("Error listing schoolEvents", e);
 		}
 		req.getSession().getServletContext().setAttribute("schoolEvents", schoolEvents);
 
 		req.setAttribute("page", "schoolEvents");
+		req.setAttribute("mode", "admin");
 		req.getRequestDispatcher("/baseAdmin.jsp").forward(req, resp);
 	}
 
@@ -58,16 +59,8 @@ public class SchoolEventsServlet extends AbstractGBServlet {
 				event.setStatus(SchoolEventStatus.CLICKED);
 				getSchoolEventDao().updateSchoolEvent(event);
 			}
-			switch (event.getObject()) {
-			case SCHOOL:
-				resp.sendRedirect("/admin/schools?highlight=" + event.getSchoolId());
-				break;
-			case COMMENT:
-			case PICTURE:
-				resp.sendRedirect("/admin/schoolCriteriaAdmin/" + event.getSchoolId() + "?highlight=" + event.getObjectId());
-				break;
+			resp.sendRedirect(event.getRedirect());
 
-			}
 		}
 
 	}

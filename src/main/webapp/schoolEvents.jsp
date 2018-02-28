@@ -39,12 +39,12 @@
 										<a href="javascript:;" onclick="document.getElementById('form${fn:escapeXml(schoolEvent.id)}').submit();">${fn:escapeXml(schoolEvent.description)}</a>
 									</div>
 									<div class="col-md-1 col-xs-1 search">
-										<form id="form${fn:escapeXml(schoolEvent.id)}" method="POST" action="/admin/events" hidden=true>
+										<form id="form${fn:escapeXml(schoolEvent.id)}" method="POST" action="${mode == 'admin'?'/admin':''}/events" hidden=true>
 											<input type="hidden" name="id" value="${fn:escapeXml(schoolEvent.id)}" />
 										</form>
 										<div class="input-group pull-right">
 											<button type="submit" onclick="return confirm('Sure you want to delete this event?');" class="icon-button" form="form${fn:escapeXml(schoolEvent.id)}"
-												formaction="/admin/eventsDelete">
+												formaction="${mode == 'admin'?'/admin':''}/eventsDelete">
 												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</button>
 										</div>

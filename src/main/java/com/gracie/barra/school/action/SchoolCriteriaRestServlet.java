@@ -93,7 +93,7 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 						if (item.isFormField()) {
 							params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
 						} else if (!Strings.isNullOrEmpty(item.getName())) {
-							extension = CloudStorageHelper.checkFileExtension(item.getName());
+							extension = CloudStorageHelper.checkFileExtension(item.getName().toLowerCase());
 							pic = IOUtils.toByteArray(item.openStream());
 							hasFile = true;
 						}

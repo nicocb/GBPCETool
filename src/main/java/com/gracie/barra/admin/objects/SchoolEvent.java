@@ -10,6 +10,7 @@ public class SchoolEvent {
 	private SchoolEventObject object;
 	private Long objectId;
 	private SchoolEventStatus status = SchoolEventStatus.PENDING;
+	private SchoolEventOrigin origin = SchoolEventOrigin.SCHOOL;
 
 	public static final String ID = "id";
 	public static final String DATE = "date";
@@ -18,6 +19,7 @@ public class SchoolEvent {
 	public static final String OBJECT = "object";
 	public static final String OBJECT_ID = "objectId";
 	public static final String STATUS = "status";
+	public static final String ORIGIN = "origin";
 
 	public static class Builder {
 		private Long id;
@@ -26,7 +28,8 @@ public class SchoolEvent {
 		private Long schoolId;
 		private SchoolEventObject object;
 		private Long objectId;
-		private SchoolEventStatus status;
+		private SchoolEventStatus status = SchoolEventStatus.PENDING;
+		private SchoolEventOrigin origin = SchoolEventOrigin.SCHOOL;
 
 		public Builder id(Long id) {
 			this.id = id;
@@ -63,6 +66,11 @@ public class SchoolEvent {
 			return this;
 		}
 
+		public Builder origin(SchoolEventOrigin origin) {
+			this.origin = origin;
+			return this;
+		}
+
 		public SchoolEvent build() {
 			return new SchoolEvent(this);
 		}
@@ -76,6 +84,7 @@ public class SchoolEvent {
 		this.object = builder.object;
 		this.objectId = builder.objectId;
 		this.status = builder.status;
+		this.origin = builder.origin;
 	}
 
 	public Date getDate() {
@@ -149,12 +158,61 @@ public class SchoolEvent {
 		return status;
 	}
 
+	public SchoolEventOrigin getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(SchoolEventOrigin origin) {
+		this.origin = origin;
+	}
+
 	public enum SchoolEventStatus {
 		PENDING, CLICKED, TREATED
 	}
 
+	public enum SchoolEventOrigin {
+		SCHOOL, GB
+	}
+
 	public enum SchoolEventObject {
-		SCHOOL, PICTURE, COMMENT
+		SCHOOL, PICTURE, COMMENT, ADMISSION, DOCUMENT, FEE
+	}
+
+	public String getRedirect() {
+		String redirect = "";
+		if (getOrigin() == SchoolEventOrigin.SCHOOL)
+			switch (getObject()) {
+			case ADMISSION:
+			case SCHOOL:
+				redirect = "/admin/schools?highlight=" + getSchoolId();
+				break;
+			case COMMENT:
+			case PICTURE:
+				redirect = "/admin/schoolCriteriaAdmin/" + getSchoolId() + "?highlight=" + getObjectId();
+				break;
+			default:
+				redirect = "/admin";
+
+			}
+		else {
+			switch (getObject()) {
+			case ADMISSION:
+			case FEE:
+				redirect = "/admission";
+				break;
+			case COMMENT:
+			case PICTURE:
+				redirect = "/schoolCriteria/?highlight=" + getObjectId();
+				break;
+			case DOCUMENT:
+				redirect = "/documents";
+				break;
+			default:
+				redirect = "/school";
+
+			}
+		}
+		return redirect;
 	}
 
 }
