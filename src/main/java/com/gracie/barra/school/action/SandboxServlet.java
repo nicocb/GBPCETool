@@ -21,36 +21,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 
 @SuppressWarnings("serial")
-public class SchoolCriteriaServlet extends AbstractGBServlet {
+public class SandboxServlet extends AbstractGBServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		School school = null;
 		if (isUserLoggedIn(req)) {
-			School school = getSchoolDao().getSchoolByUser(getCurrentUserId(req));
-			if (school == null) {
-				throw new ServletException("Session probably expired");
-			}
-			SchoolCertificationDashboard schoolCertificationDashboard = null;
-
-			try {
-				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(school.getId());
-			} catch (Exception e) {
-				throw new ServletException("Error listing certificationCriteria", e);
-			}
 			injectSchoolStatus(req, school);
-			String highlight = req.getParameter("highlight");
-			req.getSession().getServletContext().setAttribute("highlight", highlight);
-			req.getSession().getServletContext().setAttribute("schoolCertificationDashboard", schoolCertificationDashboard);
-			req.setAttribute("schoolId", school.getId());
-			req.setAttribute("school", school);
-			req.setAttribute("page", "schoolCriteria");
-			req.getRequestDispatcher("/base.jsp").forward(req, resp);
 		}
+		req.setAttribute("page", "sandbox");
+		req.getRequestDispatcher("/base.jsp").forward(req, resp);
 	}
 
 }

@@ -75,6 +75,14 @@
 		<url-pattern>/events</url-pattern>
 		<url-pattern>/eventsDelete</url-pattern>
     </servlet-mapping>
+    <servlet>
+      <servlet-name>sandbox</servlet-name>
+      <servlet-class>com.gracie.barra.school.action.SandboxServlet</servlet-class>
+    </servlet>
+	<servlet-mapping>
+		<servlet-name>sandbox</servlet-name>
+		<url-pattern>/sandbox</url-pattern>
+    </servlet-mapping>
     
     <servlet>
       <servlet-name>criteria</servlet-name>
@@ -136,6 +144,7 @@
       <url-pattern>/schoolCriteria</url-pattern>
       <url-pattern>/api/schoolCriteria</url-pattern>
       <url-pattern>/school</url-pattern>
+      <url-pattern>/events</url-pattern>
       <url-pattern>/documents</url-pattern>
       <url-pattern>/admission</url-pattern>
       <url-pattern>/admin/*</url-pattern>

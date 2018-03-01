@@ -21,8 +21,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
+import com.gracie.barra.admin.objects.SchoolEvent;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventObject;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventOrigin;
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventStatus;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
 
@@ -66,11 +71,18 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			String comment = req.getParameter("comment");
 			String schoolId = req.getParameter("schoolId");
 
-			getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), Long.valueOf(schoolId), null, comment,
+			SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id),
+					Long.valueOf(schoolId), null, comment,
 					revoke ? SchoolCertificationCriterionStatus.NOT_VALIDATED
 							: validate ? SchoolCertificationCriterionStatus.VALIDATED
 									: SchoolCertificationCriterionStatus.PENDING,
 					"GB");
+			SchoolEvent se = new SchoolEvent.Builder()
+					.description("Criterion '" + criterion.getCriterion().getDescription()
+							+ (revoke ? " refused" : (validate ? " validated" : " commented")))
+					.object(SchoolEventObject.PICTURE).objectId(criterion.getId()).schoolId(Long.valueOf(schoolId))
+					.status(SchoolEventStatus.PENDING).origin(SchoolEventOrigin.GB).build();
+			this.getSchoolEventDao().createSchoolEvent(se);
 
 		} else {
 			throw new ServletException("Should be logged to save school");

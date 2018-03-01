@@ -12,6 +12,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.gracie.barra.admin.objects.SchoolEvent.SchoolEventOrigin;
+
 public class MailingHelper {
 	private static final Logger log = Logger.getLogger(MailingHelper.class.getName());
 
@@ -36,7 +38,9 @@ public class MailingHelper {
 		}
 	}
 
-	public static void notifyEvent(String school, String contact, String object, String link) {
+	public static void notifyEvent(SchoolEventOrigin origin, String school, String contact, String object, String link) {
+		String destMail = origin == SchoolEventOrigin.GB ? contact : "support.europe@graciebarra.com";
+		String dest = origin == SchoolEventOrigin.GB ? school : "Support Europem";
 		Message msg = null;
 		try {
 			Properties props = new Properties();
@@ -46,11 +50,12 @@ public class MailingHelper {
 			Address[] addresses = new Address[1];
 			addresses[0] = new InternetAddress("support.europe@graciebarra.com", "Support Europe");
 			msg.setReplyTo(addresses);
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(contact, school));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(destMail, dest));
 			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico"));
 			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("sebastien.garnier@graciebarra.com", "Seb"));
 			msg.setSubject("[SCP] " + object);
 			msg.setText("New event in your certification program : \n" + object + "\nhttps://pce-tool.appspot.com" + link);
+			log.info("Sending " + object + " to " + destMail + "/" + dest);
 			Transport.send(msg);
 		} catch (MessagingException | UnsupportedEncodingException e) {
 			log.severe("Couldn't send mail " + e.getMessage() + " \n" + msg);

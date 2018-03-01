@@ -202,7 +202,7 @@ public class SchoolEvent {
 				break;
 			case COMMENT:
 			case PICTURE:
-				redirect = "/schoolCriteria/?highlight=" + getObjectId();
+				redirect = "/schoolCriteria?highlight=" + getObjectId();
 				break;
 			case DOCUMENT:
 				redirect = "/documents";

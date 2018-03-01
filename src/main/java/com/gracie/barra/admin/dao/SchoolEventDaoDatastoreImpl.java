@@ -108,7 +108,7 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 			if (contact == null) {
 				school.getContactMail();
 			}
-			MailingHelper.notifyEvent(school.getSchoolName(), contact, se.getDescription(), se.getRedirect());
+			MailingHelper.notifyEvent(se.getOrigin(), school.getSchoolName(), contact, se.getDescription(), se.getRedirect());
 		} catch (EntityNotFoundException e) {
 			logger.severe("Could not notify school " + e.getMessage());
 		}
