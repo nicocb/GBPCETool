@@ -16,29 +16,30 @@
 			<p>No events found</p>
 		</c:when>
 		<c:otherwise>
-								<div class="input-group input-group-sm">
-						  <span class="input-group-addon" id="sizing-addon">Search : </span>
-						  <input id="searchBox" type="text" class="form-control" placeholder="School/Date/Description" aria-describedby="sizing-addon">
-						</div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon">Search : </span>
+					<input id="searchBox" type="text" class="form-control" placeholder="School/Date/Description" aria-describedby="sizing-addon">
+					<span id="eyeOfTheTiger" class="input-group-addon glyphicon glyphicon-eye-open" onclick="switchEvents()"></span>
+				</div>
 				<div class="panel panel-default">
 					<div class="panel-body">
 					
-						<c:forEach items="${schoolEvents.events}" var="schoolEvent">
-							<div class="container-fluid bgcolored${schoolEvent.status == 'CLICKED'?'':'Highlight'}" >
+						<c:forEach items="${schoolEvents.events}" var="schoolEvent">  
+							<div class="container-fluid bgcolored${schoolEvent.status == 'CLICKED'?' clicked':'Highlight'}" ${schoolEvent.status == 'CLICKED'?'style="display: none;"':''}>
 								<div class="row vertical-align">
-									<div class="col-md-2 hidden-xs search">
+									<div class="col-sm-2 hidden-xs search">
 										<fmt:formatDate value="${schoolEvent.date}"  pattern="yyyy-MM-dd" />
 									</div>
-									<div class="col-md-1 col-xs-3 search">
+									<div class="col-sm-1 col-xs-3 search">
 										${schoolEvent.readableDate}
 									</div>
-									<div class="col-md-3 hidden-xs search">
-										${fn:escapeXml(schoolEvents.schools.get(schoolEvent.schoolId))}
+									<div class="col-sm-2 hidden-xs search">
+										${fn:escapeXml(mode == 'admin'?schoolEvents.schools.get(schoolEvent.schoolId):schoolEvent.object.description)}
 									</div>
-									<div class="col-md-5 col-xs-8 search">
+									<div class="col-sm-6 col-xs-8 search">
 										<a href="javascript:;" onclick="document.getElementById('form${fn:escapeXml(schoolEvent.id)}').submit();">${fn:escapeXml(schoolEvent.description)}</a>
 									</div>
-									<div class="col-md-1 col-xs-1 search">
+									<div class="col-sm-1 col-xs-1 search">
 										<form id="form${fn:escapeXml(schoolEvent.id)}" method="POST" action="${mode == 'admin'?'/admin':''}/events" hidden=true>
 											<input type="hidden" name="id" value="${fn:escapeXml(schoolEvent.id)}" />
 										</form>

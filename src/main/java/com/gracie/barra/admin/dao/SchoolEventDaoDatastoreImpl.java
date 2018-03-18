@@ -95,6 +95,14 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 
 		Key seKey = datastore.put(seEntity); // Save the Entity
 
+		// Click twin event if exists
+		SchoolEvent twin = new SchoolEvent.Builder().object(se.getObject()).objectId(se.getObjectId())
+				.origin(se.getOrigin().getTwin()).build();
+		Entity twinEntity = findSchoolEvent(twin);
+		if (twinEntity != null) {
+			twinEntity.setProperty(SchoolEvent.STATUS, SchoolEventStatus.CLICKED.ordinal());
+			datastore.put(twinEntity);
+		}
 		notify(se);
 
 		return seKey.getId(); // The ID of the Key
@@ -170,7 +178,7 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 
 		SchoolEventsDashboard result = new SchoolEventsDashboard();
 
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1000);
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(100);
 
 		Filter filter = new FilterPredicate(SchoolEvent.ORIGIN, FilterOperator.EQUAL, origin.ordinal());
 		if (schoolId != null) {

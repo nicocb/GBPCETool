@@ -97,7 +97,7 @@ public class SchoolEvent {
 		if (diff / 1000.0 < 60) {
 			result = (int) Math.floor(diff / 1000) + " s";
 		} else if (diff / 1000.0 / 60.0 < 60) {
-			result = (int) Math.floor(diff / 1000.0 / 60.0) + " min";
+			result = (int) Math.floor(diff / 1000.0 / 60.0) + " m";
 		} else if (diff / 1000.0 / 60.0 / 60.0 < 24) {
 			result = (int) Math.floor(diff / 1000.0 / 60.0 / 60.0) + " h";
 		} else if (diff / 1000.0 / 60.0 / 60.0 / 24.0 < 30) {
@@ -171,11 +171,25 @@ public class SchoolEvent {
 	}
 
 	public enum SchoolEventOrigin {
-		SCHOOL, GB
+		SCHOOL, GB;
+
+		public SchoolEventOrigin getTwin() {
+			return this == GB ? SchoolEventOrigin.SCHOOL : GB;
+		}
 	}
 
 	public enum SchoolEventObject {
-		SCHOOL, PICTURE, COMMENT, ADMISSION, DOCUMENT, FEE
+		SCHOOL("School"), PICTURE("Picture"), COMMENT("Comment"), ADMISSION("School"), DOCUMENT("Document"), FEE("Fee");
+
+		private String description;
+
+		SchoolEventObject(String descrition) {
+			this.description = descrition;
+		}
+
+		public String getDescription() {
+			return description;
+		}
 	}
 
 	public String getRedirect() {
@@ -186,7 +200,6 @@ public class SchoolEvent {
 			case SCHOOL:
 				redirect = "/admin/schools?highlight=" + getSchoolId();
 				break;
-			case COMMENT:
 			case PICTURE:
 				redirect = "/admin/schoolCriteriaAdmin/" + getSchoolId() + "?highlight=" + getObjectId();
 				break;
@@ -200,7 +213,6 @@ public class SchoolEvent {
 			case FEE:
 				redirect = "/admission";
 				break;
-			case COMMENT:
 			case PICTURE:
 				redirect = "/schoolCriteria?highlight=" + getObjectId();
 				break;

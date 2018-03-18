@@ -125,9 +125,9 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 					school = getSchoolDao().getSchool(Long.valueOf(schoolId));
 					SchoolEvent se = new SchoolEvent.Builder()
 							.description("Criterion '" + criterion.getCriterion().getDescription() + "' for school '"
-									+ school.getSchoolName() + "' updated")
-							.object(hasFile ? SchoolEventObject.PICTURE : SchoolEventObject.COMMENT).objectId(criterion.getId())
-							.schoolId(school.getId()).status(SchoolEventStatus.PENDING).build();
+									+ school.getSchoolName() + (hasFile ? "' updated" : "' commented"))
+							.object(SchoolEventObject.PICTURE).objectId(criterion.getId()).schoolId(school.getId())
+							.status(SchoolEventStatus.PENDING).build();
 					getSchoolEventDao().createSchoolEvent(se);
 				} catch (NumberFormatException | EntityNotFoundException e) {
 					throw new ServletException("Couldn't find related school");
