@@ -114,7 +114,6 @@
 	    <artifactId>jackson-databind</artifactId>
 	    <version>${jackson.version}</version>
 	</dependency>
-
     <!-- Selenium chokes without this, for some reason. -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>

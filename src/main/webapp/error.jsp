@@ -32,17 +32,15 @@
 <body>
 	<div class="container">
 		<h3 align="center">GB SCP Tool</h3>
-<h6 align="center">Something went wrong : ${errorMessage}</h6>
-<h6 align="center"> please retry or contact admin if still no success </h6>
+<h6 align="center" style="color: red; font-weight: bold;" >Something went wrong : ${errorMessage}</h6>
+<h6 align="center">please retry or contact admin if still no success</h6>
 <BR>
-		<img alt="Error screen" src="/pics/error.jpg" class="img-responsive center-block"/>
+		<img alt="Error screen" src="/pics/scp.png" class="img-responsive center-block"/>
 <BR>
 		<div class="text-center">
 			<div class="btn-group" role="group" aria-label="..." align="center">
 				<button type="button" class="btn btn-success"
-					onclick="location.href='/school';">School</button>
-				<button type="button" class="btn btn-danger"
-					onclick="location.href='/admin';">Admin</button>
+					onclick="location.href='/school';">Go</button>
 			</div>
 		</div>
 	</div>

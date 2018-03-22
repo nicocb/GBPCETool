@@ -31,6 +31,7 @@ import com.gracie.barra.school.dao.SchoolDao;
 import com.gracie.barra.school.dao.SchoolDaoDatastoreImpl;
 import com.gracie.barra.school.objects.School;
 import com.gracie.barra.util.CloudStorageHelper;
+import com.gracie.barra.util.MailingHelper;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGBServlet extends HttpServlet {
@@ -49,7 +50,11 @@ public abstract class AbstractGBServlet extends HttpServlet {
 
 			this.getServletContext().setAttribute("schoolDao", schoolDao);
 
-			SchoolEventDao schoolEventDao = new SchoolEventDaoDatastoreImpl(schoolDao);
+			MailingHelper mailingHelper = new MailingHelper();
+
+			this.getServletContext().setAttribute("mailingHelper", mailingHelper);
+
+			SchoolEventDao schoolEventDao = new SchoolEventDaoDatastoreImpl(schoolDao, mailingHelper);
 
 			this.getServletContext().setAttribute("schoolEventDao", schoolEventDao);
 
@@ -86,6 +91,10 @@ public abstract class AbstractGBServlet extends HttpServlet {
 		return (CloudStorageHelper) this.getServletContext().getAttribute("storageHelper");
 	}
 
+	protected MailingHelper getMailHelper() {
+		return (MailingHelper) this.getServletContext().getAttribute("mailingHelper");
+	}
+
 	protected boolean nullOrEmpty(String id) {
 		return id == null || id.length() == 0 || id.equals("null");
 	}
@@ -101,5 +110,4 @@ public abstract class AbstractGBServlet extends HttpServlet {
 	protected boolean isUserLoggedIn(HttpServletRequest req) {
 		return req.getSession().getAttribute("userId") != null;
 	}
-
 }

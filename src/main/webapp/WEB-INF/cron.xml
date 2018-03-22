@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/cron/mails/gb</url>
+    <target>beta</target>
+    <description>admin mails</description>
+    <schedule>every 120 minutes</schedule>
+  </cron>
+  <cron>
+    <url>/cron/mails/schools</url>
+    <target>beta</target>
+    <description>schools mails</description>
+    <schedule>every 45 minutes</schedule>
+  </cron>
+</cronentries>

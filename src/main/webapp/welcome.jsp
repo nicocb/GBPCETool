@@ -34,14 +34,12 @@
 		<h3 align="center">GB SCP Tool</h3>
 
 
-		<img alt="Gracie Barra Certification Program" src="/pics/scp.png" class="img-responsive center-block"/>
+		<a href='/school'><img alt="Gracie Barra Certification Program" src="/pics/scp.png" class="img-responsive center-block"/></a>
 
 		<div class="text-center">
 			<div class="btn-group" role="group" aria-label="..." align="center">
 				<button type="button" class="btn btn-success"
-					onclick="location.href='/school';">School</button>
-				<button type="button" class="btn btn-danger"
-					onclick="location.href='/admin';">Admin</button>
+					onclick="location.href='/school';">Go</button>
 			</div>
 		</div>
 	</div>

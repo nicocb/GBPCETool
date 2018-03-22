@@ -54,11 +54,14 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 	SchoolDao schoolDao;
 
 	private DatastoreService datastore;
+	private MailingHelper mailingHelper;
+
 	private static final String SE_KIND = "SchoolEvent";
 
-	public SchoolEventDaoDatastoreImpl(SchoolDao schoolDao) {
+	public SchoolEventDaoDatastoreImpl(SchoolDao schoolDao, MailingHelper mailingHelper) {
 		datastore = DatastoreServiceFactory.getDatastoreService();
 		this.schoolDao = schoolDao;
+		this.mailingHelper = mailingHelper;
 	}
 
 	public SchoolEvent entityToSchoolEvent(Entity entity) {
@@ -113,10 +116,10 @@ public class SchoolEventDaoDatastoreImpl implements SchoolEventDao {
 		try {
 			school = schoolDao.getSchool(se.getSchoolId());
 			String contact = school.getSchoolMail();
-			if (contact == null) {
-				school.getContactMail();
+			if (contact == null || contact.length() == 0) {
+				contact = school.getContactMail();
 			}
-			MailingHelper.notifyEvent(se.getOrigin(), school.getSchoolName(), contact, se.getDescription(), se.getRedirect());
+			mailingHelper.notifyEvent(se.getOrigin(), school.getSchoolName(), contact, se.getDescription(), se.getRedirect());
 		} catch (EntityNotFoundException e) {
 			logger.severe("Could not notify school " + e.getMessage());
 		}
