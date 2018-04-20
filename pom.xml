@@ -46,7 +46,7 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>1.9.60</version>
+      <version>1.9.63</version>
     </dependency>
 
 	<dependency>
@@ -122,7 +122,8 @@
     <dependency>                        <!-- Google Cloud Client Library for Java -->
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud</artifactId>
-      <version>0.20.1-alpha</version>
+      <version>0.41.0-alpha</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 

@@ -42,6 +42,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.datastore.Text;
 import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
@@ -88,24 +89,27 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		if (status == null) {
 			status = 0L;
 		}
-		List<CriterionComment> comment = null;
-		try {
-			if (entity != null && entity.getProperty(SchoolCertificationCriterion.COMMENT) != null
-					&& entity.getProperty(SchoolCertificationCriterion.COMMENT).toString().length() > 0) {
-				comment = objectMapper.readValue((String) entity.getProperty(SchoolCertificationCriterion.COMMENT),
-						new TypeReference<List<CriterionComment>>() {
-						});
-			} else {
-				comment = new ArrayList<>();
-			}
-		} catch (IOException e) {
-			log.warning("Couldn't parse " + (String) entity.getProperty(SchoolCertificationCriterion.ID) + " comm : "
-					+ (String) entity.getProperty(SchoolCertificationCriterion.COMMENT) + " " + e.getMessage());
-		}
+		List<CriterionComment> comment = collectComments(entity);
+
 		return entity == null ? new SchoolCertificationCriterion.Builder().criterion(cc).build()
 				: new SchoolCertificationCriterion.Builder().id(entity.getKey().getId()).criterion(cc).comment(comment)
 						.picture((String) entity.getProperty(SchoolCertificationCriterion.PICTURE))
 						.status(SchoolCertificationCriterionStatus.values()[status.intValue()]).build();
+	}
+
+	private List<CriterionComment> collectComments(Entity entity) {
+		List<CriterionComment> comment = new ArrayList<>();
+		try {
+			if (entity != null && entity.getProperty(SchoolCertificationCriterion.COMMENT) != null
+					&& entity.getProperty(SchoolCertificationCriterion.COMMENT).toString().length() > 0) {
+				comment = objectMapper.readValue(getComment(entity), new TypeReference<List<CriterionComment>>() {
+				});
+			}
+		} catch (IOException e) {
+			log.warning("Couldn't parse " + entity.getProperty(SchoolCertificationCriterion.ID) + " comm : "
+					+ entity.getProperty(SchoolCertificationCriterion.COMMENT) + " " + e.getMessage());
+		}
+		return comment;
 	}
 
 	@Override
@@ -292,6 +296,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	public SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
 			String comment, SchoolCertificationCriterionStatus status, String author) throws JsonProcessingException {
 		Entity entity = null;
+
 		Collection<Filter> filters = new ArrayList<>();
 
 		filters.add(new FilterPredicate(SchoolCertificationCriterion.SCHOOL_ID, FilterOperator.EQUAL, schoolId));
@@ -312,20 +317,12 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 			entity.setProperty(SchoolCertificationCriterion.PICTURE, picture);
 		}
 		if (comment != null && comment.length() > 0) {
-			List<CriterionComment> storedComment = new ArrayList<>();
-			if (entity.getProperty(SchoolCertificationCriterion.COMMENT) != null) {
-				try {
-					storedComment = objectMapper.readValue((String) entity.getProperty(SchoolCertificationCriterion.COMMENT),
-							new TypeReference<List<CriterionComment>>() {
-							});
-				} catch (IOException e) {
-					log.warning("couldn't parse former comment");
-				}
-			}
+			List<CriterionComment> storedComment = collectComments(entity);
 
 			storedComment.add(new CriterionComment(new Date(), author, comment));
 
-			entity.setProperty(SchoolCertificationCriterion.COMMENT, objectMapper.writeValueAsString(storedComment));
+			entity.setUnindexedProperty(SchoolCertificationCriterion.COMMENT,
+					new Text(objectMapper.writeValueAsString(storedComment)));
 		}
 
 		datastore.put(entity); // Update the Entity
@@ -343,5 +340,18 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		sSchool.setScore(dash.getScore());
 		sSchool.setRank(dash.getRank());
 		return sSchool;
+	}
+
+	private String getComment(Entity entity) {
+		String result = null;
+		Object entityObj = entity.getProperty(SchoolCertificationCriterion.COMMENT);
+		if (entityObj != null) {
+			if (entityObj instanceof Text) {
+				result = ((Text) entityObj).getValue();
+			} else {
+				result = (String) entityObj;
+			}
+		}
+		return result;
 	}
 }

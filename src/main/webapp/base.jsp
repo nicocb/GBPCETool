@@ -64,7 +64,7 @@
 					<li ${schoolStatus == 'Validated'?'':'class="disabled"'}><a ${schoolStatus == 'Validated'?'href="/admission"':''}>Admission</a></li>
 					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/schoolCriteria"':''}>Certification</a></li>
 					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/documents"':''}>My downloads</a></li>
-					<li><a href="/events">Events</a></li>
+					<li ${agreementStatus == 'Validated'?'':'class="disabled"'}><a ${agreementStatus == 'Validated'?'href="/events"':''}>Events</a></li>
 
 				</ul>
 				<p class="navbar-text navbar-right">
