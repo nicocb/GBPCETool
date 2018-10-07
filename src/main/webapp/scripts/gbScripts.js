@@ -8,6 +8,8 @@ function beforeCriteria(formData, $form, options) {
 
 	$('#uploadModal').modal({backdrop: 'static', keyboard: 'false'});
 } 
+function beforeComm(formData, $form, options) { 
+} 
  
 function checkEmpty(field, message) { 
 	if($('#'+field).val()=='') {
@@ -28,20 +30,63 @@ function uploadingCriteria(event, position, total, percentComplete)  {
 		$('#ammoprogress').find('.progress-bar').text('Treating information');
 	}
 } 
+function uploadingComm(event, position, total, percentComplete)  {}
 
 function afterCriteria(responseText, statusText, xhr, $form)  { 
 	critId = $form.attr('id').substr(4);
 	$('#ammoprogress').find('.progress-bar').removeClass('progress-bar-striped');
 	$('#ammoprogress').find('.progress-bar').text('Upload successful');
-	$('#pic'+critId).attr('src',responseText.picture);
-	$('#pic'+critId).attr('style','width: 60px;');
-	if($form.find('textarea[name=comment]').val().length > 0) {
-		$('#ammocomment'+critId).append('<div class="alert alert-info" role="alert">'+responseText.comment[responseText.comment.length-1].comment+'</div>');
-		$form.find('textarea[name=comment]').val('');
-	}
+	//$('#pic'+critId).attr('src',responseText.picture);
+	//$('#pic'+critId).attr('style','width: 60px;');
+	//id="pic${pic.id}"
+	$('.example').hide();
+	rebuildPics(critId, responseText.picture, responseText.schoolId);
 	switchBlock('uploadModalClose');
 	switchBlock('uploadModalX');
 } 
+
+function afterComm(responseText, statusText, xhr, $form)  { 
+	critId = $form.attr('id').substr(4);
+	if($form.find('textarea[name=comment]').val().length > 0) {
+		$('#ammocomment'+critId).append('<div class="alert alert-'+(responseText.comment[responseText.comment.length-1].author == 'GB'?'danger':'info')+'" role="alert">'+responseText.comment[responseText.comment.length-1].comment+'</div>');
+		$form.find('textarea[name=comment]').val('');
+	}
+	//Update status 
+	$('#status'+critId).removeClass();
+	$('#status'+critId).addClass("label");
+	$('#status'+critId).addClass("label-"+responseText.status.style);
+	$('#status'+critId).text(responseText.status.description);
+} 
+
+function afterPicDelete(responseText, statusText, xhr, $form)  { 
+	critId = $form.attr('id').substr(4);
+	rebuildPics(critId, responseText.picture, responseText.schoolId);
+} 
+
+function rebuildPics(critId, picture, schoolId) {
+	$('#media'+critId).empty();
+	var component = '';
+	for ( var pic in picture) {		
+		component += '<img alt="Yep" class="media-object" style="width:60px;margin:3px"  onclick="resizeImg(this)"  src="'+picture[pic].url+'" >';
+		component += '<form method="POST" id="picd'+critId+'" class="picForm"><input type="hidden" name="action" value="DELETE" />';
+		component += '<input type="hidden" name="picId" value="'+picture[pic].id+'" />';
+		component += '<input type="hidden" name="schoolId" value="'+schoolId+'"/>';
+		component += '<input type="hidden" name="critId" value="'+critId+'" />';
+		component += '<button type="submit" class="btn btn-danger" formAction="/api/schoolCriteria">Delete</button></form>';
+	}
+	$('#media'+critId).append(component);
+	
+    var picDeleteOptions = {
+    		beforeSubmit:  beforeComm, 
+ 	        success:       afterPicDelete,
+ 	        error:       errorComm,
+ 	        uploadProgress: uploadingComm,
+ 	        url:'/api/schoolCriteria',         
+ 	        dataType:  'json'  
+	};
+    $('.picForm').ajaxForm(picDeleteOptions); 
+
+}
 
 function errorCriteria(responseText, statusText, xhr, $form)  { 
 	critId = $form.attr('id').substr(4);
@@ -55,6 +100,12 @@ function errorCriteria(responseText, statusText, xhr, $form)  {
 	switchBlock('uploadModalClose');
 	switchBlock('uploadModalX');
 } 
+
+function errorComm(responseText, statusText, xhr, $form)  { 
+	$form.find('textarea[name=comment]').val('');
+	alert(responseText.responseJSON.error);
+} 
+
 
 function switchForm(id)
 {
@@ -118,21 +169,8 @@ function fbConnect()
 
 function resizeImg (img)
 {
-    var origH  = img.clientHeight;  // original image height
-    var origW  = img.clientWidth; // original image width
-    
-    if(origW > 60) {
-    	resize = 60 / origW;
-    } else {
-       	resize = img.parentElement.parentElement.clientWidth/120
-    }
-
-    var newH   = origH * resize;
-    var newW   = origW * resize;
-
-    // Set the new width and height
-    img.style.height = newH;
-    img.style.width  = newW;
+	$('#pictureModal').modal();
+	$('#modalPicture').attr('src',img.src);
 }
 
 $(function() {

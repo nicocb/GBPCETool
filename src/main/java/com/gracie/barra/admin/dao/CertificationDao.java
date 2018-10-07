@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
+import com.gracie.barra.admin.objects.CriterionPicture;
 import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
@@ -33,11 +34,14 @@ public interface CertificationDao {
 
 	SchoolCertificationDashboard getSchoolCertificationDashboard(Long schoolId);
 
-	SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
+	SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, School school, CriterionPicture picture,
 			String comment, SchoolCertificationCriterionStatus status, String author) throws JsonProcessingException, IOException;
 
 	SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc, Long schoolID);
 
 	ScoredSchool scoreSchool(School school);
+
+	SchoolCertificationCriterion removePicFromSchoolCertificationCriterion(Long criterionId, Long schoolId, String picId)
+			throws JsonProcessingException;
 
 }

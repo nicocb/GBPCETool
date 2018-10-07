@@ -8,7 +8,7 @@ public class SchoolCertificationCriterion {
 	Long schoolId;
 	CertificationCriterion criterion;
 	SchoolCertificationCriterionStatus status;
-	String picture;
+	List<CriterionPicture> picture;
 	List<CriterionComment> comment;
 
 	public static final String ID = "id";
@@ -22,7 +22,7 @@ public class SchoolCertificationCriterion {
 		private Long id;
 		private Long schoolId;
 		private CertificationCriterion criterion;
-		private String picture;
+		private List<CriterionPicture> picture;
 		private SchoolCertificationCriterionStatus status;
 		private List<CriterionComment> comment;
 
@@ -41,7 +41,7 @@ public class SchoolCertificationCriterion {
 			return this;
 		}
 
-		public Builder picture(String picture) {
+		public Builder picture(List<CriterionPicture> picture) {
 			this.picture = picture;
 			return this;
 		}
@@ -78,11 +78,11 @@ public class SchoolCertificationCriterion {
 		this.criterion = criterion;
 	}
 
-	public String getPicture() {
+	public List<CriterionPicture> getPicture() {
 		return picture;
 	}
 
-	public void setPicture(String picture) {
+	public void setPicture(List<CriterionPicture> picture) {
 		this.picture = picture;
 	}
 
@@ -108,6 +108,14 @@ public class SchoolCertificationCriterion {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getSchoolId() {
+		return schoolId;
+	}
+
+	public void setSchoolId(Long schoolId) {
+		this.schoolId = schoolId;
 	}
 
 	public enum SchoolCertificationCriterionStatus {

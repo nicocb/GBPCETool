@@ -18,6 +18,7 @@ package com.gracie.barra.school.action;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -31,12 +32,14 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.MetadataException;
 import com.google.api.client.util.Strings;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.gracie.barra.admin.objects.CriterionPicture;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
@@ -79,50 +82,85 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 		try {
 			School school = null;
 			if (isUserLoggedIn(req)) {
-				assert ServletFileUpload.isMultipartContent(req);
-				CloudStorageHelper storageHelper = getStorageHelper();
+				String id;
+				String schoolId;
+				String comment = null;
+				SchoolCertificationCriterion criterion = null;
 				boolean hasFile = false;
-				String picture = null;
-				String extension = "jpg";
-				byte[] pic = null;
-				Map<String, String> params = new HashMap<String, String>();
+
 				try {
-					FileItemIterator iter = new ServletFileUpload().getItemIterator(req);
-					while (iter.hasNext()) {
-						FileItemStream item = iter.next();
-						if (item.isFormField()) {
-							params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
-						} else if (!Strings.isNullOrEmpty(item.getName())) {
-							extension = CloudStorageHelper.checkFileExtension(item.getName().toLowerCase());
-							pic = IOUtils.toByteArray(item.openStream());
-							hasFile = true;
+					if (!ServletFileUpload.isMultipartContent(req)) {
+						switch (req.getParameter("action")) {
+						case "DELETE":
+							schoolId = req.getParameter("schoolId");
+							school = getSchoolDao().getSchool(Long.valueOf(schoolId));
+							id = req.getParameter("critId");
+							String picId = req.getParameter("picId");
+							String idSuffix = "default".equals(picId) ? "" : "-" + picId;
+							getStorageHelper().deletePdf("pce-tool", schoolId + "-" + id + idSuffix + ".jpg");
+							criterion = getCertificationDao().removePicFromSchoolCertificationCriterion(Long.valueOf(id),
+									Long.valueOf(schoolId), picId);
+							break;
+						case "COMMENT":
+							// comments
+							id = req.getParameter("id");
+							comment = StringEscapeUtils.escapeXml(req.getParameter("comment"));
+
+							schoolId = req.getParameter("schoolId");
+
+							school = getSchoolDao().getSchool(Long.valueOf(schoolId));
+
+							criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), school, null,
+									comment, SchoolCertificationCriterionStatus.NOT_PROVIDED, "School");
+							break;
+						default:
 						}
+
+					} else {
+						// picture
+						CloudStorageHelper storageHelper = getStorageHelper();
+						CriterionPicture picture = null;
+						String extension = "jpg";
+						byte[] pic = null;
+						Map<String, String> params = new HashMap<String, String>();
+						try {
+							FileItemIterator iter = new ServletFileUpload().getItemIterator(req);
+							while (iter.hasNext()) {
+								FileItemStream item = iter.next();
+								if (item.isFormField()) {
+									params.put(item.getFieldName(), Streams.asString(item.openStream(), "UTF-8"));
+								} else if (!Strings.isNullOrEmpty(item.getName())) {
+									extension = CloudStorageHelper.checkFileExtension(item.getName().toLowerCase());
+									pic = IOUtils.toByteArray(item.openStream());
+									hasFile = true;
+								}
+							}
+						} catch (FileUploadException e) {
+							throw new ServletException("Couldn't read file");
+						}
+
+						id = params.get("id");
+						schoolId = params.get("schoolId");
+
+						try {
+							if (hasFile) {
+								String uuid = UUID.randomUUID().toString();
+								picture = new CriterionPicture(uuid,
+										storageHelper.uploadFile(pic, "pce-tool", schoolId + "-" + id + "-" + uuid, extension));
+							}
+						} catch (MetadataException | ImageProcessingException e1) {
+							throw new ServletException("Couldn't read image file");
+						}
+
+						school = getSchoolDao().getSchool(Long.valueOf(schoolId));
+						criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), school, picture,
+								comment, picture != null ? SchoolCertificationCriterionStatus.PENDING
+										: SchoolCertificationCriterionStatus.NOT_PROVIDED,
+								"School");
+
 					}
-				} catch (FileUploadException e) {
-					throw new ServletException("Couldn't read file");
-				}
-
-				String id = params.get("id");
-				String schoolId = params.get("schoolId");
-				String comment = params.get("comment");
-
-				try {
-					if (hasFile) {
-						picture = storageHelper.uploadFile(pic, "pce-tool", schoolId + "-" + id, extension);
-					}
-				} catch (MetadataException | ImageProcessingException e1) {
-					throw new ServletException("Couldn't read image file");
-				}
-
-				SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(
-						Long.valueOf(id), Long.valueOf(schoolId), picture, comment, picture != null
-								? SchoolCertificationCriterionStatus.PENDING : SchoolCertificationCriterionStatus.NOT_PROVIDED,
-						"School");
-
-				result = new JSONObject(criterion).toString(2);
-
-				try {
-					school = getSchoolDao().getSchool(Long.valueOf(schoolId));
+					// serialize response
+					result = new JSONObject(criterion).toString(2);
 					SchoolEvent se = new SchoolEvent.Builder()
 							.description("Criterion '" + criterion.getCriterion().getDescription() + "' for school '"
 									+ school.getSchoolName() + (hasFile ? "' updated" : "' commented"))
@@ -132,7 +170,6 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 				} catch (NumberFormatException | EntityNotFoundException e) {
 					throw new ServletException("Couldn't find related school");
 				}
-
 			} else {
 				throw new ServletException("Should be logged to save school");
 			}

@@ -68,7 +68,7 @@ public class CloudStorageHelper {
 	}
 
 	public void deletePdf(final String bucketName, String fileName) {
-
+		log.info("Deleting " + fileName);
 		storage.delete(BlobId.of(bucketName, fileName));
 	}
 

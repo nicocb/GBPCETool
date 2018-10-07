@@ -21,7 +21,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -47,6 +51,7 @@ import com.gracie.barra.admin.objects.CertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
 import com.gracie.barra.admin.objects.CriterionComment;
+import com.gracie.barra.admin.objects.CriterionPicture;
 import com.gracie.barra.admin.objects.SchoolCertificationCriteriaByRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
@@ -90,11 +95,12 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 			status = 0L;
 		}
 		List<CriterionComment> comment = collectComments(entity);
+		List<CriterionPicture> picture = collectPictures(entity);
 
 		return entity == null ? new SchoolCertificationCriterion.Builder().criterion(cc).build()
 				: new SchoolCertificationCriterion.Builder().id(entity.getKey().getId()).criterion(cc).comment(comment)
-						.picture((String) entity.getProperty(SchoolCertificationCriterion.PICTURE))
-						.status(SchoolCertificationCriterionStatus.values()[status.intValue()]).build();
+						.picture(picture).status(SchoolCertificationCriterionStatus.values()[status.intValue()])
+						.schoolId((Long) entity.getProperty(SchoolCertificationCriterion.SCHOOL_ID)).build();
 	}
 
 	private List<CriterionComment> collectComments(Entity entity) {
@@ -110,6 +116,27 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 					+ entity.getProperty(SchoolCertificationCriterion.COMMENT) + " " + e.getMessage());
 		}
 		return comment;
+	}
+
+	private List<CriterionPicture> collectPictures(Entity entity) {
+		List<CriterionPicture> picz = new ArrayList<>();
+
+		if (entity != null && entity.getProperty(SchoolCertificationCriterion.PICTURE) != null
+				&& entity.getProperty(SchoolCertificationCriterion.PICTURE).toString().length() > 0) {
+			if (entity.getProperty(SchoolCertificationCriterion.PICTURE).toString().startsWith("[")) {
+				try {
+					picz = objectMapper.readValue((String) entity.getProperty(SchoolCertificationCriterion.PICTURE),
+							new TypeReference<List<CriterionPicture>>() {
+							});
+				} catch (IOException e) {
+					log.warning("Couldn't parse " + entity.getProperty(SchoolCertificationCriterion.ID) + " pic : "
+							+ entity.getProperty(SchoolCertificationCriterion.PICTURE) + " " + e.getMessage());
+				}
+			} else {
+				picz.add(new CriterionPicture("default", (String) entity.getProperty(SchoolCertificationCriterion.PICTURE)));
+			}
+		}
+		return picz;
 	}
 
 	@Override
@@ -139,14 +166,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 
 	@Override
 	public SchoolCertificationCriterion readSchoolCertificationCriterion(CertificationCriterion cc, Long schoolId) {
-		Entity entity = null;
-		Collection<Filter> filters = new ArrayList<>();
-		filters.add(new FilterPredicate(SchoolCertificationCriterion.SCHOOL_ID, FilterOperator.EQUAL, schoolId));
-		filters.add(new FilterPredicate(SchoolCertificationCriterion.CRITERION_ID, FilterOperator.EQUAL, cc.getId()));
-		Query query = new Query(SCC_KIND).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
-
-		PreparedQuery preparedQuery = datastore.prepare(query);
-		entity = preparedQuery.asSingleEntity();
+		Entity entity = getSCCEntity(schoolId, cc.getId());
 		return entityToSchoolCertificationCriterion(entity, cc);
 	}
 
@@ -293,33 +313,56 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	}
 
 	@Override
-	public SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, Long schoolId, String picture,
-			String comment, SchoolCertificationCriterionStatus status, String author) throws JsonProcessingException {
-		Entity entity = null;
+	public SchoolCertificationCriterion removePicFromSchoolCertificationCriterion(Long criterionId, Long schoolId, String picId)
+			throws JsonProcessingException {
+		Entity entity = getSCCEntity(schoolId, criterionId);
+		List<CriterionPicture> pics = collectPictures(entity);
+		pics = pics.stream().filter(pic -> !pic.getId().equals(picId)).collect(Collectors.toList());
+		entity.setProperty(SchoolCertificationCriterion.PICTURE, objectMapper.writeValueAsString(pics));
+		datastore.put(entity); // Update the Entity
 
-		Collection<Filter> filters = new ArrayList<>();
+		return entityToSchoolCertificationCriterion(entity, readCertificationCriterion(criterionId));
+	}
 
-		filters.add(new FilterPredicate(SchoolCertificationCriterion.SCHOOL_ID, FilterOperator.EQUAL, schoolId));
-		filters.add(new FilterPredicate(SchoolCertificationCriterion.CRITERION_ID, FilterOperator.EQUAL, criterionId));
-		Query query = new Query(SCC_KIND).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
-
-		PreparedQuery preparedQuery = datastore.prepare(query);
-		entity = preparedQuery.asSingleEntity();
+	@Override
+	public SchoolCertificationCriterion updateSchoolCertificationCriterion(Long criterionId, School school,
+			CriterionPicture picture, String comment, SchoolCertificationCriterionStatus status, String author)
+			throws JsonProcessingException {
+		Entity entity = getSCCEntity(school.getId(), criterionId);
 
 		if (entity == null) {
 			entity = new Entity(SCC_KIND);
-			entity.setProperty(SchoolCertificationCriterion.SCHOOL_ID, schoolId);
+			entity.setProperty(SchoolCertificationCriterion.SCHOOL_ID, school.getId());
 			entity.setProperty(SchoolCertificationCriterion.CRITERION_ID, criterionId);
 		}
 
 		entity.setProperty(SchoolCertificationCriterion.STATUS, Long.valueOf(status.ordinal()));
 		if (picture != null) {
-			entity.setProperty(SchoolCertificationCriterion.PICTURE, picture);
+			List<CriterionPicture> storedPics = collectPictures(entity);
+			storedPics.add(picture);
+			entity.setProperty(SchoolCertificationCriterion.PICTURE, objectMapper.writeValueAsString(storedPics));
+
 		}
 		if (comment != null && comment.length() > 0) {
+			// Treat links in comment : find brackets and replace by file link
+			Pattern pat = Pattern.compile("\\[([a-zA-Z \\.0-9]*)\\]");
+			Matcher m = pat.matcher(comment);
+			StringBuffer sb = new StringBuffer();
+			while (m.find()) {
+				String docName = m.group(1);
+				Map<String, String> doc = school.getDocuments().get(docName);
+				if (doc != null) {
+					m.appendReplacement(sb, "<a href ='" + doc.get("URL") + "'>" + docName + "</a>");
+				} else {
+					log.severe("No doc named " + docName + " in " + school.getDocuments());
+					throw new IllegalArgumentException("Doc not found");
+				}
+			}
+			m.appendTail(sb);
+
 			List<CriterionComment> storedComment = collectComments(entity);
 
-			storedComment.add(new CriterionComment(new Date(), author, comment));
+			storedComment.add(new CriterionComment(new Date(), author, sb.toString()));
 
 			entity.setUnindexedProperty(SchoolCertificationCriterion.COMMENT,
 					new Text(objectMapper.writeValueAsString(storedComment)));
@@ -328,6 +371,17 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		datastore.put(entity); // Update the Entity
 
 		return entityToSchoolCertificationCriterion(entity, readCertificationCriterion(criterionId));
+	}
+
+	private Entity getSCCEntity(Long schoolId, Long criterionId) {
+		Collection<Filter> filters = new ArrayList<>();
+
+		filters.add(new FilterPredicate(SchoolCertificationCriterion.SCHOOL_ID, FilterOperator.EQUAL, schoolId));
+		filters.add(new FilterPredicate(SchoolCertificationCriterion.CRITERION_ID, FilterOperator.EQUAL, criterionId));
+		Query query = new Query(SCC_KIND).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
+
+		PreparedQuery preparedQuery = datastore.prepare(query);
+		return preparedQuery.asSingleEntity();
 	}
 
 	@Override
@@ -354,4 +408,5 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		}
 		return result;
 	}
+
 }
