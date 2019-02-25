@@ -121,19 +121,22 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 	private List<CriterionPicture> collectPictures(Entity entity) {
 		List<CriterionPicture> picz = new ArrayList<>();
 
-		if (entity != null && entity.getProperty(SchoolCertificationCriterion.PICTURE) != null
-				&& entity.getProperty(SchoolCertificationCriterion.PICTURE).toString().length() > 0) {
-			if (entity.getProperty(SchoolCertificationCriterion.PICTURE).toString().startsWith("[")) {
-				try {
-					picz = objectMapper.readValue((String) entity.getProperty(SchoolCertificationCriterion.PICTURE),
-							new TypeReference<List<CriterionPicture>>() {
-							});
-				} catch (IOException e) {
-					log.warning("Couldn't parse " + entity.getProperty(SchoolCertificationCriterion.ID) + " pic : "
-							+ entity.getProperty(SchoolCertificationCriterion.PICTURE) + " " + e.getMessage());
+		if (entity != null && entity.getProperty(SchoolCertificationCriterion.PICTURE) != null) {
+			Object picO = entity.getProperty(SchoolCertificationCriterion.PICTURE);
+			String picT = picO instanceof String ? (String) picO : ((Text) picO).getValue();
+			if (picT.length() > 0) {
+
+				if (picT.startsWith("[")) {
+					try {
+						picz = objectMapper.readValue(picT, new TypeReference<List<CriterionPicture>>() {
+						});
+					} catch (IOException e) {
+						log.warning("Couldn't parse " + entity.getProperty(SchoolCertificationCriterion.ID) + " pic : " + picT
+								+ " " + e.getMessage());
+					}
+				} else {
+					picz.add(new CriterionPicture("default", picT));
 				}
-			} else {
-				picz.add(new CriterionPicture("default", (String) entity.getProperty(SchoolCertificationCriterion.PICTURE)));
 			}
 		}
 		return picz;
@@ -318,7 +321,7 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 		Entity entity = getSCCEntity(schoolId, criterionId);
 		List<CriterionPicture> pics = collectPictures(entity);
 		pics = pics.stream().filter(pic -> !pic.getId().equals(picId)).collect(Collectors.toList());
-		entity.setProperty(SchoolCertificationCriterion.PICTURE, objectMapper.writeValueAsString(pics));
+		entity.setUnindexedProperty(SchoolCertificationCriterion.PICTURE, new Text(objectMapper.writeValueAsString(pics)));
 		datastore.put(entity); // Update the Entity
 
 		return entityToSchoolCertificationCriterion(entity, readCertificationCriterion(criterionId));
@@ -336,11 +339,22 @@ public class CertificationDaoDatastoreImpl implements CertificationDao {
 			entity.setProperty(SchoolCertificationCriterion.CRITERION_ID, criterionId);
 		}
 
-		entity.setProperty(SchoolCertificationCriterion.STATUS, Long.valueOf(status.ordinal()));
+		if (status != null) {
+			entity.setProperty(SchoolCertificationCriterion.STATUS, Long.valueOf(status.ordinal()));
+		} else if (entity.getProperty(SchoolCertificationCriterion.STATUS) == null
+				|| entity.getProperty(SchoolCertificationCriterion.STATUS)
+						.equals(SchoolCertificationCriterionStatus.NOT_PROVIDED.ordinal())) {
+			entity.setProperty(SchoolCertificationCriterion.STATUS,
+					Long.valueOf(SchoolCertificationCriterionStatus.PENDING.ordinal()));
+		}
 		if (picture != null) {
 			List<CriterionPicture> storedPics = collectPictures(entity);
+			if (storedPics.size() >= 10) {
+				throw new IllegalArgumentException("10 photos max!");
+			}
 			storedPics.add(picture);
-			entity.setProperty(SchoolCertificationCriterion.PICTURE, objectMapper.writeValueAsString(storedPics));
+			entity.setUnindexedProperty(SchoolCertificationCriterion.PICTURE,
+					new Text(objectMapper.writeValueAsString(storedPics)));
 
 		}
 		if (comment != null && comment.length() > 0) {

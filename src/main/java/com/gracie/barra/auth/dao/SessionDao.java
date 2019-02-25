@@ -6,4 +6,6 @@ public interface SessionDao {
 
 	public void storeToken(String sessionId, String token);
 
+	void deleteToken(String sessionId);
+
 }

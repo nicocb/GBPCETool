@@ -71,11 +71,13 @@ public class AuthEnrichFilter implements Filter {
 					try {
 						facebookClient = new DefaultFacebookClient(Version.VERSION_2_9);
 						accessToken = facebookClient
-								.obtainUserAccessToken("123435078353209", "ae0c80436329b8e2d172910569f6099f", "", accessCode)
+								.obtainUserAccessToken("123435078353209",
+										servletReq.getServletContext().getInitParameter("facebook.secret"), "", accessCode)
 								.getAccessToken();
 						sessionDao.storeToken(req.getSession().getId(), accessToken);
 					} catch (Throwable t) {
 						log.severe(t.getMessage());
+						sessionDao.deleteToken(req.getSession().getId());
 					}
 				}
 			}

@@ -90,9 +90,12 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 
 				try {
 					if (!ServletFileUpload.isMultipartContent(req)) {
+						schoolId = req.getParameter("schoolId");
+						log.info("School " + schoolId + " " + req.getParameter("action") + " crit " + req.getParameter("id"));
+
 						switch (req.getParameter("action")) {
 						case "DELETE":
-							schoolId = req.getParameter("schoolId");
+
 							school = getSchoolDao().getSchool(Long.valueOf(schoolId));
 							id = req.getParameter("critId");
 							String picId = req.getParameter("picId");
@@ -106,12 +109,10 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 							id = req.getParameter("id");
 							comment = StringEscapeUtils.escapeXml(req.getParameter("comment"));
 
-							schoolId = req.getParameter("schoolId");
-
 							school = getSchoolDao().getSchool(Long.valueOf(schoolId));
 
 							criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), school, null,
-									comment, SchoolCertificationCriterionStatus.NOT_PROVIDED, "School");
+									comment, null, "School");
 							break;
 						default:
 						}
@@ -123,6 +124,7 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 						String extension = "jpg";
 						byte[] pic = null;
 						Map<String, String> params = new HashMap<String, String>();
+
 						try {
 							FileItemIterator iter = new ServletFileUpload().getItemIterator(req);
 							while (iter.hasNext()) {
@@ -138,9 +140,17 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 						} catch (FileUploadException e) {
 							throw new ServletException("Couldn't read file");
 						}
-
 						id = params.get("id");
 						schoolId = params.get("schoolId");
+
+						log.info("School " + schoolId + " uploading crit " + req.getParameter("id"));
+						// check 10 elements
+						school = getSchoolDao().getSchool(Long.valueOf(schoolId));
+						criterion = getCertificationDao().readSchoolCertificationCriterion(
+								getCertificationDao().readCertificationCriterion(Long.valueOf(id)), school.getId());
+						if (criterion.getPicture().size() >= 10) {
+							throw new IllegalArgumentException("10 photos max!");
+						}
 
 						try {
 							if (hasFile) {
@@ -152,7 +162,6 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 							throw new ServletException("Couldn't read image file");
 						}
 
-						school = getSchoolDao().getSchool(Long.valueOf(schoolId));
 						criterion = getCertificationDao().updateSchoolCertificationCriterion(Long.valueOf(id), school, picture,
 								comment, picture != null ? SchoolCertificationCriterionStatus.PENDING
 										: SchoolCertificationCriterionStatus.NOT_PROVIDED,

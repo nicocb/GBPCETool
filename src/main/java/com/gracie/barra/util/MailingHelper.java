@@ -113,8 +113,7 @@ public class MailingHelper {
 			addresses[0] = new InternetAddress("support.europe@graciebarra.com", "Support Europe");
 			msg.setReplyTo(addresses);
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(destMail, dest));
-			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("nicolas.de.dreuille@gmail.com", "Nico"));
-			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("sebastien.garnier@graciebarra.com", "Seb"));
+			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("ndreuille@gmail.com", "Nico"));
 			msg.setSubject("[SCP] " + object);
 			msg.setText(object + " \n\n" + body);
 			log.info("Sending " + object + " to " + destMail + "/" + dest + " : \n\n" + body);

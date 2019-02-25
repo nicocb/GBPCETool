@@ -7,6 +7,7 @@ function beforeCriteria(formData, $form, options) {
 	$('#ammoprogress').find('.progress-bar').addClass('progress-bar-success');
 
 	$('#uploadModal').modal({backdrop: 'static', keyboard: 'false'});
+	critId = $form.attr('id').substr(4);
 } 
 function beforeComm(formData, $form, options) { 
 } 
@@ -43,6 +44,7 @@ function afterCriteria(responseText, statusText, xhr, $form)  {
 	rebuildPics(critId, responseText.picture, responseText.schoolId);
 	switchBlock('uploadModalClose');
 	switchBlock('uploadModalX');
+	$form[0].reset();
 } 
 
 function afterComm(responseText, statusText, xhr, $form)  { 
@@ -90,6 +92,7 @@ function rebuildPics(critId, picture, schoolId) {
 
 function errorCriteria(responseText, statusText, xhr, $form)  { 
 	critId = $form.attr('id').substr(4);
+	$('#ammoprogress').find('.progress-bar').attr('style','min-width: 2em;width: 100%');
 	$('#ammoprogress').find('.progress-bar').removeClass('progress-bar-success');
 	$('#ammoprogress').find('.progress-bar').removeClass('progress-bar-striped');
 	$('#ammoprogress').find('.progress-bar').addClass('progress-bar-danger');
@@ -99,6 +102,7 @@ function errorCriteria(responseText, statusText, xhr, $form)  {
 	$('#ammoprogress').find('.progress-bar').text(responseText.responseJSON.error);
 	switchBlock('uploadModalClose');
 	switchBlock('uploadModalX');
+	$form[0].reset();
 } 
 
 function errorComm(responseText, statusText, xhr, $form)  { 

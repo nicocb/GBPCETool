@@ -85,10 +85,8 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 				}
 
 				SchoolCertificationCriterion criterion = getCertificationDao().updateSchoolCertificationCriterion(
-						Long.valueOf(id), school, null, comment,
-						revoke ? SchoolCertificationCriterionStatus.NOT_VALIDATED
-								: validate ? SchoolCertificationCriterionStatus.VALIDATED
-										: SchoolCertificationCriterionStatus.PENDING,
+						Long.valueOf(id), school, null, comment, revoke ? SchoolCertificationCriterionStatus.NOT_VALIDATED
+								: validate ? SchoolCertificationCriterionStatus.VALIDATED : null,
 						"GB");
 				result = new JSONObject(criterion).toString(2);
 

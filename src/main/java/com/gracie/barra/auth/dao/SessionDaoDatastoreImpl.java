@@ -48,4 +48,15 @@ public class SessionDaoDatastoreImpl implements SessionDao {
 
 	}
 
+	@Override
+	public void deleteToken(String sessionId) {
+		Query query = new Query(SESSION_KIND).setFilter(new FilterPredicate("sessionId", FilterOperator.EQUAL, sessionId));
+
+		PreparedQuery preparedQuery = datastore.prepare(query);
+		Entity entity = preparedQuery.asSingleEntity(); // the
+		if (entity != null) {
+			datastore.delete(entity.getKey());
+		}
+	}
+
 }

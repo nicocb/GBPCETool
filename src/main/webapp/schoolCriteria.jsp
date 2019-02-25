@@ -167,8 +167,8 @@
 														
 														<button type="submit" class="btn btn-warning comment" formAction="${mode == 'admin'?'/admin/schoolCriteriaAdmin':'/api/schoolCriteria'}">Comment</button>
 														<c:if test="${mode == 'admin'}">
-															<button type="submit" class="btn btn-success validate" formAction="/admin/schoolCriteriaAdminValidate">Validate</button>
-															<button type="submit" class="btn btn-danger refuse" formaction="/admin/schoolCriteriaAdminRefuse">Refuse</button>
+															<button type="submit" class="btn btn-danger refuse" formaction="/admin/schoolCriteriaAdminRefuse" style="float: right;margin-left:4">Refuse</button>
+															<button type="submit" class="btn btn-success validate" formAction="/admin/schoolCriteriaAdminValidate" style="float: right;margin-left:4"">Validate</button>
 														</c:if>
 													</form>
 													<c:if test="${mode != 'admin'}">

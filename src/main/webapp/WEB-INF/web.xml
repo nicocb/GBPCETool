@@ -223,4 +223,9 @@
       <servlet-name>login</servlet-name>
       <url-pattern>/login</url-pattern>
     </servlet-mapping>
+    
+    <context-param>
+        <param-name>facebook.secret</param-name>
+        <param-value>${facebook.secret}</param-value>
+    </context-param>
 </web-app>
