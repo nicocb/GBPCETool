@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -53,9 +54,12 @@ public class AuthEnrichFilter implements Filter {
 			try {
 				if (accessToken != null && !facebookClient.debugToken(accessToken).isValid()) {
 					accessToken = null;
+					sessionDao.deleteToken(req.getSession().getId());
 				}
 			} catch (Throwable t) {
+				log.severe("Issue with token" + t.getMessage());
 				accessToken = null;
+				sessionDao.deleteToken(req.getSession().getId());
 			}
 			if (accessToken == null) {
 				String accessCode = null;
@@ -64,6 +68,10 @@ public class AuthEnrichFilter implements Filter {
 						accessCode = new JSONObject(
 								new String(Base64.getDecoder().decode(req.getCookies()[c].getValue().split("\\.")[1])))
 										.getString("code");
+						// Expire authorization code once used
+						HttpServletResponse resp = (HttpServletResponse) servletResp;
+						req.getCookies()[c].setMaxAge(0);
+						resp.addCookie(req.getCookies()[c]);
 						break;
 					}
 				}

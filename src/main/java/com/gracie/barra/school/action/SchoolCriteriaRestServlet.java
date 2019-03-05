@@ -143,12 +143,12 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 						id = params.get("id");
 						schoolId = params.get("schoolId");
 
-						log.info("School " + schoolId + " uploading crit " + req.getParameter("id"));
+						log.info("School " + schoolId + " uploading crit " + id);
 						// check 10 elements
 						school = getSchoolDao().getSchool(Long.valueOf(schoolId));
 						criterion = getCertificationDao().readSchoolCertificationCriterion(
 								getCertificationDao().readCertificationCriterion(Long.valueOf(id)), school.getId());
-						if (criterion.getPicture().size() >= 10) {
+						if (criterion != null && criterion.getPicture() != null && criterion.getPicture().size() >= 10) {
 							throw new IllegalArgumentException("10 photos max!");
 						}
 
