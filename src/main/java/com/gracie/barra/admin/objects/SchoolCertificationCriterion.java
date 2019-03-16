@@ -2,7 +2,7 @@ package com.gracie.barra.admin.objects;
 
 import java.util.List;
 
-public class SchoolCertificationCriterion {
+public class SchoolCertificationCriterion implements Comparable<SchoolCertificationCriterion> {
 
 	Long id;
 	Long schoolId;
@@ -138,6 +138,15 @@ public class SchoolCertificationCriterion {
 			return style;
 		}
 
+	}
+
+	@Override
+	public int compareTo(SchoolCertificationCriterion o) {
+		int compare = Long.compare(getCriterion().getScore(), o.getCriterion().getScore());
+		if (compare == 0) {
+			compare = getCriterion().getDescription().compareTo(o.getCriterion().getDescription());
+		}
+		return compare;
 	}
 
 }

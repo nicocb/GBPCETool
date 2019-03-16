@@ -24,7 +24,10 @@
 										</c:if>	</h4>
 									</div>
 									<div class="col-md-3 col-xs-4">
-										<label class="label label-${empty sschool.school.status?'Default':sschool.school.status.style}">${empty sschool.school.status?'Not provided':sschool.school.status.description}</label><c:if test="${not empty highlight && highlight == certificationCriterion.id}"><span class="badge error">new</span></c:if>
+										<label class="label label-${empty sschool.school.status?'Default':sschool.school.status.style}">${empty sschool.school.status?'Not provided':sschool.school.status.description}</label>
+										<c:if test="${sschool.nbPending > 0}">
+											<span class="label label-Warning">${fn:escapeXml(sschool.nbPending)}</span>
+										</c:if>
 									</div>
 									<div class="col-md-1 col-xs-1">
 										

@@ -39,6 +39,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.MetadataException;
 import com.google.api.client.util.Strings;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
 import com.gracie.barra.admin.objects.CriterionPicture;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
@@ -66,7 +67,10 @@ public class SchoolCriteriaRestServlet extends AbstractGBServlet {
 			SchoolCertificationDashboard schoolCertificationDashboard = null;
 
 			try {
-				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(school.getId());
+				Map<Long, Map<CertificationCriterionRank, Map<Long, SchoolCertificationCriterion>>> schoolCriteria = getCertificationDao()
+						.ListSchoolCriteria(school.getId());
+				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(school.getId(),
+						schoolCriteria, getCertificationDao().listCertificationCriteria());
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}

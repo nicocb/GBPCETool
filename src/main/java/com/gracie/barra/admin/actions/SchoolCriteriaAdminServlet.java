@@ -16,6 +16,7 @@
 package com.gracie.barra.admin.actions;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationCriterion.SchoolCertificationCriterionStatus;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
@@ -46,8 +48,10 @@ public class SchoolCriteriaAdminServlet extends AbstractGBServlet {
 			SchoolCertificationDashboard schoolCertificationDashboard = null;
 			School school = null;
 			try {
-
-				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(schoolId);
+				Map<Long, Map<CertificationCriterionRank, Map<Long, SchoolCertificationCriterion>>> schoolCriteria = getCertificationDao()
+						.ListSchoolCriteria(schoolId);
+				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(schoolId, schoolCriteria,
+						getCertificationDao().listCertificationCriteria());
 				school = getSchoolDao().getSchool(schoolId);
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);

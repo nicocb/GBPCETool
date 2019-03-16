@@ -16,11 +16,14 @@
 package com.gracie.barra.school.action;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.admin.objects.SchoolCertificationDashboard;
 import com.gracie.barra.base.actions.AbstractGBServlet;
 import com.gracie.barra.school.objects.School;
@@ -38,7 +41,10 @@ public class SchoolCriteriaServlet extends AbstractGBServlet {
 			SchoolCertificationDashboard schoolCertificationDashboard = null;
 
 			try {
-				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(school.getId());
+				Map<Long, Map<CertificationCriterionRank, Map<Long, SchoolCertificationCriterion>>> schoolCriteria = getCertificationDao()
+						.ListSchoolCriteria(school.getId());
+				schoolCertificationDashboard = getCertificationDao().getSchoolCertificationDashboard(school.getId(),
+						schoolCriteria, getCertificationDao().listCertificationCriteria());
 			} catch (Exception e) {
 				throw new ServletException("Error listing certificationCriteria", e);
 			}

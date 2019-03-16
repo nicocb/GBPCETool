@@ -25,7 +25,9 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.gracie.barra.admin.dao.CertificationDao;
+import com.gracie.barra.admin.objects.CertificationCriterion;
 import com.gracie.barra.admin.objects.CertificationCriterion.CertificationCriterionRank;
+import com.gracie.barra.admin.objects.SchoolCertificationCriterion;
 import com.gracie.barra.school.objects.School;
 import com.gracie.barra.school.objects.School.Belt;
 import com.gracie.barra.school.objects.School.SchoolStatus;
@@ -243,12 +245,18 @@ public class SchoolDaoDatastoreImpl implements SchoolDao {
 
 	@Override
 	public List<SchoolsByRank> listSchoolsByRank() {
+		// TODO preload criteria and schoolcriteria
+
 		List<School> schools = listSchools();
 		List<SchoolsByRank> schoolsBR = new ArrayList<>();
 		Map<CertificationCriterionRank, SchoolsByRank> ranks = new HashMap<>();
 
+		Map<Long, Map<CertificationCriterionRank, Map<Long, SchoolCertificationCriterion>>> schoolCritreria = certificationDao
+				.ListSchoolCriteria(null);
+		List<CertificationCriterion> criteria = certificationDao.listCertificationCriteria();
+
 		for (School school : schools) {
-			ScoredSchool sSchool = certificationDao.scoreSchool(school);
+			ScoredSchool sSchool = certificationDao.scoreSchool(school, schoolCritreria, criteria);
 			SchoolsByRank current = ranks.get(sSchool.getRank());
 			if (current == null) {
 				current = new SchoolsByRank();
